@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PairUp — Where Brands Meet the Right Creators</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pu:#6C63FF;--pu2:#8B85FF;--pu-light:#F0EFFE;--pu-dark:#4A42D6;--pu-border:#C5C2FF;
+  --teal:#00C896;--teal2:#00A87D;--teal-light:#E0FBF4;--teal-dark:#007A5A;
+  --bg:#F7F8FC;--surface:#FFFFFF;--surface2:#F0F1F8;
+  --txt:#0D0E1A;--txt2:#5A5B72;--txt3:#9899B0;
+  --border:#E4E5F0;--border2:#CCCDE0;
+  --amber:#F5A623;--coral:#FF5C5C;--green:#22C55E;
+  --shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(108,99,255,.07);
+  --shadow2:0 2px 8px rgba(0,0,0,.08),0 8px 32px rgba(108,99,255,.1);
+  --r:12px;--r2:8px;--r3:20px;
+}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--txt);font-size:14px;line-height:1.5}
+
+/* NAV */
+.nav{height:56px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;position:sticky;top:0;z-index:200;box-shadow:0 1px 0 var(--border)}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer;text-decoration:none}
+.logo-icon{width:32px;height:32px;background:var(--pu);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.logo-icon svg{width:18px;height:18px}
+.logo-name{font-size:17px;font-weight:700;color:var(--txt);letter-spacing:-.4px}
+.logo-name span{color:var(--pu)}
+.nav-pills{display:flex;gap:2px;margin-left:8px}
+.npill{padding:6px 14px;border-radius:var(--r2);font-size:13px;font-weight:500;color:var(--txt2);cursor:pointer;border:none;background:none;font-family:inherit;transition:all .15s}
+.npill:hover{background:var(--surface2);color:var(--txt)}
+.npill.on{background:var(--pu-light);color:var(--pu);font-weight:600}
+.nav-spacer{flex:1}
+.role-switch{display:flex;background:var(--surface2);border-radius:var(--r2);padding:3px;gap:2px}
+.role-btn{padding:5px 16px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;background:none;font-family:inherit;color:var(--txt2);transition:all .15s}
+.role-btn.on{background:var(--surface);color:var(--pu);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.nav-av{width:32px;height:32px;border-radius:50%;background:var(--pu-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--pu);cursor:pointer;border:2px solid var(--pu-border);position:relative}
+.nav-dot{position:absolute;top:-1px;right:-1px;width:9px;height:9px;background:var(--coral);border-radius:50%;border:2px solid var(--surface)}
+
+/* SCREENS */
+.screen{display:none}.screen.on{display:flex;flex-direction:column}
+
+/* WELCOME */
+.welcome-wrap{min-height:calc(100vh - 56px);background:var(--bg);overflow-y:auto}
+.hero{padding:72px 24px 48px;text-align:center;max-width:680px;margin:0 auto}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:var(--pu-light);color:var(--pu);font-size:12px;font-weight:600;padding:5px 14px;border-radius:20px;margin-bottom:20px;border:1px solid var(--pu-border)}
+.hero-badge span{width:6px;height:6px;background:var(--pu);border-radius:50%;display:inline-block}
+.hero h1{font-size:42px;font-weight:800;color:var(--txt);line-height:1.15;letter-spacing:-.8px;margin-bottom:14px}
+.hero h1 em{color:var(--pu);font-style:normal}
+.hero p{font-size:16px;color:var(--txt2);line-height:1.6;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.btn-primary{background:var(--pu);color:#fff;border:none;border-radius:var(--r2);padding:12px 28px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.btn-primary:hover{background:var(--pu-dark)}
+.btn-secondary{background:var(--surface);color:var(--txt);border:1px solid var(--border2);border-radius:var(--r2);padding:12px 28px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.btn-secondary:hover{border-color:var(--pu);color:var(--pu)}
+.btn-teal{background:var(--teal);color:#fff;border:none;border-radius:var(--r2);padding:12px 28px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.btn-teal:hover{background:var(--teal2)}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:560px;margin:40px auto 0}
+.stat-hero{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;text-align:center}
+.stat-hero-v{font-size:28px;font-weight:800;color:var(--pu);margin-bottom:4px}
+.stat-hero-k{font-size:12px;color:var(--txt2)}
+.how-section{background:var(--surface);border-top:1px solid var(--border);padding:56px 24px}
+.how-inner{max-width:900px;margin:0 auto}
+.how-section h2{font-size:26px;font-weight:700;color:var(--txt);text-align:center;margin-bottom:8px}
+.how-sub{font-size:14px;color:var(--txt2);text-align:center;margin-bottom:40px}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+.how-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:20px}
+.how-num{width:30px;height:30px;border-radius:var(--r2);background:var(--pu-light);color:var(--pu);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+.how-card h3{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:6px}
+.how-card p{font-size:13px;color:var(--txt2);line-height:1.55}
+.creators-section{padding:56px 24px;max-width:900px;margin:0 auto}
+.creators-section h2{font-size:26px;font-weight:700;margin-bottom:8px}
+.split-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:32px}
+.split-card{border-radius:var(--r);padding:24px;border:1px solid var(--border)}
+.split-card.brand-card{background:linear-gradient(135deg,#F0EFFE 0%,#E8E6FF 100%)}
+.split-card.inf-card-w{background:linear-gradient(135deg,#E0FBF4 0%,#D0F5EB 100%)}
+.split-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;font-size:20px}
+.split-card h3{font-size:16px;font-weight:700;color:var(--txt);margin-bottom:8px}
+.split-card ul{list-style:none;padding:0}
+.split-card ul li{font-size:13px;color:var(--txt2);padding:4px 0;display:flex;align-items:center;gap:6px}
+.split-card ul li::before{content:'';width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.split-card.brand-card ul li::before{background:var(--pu)}
+.split-card.inf-card-w ul li::before{background:var(--teal)}
+.split-card-btn{display:inline-block;margin-top:16px;padding:9px 20px;border-radius:var(--r2);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit}
+
+/* DISCOVER - two col */
+.two-col{display:flex;height:calc(100vh - 56px);overflow:hidden}
+.sidebar{width:272px;background:var(--surface);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;padding:0}
+.sidebar-inner{padding:16px}
+.main-area{flex:1;overflow-y:auto;background:var(--bg);padding:20px 24px}
+
+/* SIDEBAR */
+.sb-head{padding:14px 16px 12px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:10}
+.sb-title{font-size:13px;font-weight:700;color:var(--txt)}
+.sb-subtitle{font-size:11px;color:var(--txt3);margin-top:1px}
+.sb-sec{margin-bottom:16px}
+.sb-label{font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:7px}
+.sb-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:8px 11px;font-size:13px;color:var(--txt);font-family:inherit;transition:border-color .15s;outline:none}
+.sb-input:focus{border-color:var(--pu);background:var(--surface)}
+.sb-input::placeholder{color:var(--txt3)}
+.chips-wrap{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--border2);background:var(--surface);color:var(--txt2);cursor:pointer;font-family:inherit;font-weight:500;transition:all .15s;user-select:none}
+.chip:hover{border-color:var(--pu);color:var(--pu)}
+.chip.on{background:var(--pu-light);color:var(--pu);border-color:var(--pu-border);font-weight:600}
+.chip.teal{background:var(--teal-light);color:var(--teal-dark);border-color:#80DFC3;font-weight:600}
+.rng-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.rng-lbl{font-size:12px;color:var(--txt2)}
+.rng-val{font-size:12px;font-weight:700;color:var(--pu);background:var(--pu-light);padding:2px 8px;border-radius:10px}
+.rng-val.teal-val{color:var(--teal-dark);background:var(--teal-light)}
+input[type=range]{width:100%;height:4px;border-radius:2px;outline:none;cursor:pointer;accent-color:var(--pu)}
+.divhr{height:1px;background:var(--border);margin:14px 0}
+.filter-actions{display:flex;gap:8px;margin-top:4px}
+.find-btn{flex:2;background:var(--pu);color:#fff;border:none;border-radius:var(--r2);padding:9px 0;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.find-btn:hover{background:var(--pu-dark)}
+.find-btn.teal-btn{background:var(--teal)}
+.find-btn.teal-btn:hover{background:var(--teal2)}
+.reset-btn{flex:1;background:var(--surface2);color:var(--txt2);border:1px solid var(--border);border-radius:var(--r2);padding:9px 0;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+.reset-btn:hover{border-color:var(--border2);color:var(--txt)}
+
+/* RESULTS */
+.results-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.results-title{font-size:16px;font-weight:700;color:var(--txt)}
+.results-count{font-size:12px;color:var(--txt3);margin-top:2px}
+.sort-row{display:flex;align-items:center;gap:8px}
+.sort-sel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:6px 10px;font-size:12px;font-weight:500;color:var(--txt);font-family:inherit;cursor:pointer;outline:none}
+.view-toggle{display:flex;background:var(--surface2);border-radius:var(--r2);padding:2px;gap:2px}
+.vt-btn{width:28px;height:28px;border-radius:5px;border:none;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--txt3)}
+.vt-btn.on{background:var(--surface);color:var(--pu);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+/* CARDS */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.inf-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px;cursor:pointer;transition:all .2s;position:relative}
+.inf-card:hover{border-color:var(--pu-border);box-shadow:var(--shadow2);transform:translateY(-1px)}
+.card-top-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px}
+.c-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex-shrink:0;border:2px solid var(--border)}
+.c-av-sq{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.c-name{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:2px}
+.c-sub{font-size:12px;color:var(--txt2)}
+.match-badge{margin-left:auto;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;background:var(--pu-light);color:var(--pu);border:1px solid var(--pu-border);white-space:nowrap;flex-shrink:0}
+.match-badge.teal{background:var(--teal-light);color:var(--teal-dark);border-color:#80DFC3}
+.stats-row-card{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:12px}
+.stat-c{background:var(--bg);border-radius:var(--r2);padding:7px 6px;text-align:center}
+.stat-c-v{font-size:13px;font-weight:700;color:var(--txt)}
+.stat-c-k{font-size:10px;color:var(--txt3);margin-top:1px}
+.score-bar{height:5px;border-radius:3px;background:var(--surface2);overflow:hidden;display:flex;margin-bottom:6px}
+.sn{background:var(--pu)}.sa{background:var(--teal)}.se{background:var(--amber)}.sh{background:var(--coral)}
+.score-legend{display:flex;gap:8px;flex-wrap:wrap}
+.sl-item{display:flex;align-items:center;gap:3px;font-size:10px;color:var(--txt3)}
+.sl-dot{width:5px;height:5px;border-radius:50%}
+.card-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}
+.tag{font-size:11px;padding:3px 8px;border-radius:8px;background:var(--surface2);color:var(--txt2);border:1px solid var(--border)}
+.save-icon{position:absolute;top:14px;right:14px;background:none;border:none;cursor:pointer;font-size:16px;color:var(--txt3);transition:color .15s}
+.save-icon:hover{color:var(--amber)}
+.save-icon.saved{color:var(--amber)}
+
+/* PROFILE DETAIL */
+.profile-wrap{max-width:780px;margin:0 auto;padding:24px}
+.back-link{display:flex;align-items:center;gap:6px;color:var(--txt2);font-size:13px;cursor:pointer;border:none;background:none;font-family:inherit;padding:0;margin-bottom:18px;font-weight:500}
+.back-link:hover{color:var(--pu)}
+.back-link svg{width:16px;height:16px}
+.profile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.profile-hero{padding:28px;background:var(--pu-light);border-bottom:1px solid var(--pu-border)}
+.profile-hero.teal{background:var(--teal-light);border-bottom-color:#80DFC3}
+.ph-top{display:flex;align-items:flex-start;gap:16px;margin-bottom:14px}
+.ph-av{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;border:3px solid rgba(255,255,255,.8);flex-shrink:0}
+.ph-av-sq{border-radius:16px}
+.ph-name{font-size:20px;font-weight:800;color:var(--pu-dark);margin-bottom:3px}
+.ph-name.teal{color:var(--teal-dark)}
+.ph-sub{font-size:13px;color:var(--pu);font-weight:500}
+.ph-sub.teal{color:var(--teal2)}
+.ph-score{margin-left:auto;background:var(--pu);color:#fff;font-size:15px;font-weight:700;padding:8px 18px;border-radius:var(--r3);flex-shrink:0}
+.ph-score.teal{background:var(--teal)}
+.ph-bio{font-size:13px;color:var(--pu-dark);line-height:1.65}
+.ph-bio.teal{color:var(--teal-dark)}
+.profile-body{padding:24px}
+.sec-title{font-size:10px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:12px;margin-top:20px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.sec-title:first-child{margin-top:0}
+.det-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
+.det-box{background:var(--bg);border-radius:var(--r2);padding:12px 14px;border:1px solid var(--border)}
+.det-k{font-size:11px;color:var(--txt3);margin-bottom:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.det-v{font-size:14px;font-weight:700;color:var(--txt)}
+.bk-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.bk-label{font-size:12px;color:var(--txt2);width:90px;flex-shrink:0;font-weight:500}
+.bk-track{flex:1;height:7px;background:var(--surface2);border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+.bk-fill{height:100%;border-radius:4px}
+.bk-weight{font-size:10px;color:var(--txt3);width:28px;text-align:right;flex-shrink:0}
+.bk-score{font-size:13px;font-weight:700;color:var(--txt);width:30px;text-align:right;flex-shrink:0}
+.collab-item{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;background:var(--bg);border-radius:var(--r2);margin-bottom:6px;border:1px solid var(--border)}
+.collab-brand{font-size:13px;font-weight:700;color:var(--txt)}
+.collab-cat{font-size:11px;color:var(--txt2);margin-top:1px}
+.yr-pill{font-size:11px;font-weight:600;color:var(--txt2);background:var(--surface);border:1px solid var(--border);padding:3px 10px;border-radius:10px}
+.contact-panel{background:var(--bg);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden;margin-bottom:4px}
+.contact-row-item{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border)}
+.contact-row-item:last-child{border-bottom:none}
+.contact-key{font-size:12px;color:var(--txt3);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.contact-val{font-size:13px;font-weight:600;color:var(--pu);cursor:pointer}
+.contact-val.teal{color:var(--teal2)}
+.action-row{display:flex;gap:10px;margin-top:20px}
+.act-btn{flex:1;padding:11px;border-radius:var(--r2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;text-align:center;border:1px solid var(--border2);background:var(--surface);color:var(--txt);transition:all .15s}
+.act-btn:hover{border-color:var(--pu);color:var(--pu)}
+.act-primary{background:var(--pu);color:#fff;border:none}
+.act-primary:hover{background:var(--pu-dark);color:#fff;border:none}
+.act-teal{background:var(--teal);color:#fff;border:none}
+.act-teal:hover{background:var(--teal2);color:#fff;border:none}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(13,14,26,.45);display:flex;align-items:center;justify-content:center;z-index:500;padding:20px}
+.modal-box{background:var(--surface);border-radius:var(--r);border:1px solid var(--border);width:100%;max-width:460px;box-shadow:var(--shadow2)}
+.modal-header{padding:20px 22px 16px;border-bottom:1px solid var(--border)}
+.modal-title{font-size:16px;font-weight:700;color:var(--txt);margin-bottom:3px}
+.modal-sub{font-size:13px;color:var(--txt2)}
+.modal-body{padding:18px 22px}
+.modal-field{margin-bottom:13px}
+.modal-label{font-size:12px;font-weight:700;color:var(--txt2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.modal-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:9px 12px;font-size:13px;color:var(--txt);font-family:inherit;outline:none;transition:border-color .15s}
+.modal-input:focus{border-color:var(--pu);background:var(--surface)}
+textarea.modal-input{resize:vertical;min-height:90px}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.modal-cancel{background:none;border:1px solid var(--border2);border-radius:var(--r2);padding:9px 18px;font-size:13px;font-weight:600;color:var(--txt2);cursor:pointer;font-family:inherit}
+.modal-confirm{border:none;border-radius:var(--r2);padding:9px 24px;font-size:13px;font-weight:600;color:#fff;cursor:pointer;font-family:inherit}
+.mc-pu{background:var(--pu)}.mc-pu:hover{background:var(--pu-dark)}
+.mc-teal{background:var(--teal)}.mc-teal:hover{background:var(--teal2)}
+
+/* ONBOARDING */
+.ob-wrap{min-height:calc(100vh - 56px);background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px}
+.ob-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);width:100%;max-width:520px;box-shadow:var(--shadow2);overflow:hidden}
+.ob-progress-bar{height:4px;background:var(--surface2)}
+.ob-progress-fill{height:100%;background:var(--pu);border-radius:2px;transition:width .3s}
+.ob-body{padding:32px 32px 24px}
+.ob-step-num{font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.ob-title{font-size:22px;font-weight:800;color:var(--txt);margin-bottom:6px;letter-spacing:-.3px}
+.ob-sub{font-size:14px;color:var(--txt2);line-height:1.55;margin-bottom:22px}
+.ob-footer{padding:16px 32px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.ob-back{background:none;border:1px solid var(--border2);border-radius:var(--r2);padding:9px 18px;font-size:13px;font-weight:600;color:var(--txt2);cursor:pointer;font-family:inherit}
+.ob-next{background:var(--pu);color:#fff;border:none;border-radius:var(--r2);padding:9px 24px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s}
+.ob-next:hover{background:var(--pu-dark)}
+.ob-dots{display:flex;gap:5px}
+.odot{width:7px;height:7px;border-radius:50%;background:var(--border2);transition:all .2s}
+.odot.on{background:var(--pu);width:18px;border-radius:4px}
+.role-cards-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.role-pick-card{border:2px solid var(--border);border-radius:var(--r);padding:20px 16px;text-align:center;cursor:pointer;transition:all .2s}
+.role-pick-card:hover{border-color:var(--pu-border)}
+.role-pick-card.picked{border-color:var(--pu);background:var(--pu-light)}
+.rpc-icon{width:44px;height:44px;border-radius:12px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:20px}
+.rpc-title{font-size:14px;font-weight:700;color:var(--txt);margin-bottom:4px}
+.rpc-desc{font-size:12px;color:var(--txt2);line-height:1.4}
+.form-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-field{margin-bottom:12px}
+.form-label{font-size:11px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.form-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--r2);padding:9px 12px;font-size:13px;color:var(--txt);font-family:inherit;outline:none;transition:border-color .15s}
+.form-input:focus{border-color:var(--pu);background:var(--surface)}
+.form-input::placeholder{color:var(--txt3)}
+.form-input option{color:var(--txt)}
+
+/* MY MATCHES */
+.page-inner{padding:24px;max-width:1000px;margin:0 auto;width:100%;overflow-y:auto;flex:1}
+.page-title{font-size:22px;font-weight:800;color:var(--txt);margin-bottom:4px;letter-spacing:-.3px}
+.page-sub{font-size:13px;color:var(--txt2);margin-bottom:24px}
+.section-block{margin-bottom:32px}
+.section-block-title{font-size:12px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.count-pill{background:var(--surface2);color:var(--txt2);font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+.empty-state{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:32px;text-align:center;color:var(--txt2);font-size:13px}
+.empty-icon{font-size:28px;margin-bottom:10px}
+.request-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .15s}
+.request-card:hover{border-color:var(--pu-border);box-shadow:var(--shadow)}
+.req-status{font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px;margin-left:auto;white-space:nowrap}
+.req-sent{background:#FFF5E0;color:#B07500;border:1px solid #F5D98B}
+.req-responded{background:#E0F5EC;color:#0A6B3B;border:1px solid #80DFC3}
+
+/* MY PROFILE */
+.profile-edit-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;margin-bottom:16px;box-shadow:var(--shadow)}
+.stats-dashboard{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:20px}
+.dash-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px}
+.dash-stat-v{font-size:26px;font-weight:800;color:var(--pu);margin-bottom:4px}
+.dash-stat-v.teal{color:var(--teal)}
+.dash-stat-k{font-size:12px;color:var(--txt2)}
+.inbound-opp{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:10px;cursor:pointer;transition:all .15s;display:flex;align-items:flex-start;gap:12px}
+.inbound-opp:hover{border-color:var(--teal);box-shadow:var(--shadow)}
+.edit-profile-btn{background:var(--pu);color:#fff;border:none;border-radius:var(--r2);padding:10px 24px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+.download-btn{background:var(--surface);color:var(--txt2);border:1px solid var(--border2);border-radius:var(--r2);padding:10px 24px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;margin-left:8px}
+
+/* TOAST NOTIFICATION */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:1000;display:flex;flex-direction:column;gap:8px}
+.toast-notif{background:var(--txt);color:#fff;border-radius:var(--r2);padding:12px 18px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:10px;animation:slideIn .25s ease;max-width:320px;box-shadow:var(--shadow2)}
+.toast-notif.success{background:var(--green)}
+@keyframes slideIn{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="logo" onclick="go('welcome')">
+    <div class="logo-icon">
+      <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="6" cy="9" r="3.5" stroke="white" stroke-width="1.8"/>
+        <circle cx="12" cy="9" r="3.5" stroke="white" stroke-width="1.8"/>
+        <path d="M8.5 9C8.5 7.5 9.5 6.5 10 6.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="logo-name">Pair<span>Up</span></span>
+  </a>
+  <div class="nav-pills" id="nav-pills">
+    <button class="npill" id="np-discover" onclick="go('discover')">Discover</button>
+    <button class="npill" id="np-matches" onclick="go('matches')">My matches</button>
+    <button class="npill" id="np-profile" onclick="go('myprofile')">My profile</button>
+  </div>
+  <div class="nav-spacer"></div>
+  <div class="role-switch">
+    <button class="role-btn on" id="rb-brand" onclick="setRole('brand')">Brand</button>
+    <button class="role-btn" id="rb-creator" onclick="setRole('creator')">Creator</button>
+  </div>
+  <div class="nav-av" id="nav-avatar" onclick="go('myprofile')">JD<div class="nav-dot"></div></div>
+</nav>
+
+<!-- WELCOME SCREEN -->
+<div class="screen on" id="screen-welcome">
+  <div class="welcome-wrap">
+    <div class="hero">
+      <div class="hero-badge"><span></span> Smart matching · No agencies needed</div>
+      <h1>Where brands meet<br><em>the right creators</em></h1>
+      <p>PairUp connects small businesses with micro-influencers using data-driven match scores — not guesswork. Find your perfect creative partner in minutes.</p>
+      <div class="hero-btns">
+        <button class="btn-primary" onclick="startOnboard('brand')">I'm a brand</button>
+        <button class="btn-teal" onclick="startOnboard('creator')">I'm a creator</button>
+        <button class="btn-secondary" onclick="go('discover')">Browse marketplace</button>
+      </div>
+      <div class="stats-row">
+        <div class="stat-hero"><div class="stat-hero-v">8</div><div class="stat-hero-k">Creators listed</div></div>
+        <div class="stat-hero"><div class="stat-hero-v">5</div><div class="stat-hero-k">Brands seeking</div></div>
+        <div class="stat-hero"><div class="stat-hero-v">$5.78</div><div class="stat-hero-k">Avg ROI per $1 spent</div></div>
+      </div>
+    </div>
+    <div class="how-section">
+      <div class="how-inner">
+        <h2>How PairUp works</h2>
+        <p class="how-sub">A transparent, scored marketplace — no black boxes</p>
+        <div class="how-grid">
+          <div class="how-card"><div class="how-num">1</div><h3>Create your profile</h3><p>Brands describe their campaign. Creators share their audience, engagement, and past collabs.</p></div>
+          <div class="how-card"><div class="how-num">2</div><h3>Get matched by score</h3><p>Our algorithm scores compatibility across niche, audience, engagement, and history — 0 to 100.</p></div>
+          <div class="how-card"><div class="how-num">3</div><h3>Browse and filter</h3><p>Search with smart filters. Every result shows a transparent score breakdown so you know why.</p></div>
+          <div class="how-card"><div class="how-num">4</div><h3>Connect directly</h3><p>Send a collab request or pitch directly. No intermediary, no agency fee.</p></div>
+        </div>
+        <div class="split-grid" style="margin-top:40px">
+          <div class="split-card brand-card">
+            <div class="split-icon" style="background:#dbd8ff">🏢</div>
+            <h3>For brands</h3>
+            <ul>
+              <li>Filter by niche, location, engagement</li>
+              <li>See a full match score breakdown</li>
+              <li>Send collab requests directly</li>
+              <li>Save favourite creators</li>
+            </ul>
+            <button class="split-card-btn" style="background:var(--pu);color:#fff" onclick="startOnboard('brand')">Start as a brand</button>
+          </div>
+          <div class="split-card inf-card-w">
+            <div class="split-icon" style="background:#b3f0df">✨</div>
+            <h3>For creators</h3>
+            <ul>
+              <li>Get discovered by matching brands</li>
+              <li>Receive inbound pitch requests</li>
+              <li>Showcase your rate card and audience</li>
+              <li>Track your deal pipeline</li>
+            </ul>
+            <button class="split-card-btn" style="background:var(--teal);color:#fff" onclick="startOnboard('creator')">Start as a creator</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DISCOVER SCREEN -->
+<div class="screen" id="screen-discover">
+  <div class="two-col">
+    <div class="sidebar">
+      <div class="sb-head">
+        <div class="sb-title" id="sb-title">Filter creators</div>
+        <div class="sb-subtitle" id="sb-subtitle">Narrow down your perfect match</div>
+      </div>
+      <div class="sidebar-inner" id="sidebar-inner"></div>
+    </div>
+    <div class="main-area">
+      <div class="results-bar">
+        <div>
+          <div class="results-title" id="results-title">Matched creators</div>
+          <div class="results-count" id="results-count">Loading...</div>
+        </div>
+        <div class="sort-row">
+          <select class="sort-sel" id="sort-select" onchange="applyFilters()">
+            <option value="match">Sort: Match score</option>
+            <option value="engagement">Sort: Engagement</option>
+            <option value="followers">Sort: Followers</option>
+          </select>
+        </div>
+      </div>
+      <div class="cards-grid" id="cards-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PROFILE DETAIL SCREEN -->
+<div class="screen" id="screen-profile">
+  <div style="overflow-y:auto;flex:1;background:var(--bg)">
+    <div class="profile-wrap">
+      <button class="back-link" onclick="go('discover')">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 3L5 8L10 13"/></svg>
+        Back to results
+      </button>
+      <div id="profile-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MATCHES SCREEN -->
+<div class="screen" id="screen-matches">
+  <div style="overflow-y:auto;flex:1;background:var(--bg)">
+    <div class="page-inner" id="matches-content"></div>
+  </div>
+</div>
+
+<!-- MY PROFILE SCREEN -->
+<div class="screen" id="screen-myprofile">
+  <div style="overflow-y:auto;flex:1;background:var(--bg)">
+    <div class="page-inner" id="myprofile-content"></div>
+  </div>
+</div>
+
+<!-- ONBOARDING SCREEN -->
+<div class="screen" id="screen-onboard">
+  <div class="ob-wrap">
+    <div class="ob-card">
+      <div class="ob-progress-bar"><div class="ob-progress-fill" id="ob-fill" style="width:25%"></div></div>
+      <div class="ob-body" id="ob-body"></div>
+      <div class="ob-footer">
+        <button class="ob-back" id="ob-back-btn" onclick="obBack()">Back</button>
+        <div class="ob-dots" id="ob-dots"></div>
+        <button class="ob-next" id="ob-next-btn" onclick="obNext()">Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div class="modal-overlay" id="modal-overlay" style="display:none" onclick="closeModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-sub" id="modal-sub"></div>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+    <div class="modal-footer">
+      <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+      <button class="modal-confirm" id="modal-confirm-btn" onclick="submitContact()"></button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+const INFLUENCERS=[
+  {id:1,handle:"@sara.fit",name:"Sara Chen",niche:"Fitness",location:"New York, US",followers:42400,eng:3.8,format:["Reels","Stories"],collab:[{brand:"Nike Running",cat:"Sportswear",year:2022},{brand:"Lululemon",cat:"Activewear",year:2023},{brand:"FitFuel Nutrition",cat:"Nutrition",year:2024}],ageGroup:"18–34",gender:"Female 68%",bio:"NYC-based fitness creator helping women build strength with no-equipment workouts. 3+ years creating content, averaging 2 brand deals per month.",contact:{email:"sara@sarafit.com",ig:"@sara.fit",rate:"$800–$1,500/post"},scores:{niche:95,audience:91,engagement:88,history:100},av:{i:"SC",bg:"#EEEDFE",c:"#4A42D6"}},
+  {id:2,handle:"@move.with.mia",name:"Mia Torres",niche:"Wellness",location:"Brooklyn, US",followers:27200,eng:4.1,format:["Reels","Stories"],collab:[{brand:"Calm App",cat:"Wellness",year:2022},{brand:"Vital Proteins",cat:"Supplements",year:2023},{brand:"Alo Yoga",cat:"Yoga",year:2024}],ageGroup:"18–34",gender:"Female 74%",bio:"Mindful movement and recovery for busy people. Daily mobility, breathwork, and supplement reviews.",contact:{email:"mia@movewithmia.com",ig:"@move.with.mia",rate:"$500–$900/post"},scores:{niche:72,audience:84,engagement:94,history:75},av:{i:"MT",bg:"#E0FBF4",c:"#007A5A"}},
+  {id:3,handle:"@danielruns",name:"Daniel Park",niche:"Running",location:"Jersey City, US",followers:61000,eng:1.9,format:["Posts","Stories"],collab:[{brand:"Brooks Running",cat:"Running gear",year:2022},{brand:"Maurten",cat:"Sports nutrition",year:2023},{brand:"On Running",cat:"Footwear",year:2024}],ageGroup:"25–34",gender:"Male 62%",bio:"Marathon runner covering gear reviews, training plans, and race recaps. NJ-based, running since 2018.",contact:{email:"daniel@danielruns.co",ig:"@danielruns",rate:"$1,200–$2,000/post"},scores:{niche:60,audience:68,engagement:52,history:80},av:{i:"DP",bg:"#FFF3E0",c:"#8B4500"}},
+  {id:4,handle:"@nourish.nina",name:"Nina Okafor",niche:"Food",location:"Los Angeles, US",followers:38900,eng:3.3,format:["Reels","Long-form"],collab:[{brand:"Daily Harvest",cat:"Meal kits",year:2022},{brand:"Vitamix",cat:"Kitchen",year:2023},{brand:"Thrive Market",cat:"Organic",year:2024}],ageGroup:"25–34",gender:"Female 71%",bio:"Plant-based recipe creator. Weekly meal prep, ingredient spotlights, and honest brand reviews.",contact:{email:"nina@nourishnina.com",ig:"@nourish.nina",rate:"$700–$1,200/post"},scores:{niche:28,audience:70,engagement:80,history:45},av:{i:"NO",bg:"#FFEDE8",c:"#9B2000"}},
+  {id:5,handle:"@techbytomas",name:"Tomas Rivera",niche:"Tech",location:"San Francisco, US",followers:88000,eng:1.4,format:["Long-form","Posts"],collab:[{brand:"Notion",cat:"SaaS",year:2022},{brand:"Raycast",cat:"Productivity",year:2023},{brand:"Linear",cat:"Dev tools",year:2024}],ageGroup:"18–34",gender:"Male 78%",bio:"Honest tech reviews and SaaS breakdowns for developers and early adopters. 5 years in content.",contact:{email:"tomas@techbytomas.com",ig:"@techbytomas",rate:"$2,000–$4,000/post"},scores:{niche:15,audience:40,engagement:38,history:60},av:{i:"TR",bg:"#E3F0FF",c:"#0A4E9A"}},
+  {id:6,handle:"@glowwithgrace",name:"Grace Liu",niche:"Beauty",location:"Chicago, US",followers:54000,eng:2.9,format:["Reels","Stories","Long-form"],collab:[{brand:"Glossier",cat:"Skincare",year:2022},{brand:"Rare Beauty",cat:"Makeup",year:2023},{brand:"Tatcha",cat:"Premium skincare",year:2024}],ageGroup:"18–24",gender:"Female 83%",bio:"Skincare-first beauty creator. In-depth reviews, morning routines, and ingredient breakdowns for Gen Z.",contact:{email:"grace@glowwithgrace.com",ig:"@glowwithgrace",rate:"$900–$1,600/post"},scores:{niche:20,audience:55,engagement:75,history:70},av:{i:"GL",bg:"#FDE8F2",c:"#8B1A50"}},
+  {id:7,handle:"@passport.alex",name:"Alex Moreau",niche:"Travel",location:"Miami, US",followers:73000,eng:2.2,format:["Reels","Stories"],collab:[{brand:"Airbnb",cat:"Travel",year:2022},{brand:"Away",cat:"Luggage",year:2023},{brand:"Chase Sapphire",cat:"Finance",year:2024}],ageGroup:"25–34",gender:"Mixed 51%F",bio:"Budget luxury travel. Hotel reviews, flight hacks, and destination guides across 60+ countries.",contact:{email:"alex@passportalex.com",ig:"@passport.alex",rate:"$1,500–$3,000/post"},scores:{niche:10,audience:60,engagement:62,history:65},av:{i:"AM",bg:"#EAFAEA",c:"#1A6B1A"}},
+  {id:8,handle:"@levelup.leo",name:"Leo Santos",niche:"Gaming",location:"Austin, US",followers:95000,eng:3.5,format:["Long-form","Reels"],collab:[{brand:"Razer",cat:"Gaming gear",year:2022},{brand:"G Fuel",cat:"Gaming nutrition",year:2023},{brand:"Corsair",cat:"Peripherals",year:2024}],ageGroup:"13–24",gender:"Male 81%",bio:"FPS and RPG content creator. Reviews, tier lists, and live commentary. Top 1% Twitch streamer.",contact:{email:"leo@levelupleo.gg",ig:"@levelup.leo",rate:"$2,500–$5,000/post"},scores:{niche:12,audience:35,engagement:90,history:85},av:{i:"LS",bg:"#F2F2F2",c:"#2C2C2A"}}
+];
+const BRANDS=[
+  {id:101,name:"FitFuel Nutrition",handle:"FitFuel",industry:"Fitness / Nutrition",location:"Austin, US",size:"Startup",budget:"$3,000–$8,000",budgetNum:5500,target:"Active adults 20–35, fitness-focused",looking:["Fitness","Wellness","Running"],formats:["Reels","Stories"],bio:"Premium plant-based protein and pre-workout supplements. Looking for authentic fitness creators who actually train.",contact:{email:"collab@fitfuel.com",web:"fitfuel.com",ig:"@fitfuel"},av:{i:"FF",bg:"#EEEDFE",c:"#4A42D6"},scores:{niche:92,audience:88,engagement:85,history:95}},
+  {id:102,name:"Bloom Skincare",handle:"BloomSkin",industry:"Beauty / Skincare",location:"New York, US",size:"SMB",budget:"$2,000–$5,000",budgetNum:3500,target:"Women 18–28 interested in clean beauty",looking:["Beauty","Wellness","Fashion"],formats:["Reels","Stories","Long-form"],bio:"Clean, vegan skincare for Gen Z. Formulated without parabens, sulfates, or synthetic fragrance.",contact:{email:"creators@bloomskincare.com",web:"bloomskincare.com",ig:"@bloomskin"},av:{i:"BS",bg:"#FDE8F2",c:"#8B1A50"},scores:{niche:88,audience:82,engagement:79,history:72}},
+  {id:103,name:"Wanderly Travel",handle:"Wanderly",industry:"Travel / Lifestyle",location:"San Francisco, US",size:"SMB",budget:"$4,000–$10,000",budgetNum:7000,target:"Millennials 25–38 experience travelers",looking:["Travel","Food","Lifestyle"],formats:["Reels","Long-form"],bio:"Curated boutique travel experiences and hotel bookings. We partner with authentic travel storytellers.",contact:{email:"partnerships@wanderly.co",web:"wanderly.co",ig:"@wanderly"},av:{i:"WL",bg:"#EAFAEA",c:"#1A6B1A"},scores:{niche:85,audience:78,engagement:72,history:68}},
+  {id:104,name:"ByteDesk",handle:"ByteDesk",industry:"Productivity / SaaS",location:"Remote",size:"Startup",budget:"$1,500–$4,000",budgetNum:2750,target:"Developers and knowledge workers 22–40",looking:["Tech","Gaming","Productivity"],formats:["Long-form","Posts"],bio:"AI-powered task manager for developers. We want creators who genuinely use and love productivity tools.",contact:{email:"grow@bytedesk.io",web:"bytedesk.io",ig:"@bytedesk"},av:{i:"BD",bg:"#E3F0FF",c:"#0A4E9A"},scores:{niche:80,audience:75,engagement:70,history:60}},
+  {id:105,name:"Petal Foods",handle:"PetalFoods",industry:"Food / Organic",location:"Portland, US",size:"SMB",budget:"$2,500–$6,000",budgetNum:4250,target:"Health-conscious adults 25–40",looking:["Food","Wellness","Fitness"],formats:["Reels","Stories","Long-form"],bio:"Organic meal kits and pantry staples. Farm-to-table made simple. Seeking food creators with real kitchen passion.",contact:{email:"hello@petalfoods.com",web:"petalfoods.com",ig:"@petalfoods"},av:{i:"PF",bg:"#FFF3E0",c:"#8B4500"},scores:{niche:82,audience:80,engagement:76,history:70}}
+];
+
+let role="brand";
+let savedSet=new Set();
+let sentSet=new Set();
+let activeFilters={niches:[],location:"",minEng:0,maxFol:100,minMatch:0,formats:[],ages:[],budgets:[],sizes:[],brandNiches:[]};
+let obStep=0;
+let obRole="brand";
+let currentProfileId=null;
+
+function score(item){const s=item.scores;return Math.round(s.niche*.35+s.audience*.30+s.engagement*.25+s.history*.10)}
+
+function setRole(r){
+  role=r;
+  document.getElementById("rb-brand").classList.toggle("on",r==="brand");
+  document.getElementById("rb-creator").classList.toggle("on",r==="creator");
+  document.getElementById("nav-avatar").textContent=r==="brand"?"JD":"SC";
+  activeFilters={niches:[],location:"",minEng:0,maxFol:100,minMatch:0,formats:[],ages:[],budgets:[],sizes:[],brandNiches:[]};
+  if(document.getElementById("screen-discover").classList.contains("on"))renderDiscover();
+  if(document.getElementById("screen-matches").classList.contains("on"))renderMatches();
+  if(document.getElementById("screen-myprofile").classList.contains("on"))renderMyProfile();
+}
+
+function go(page){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));
+  document.getElementById("screen-"+page).classList.add("on");
+  ["np-discover","np-matches","np-profile"].forEach(id=>document.getElementById(id)&&document.getElementById(id).classList.remove("on"));
+  const map={discover:"np-discover",matches:"np-matches",myprofile:"np-profile"};
+  if(map[page])document.getElementById(map[page]).classList.add("on");
+  if(page==="discover")renderDiscover();
+  if(page==="matches")renderMatches();
+  if(page==="myprofile")renderMyProfile();
+}
+
+function startOnboard(r){obRole=r;obStep=0;renderOb();go("onboard")}
+
+/* ========== SIDEBAR ========== */
+function renderDiscover(){
+  if(role==="brand")renderBrandSidebar();
+  else renderCreatorSidebar();
+  applyFilters();
+}
+
+function renderBrandSidebar(){
+  document.getElementById("sb-title").textContent="Filter creators";
+  document.getElementById("sb-subtitle").textContent="Narrow your perfect match";
+  document.getElementById("results-title").textContent="Matched creators";
+  document.getElementById("sidebar-inner").innerHTML=`
+    <div class="sb-sec">
+      <div class="sb-label">Your campaign niche</div>
+      <input class="sb-input" id="f-camp-niche" placeholder="e.g. Fitness, Food, Tech" value="${activeFilters.campNiche||''}" oninput="activeFilters.campNiche=this.value;applyFilters()">
+    </div>
+    <div class="sb-sec">
+      <div class="sb-label">Creator location</div>
+      <input class="sb-input" id="f-location" placeholder="e.g. New York, London" value="${activeFilters.location||''}" oninput="activeFilters.location=this.value;applyFilters()">
+    </div>
+    <div class="divhr"></div>
+    <div class="sb-sec">
+      <div class="sb-label">Creator niche</div>
+      <div class="chips-wrap" id="niche-chips">
+        ${["Fitness","Wellness","Fashion","Food","Tech","Travel","Beauty","Gaming","Running","Lifestyle"].map(n=>`<div class="chip ${activeFilters.niches.includes(n)?'on':''}" onclick="toggleFilter('niches','${n}',this,'on')">${n}</div>`).join("")}
+      </div>
+    </div>
+    <div class="divhr"></div>
+    <div class="sb-sec">
+      <div class="sb-label">Min engagement rate</div>
+      <div class="rng-header">
+        <span class="rng-lbl">0%</span>
+        <span class="rng-val" id="eng-val">${activeFilters.minEng}%</span>
+      </div>
+      <input type="range" min="0" max="8" step="0.5" value="${activeFilters.minEng}" oninput="activeFilters.minEng=parseFloat(this.value);document.getElementById('eng-val').textContent=parseFloat(this.value).toFixed(1)+'%';applyFilters()">
+    </div>
+    <div class="sb-sec">
+      <div class="sb-label">Max followers</div>
+      <div class="rng-header">
+        <span class="rng-lbl">5K</span>
+        <span class="rng-val" id="fol-val">${activeFilters.maxFol}K</span>
+      </div>
+      <input type="range" min="5" max="100" step="5" value="${activeFilters.maxFol}" oninput="activeFilters.maxFol=parseInt(this.value);document.getElementById('fol-val').textContent=this.value+'K';applyFilters()">
+    </div>
+    <div class="sb-sec">
+      <div class="sb-label">Min match score</div>
+      <div class="rng-header">
+        <span class="rng-lbl">0%</span>
+        <span class="rng-val" id="match-val">${activeFilters.minMatch}%</span>
+      </div>
+      <input type="range" min="0" max="95" step="5" value="${activeFilters.minMatch}" oninput="activeFilters.minMatch=parseInt(this.value);document.getElementById('match-val').textContent=this.value+'%';applyFilters()">
+    </div>
+    <div class="divhr"></div>
+    <div class="sb-sec">
+      <div class="sb-label">Content format</div>
+      <div class="chips-wrap">
+        ${["Reels","Stories","Long-form","Posts"].map(f=>`<div class="chip ${activeFilters.formats.includes(f)?'on':''}" onclick="toggleFilter('formats','${f}',this,'on')">${f}</div>`).join("")}
+      </div>
+    </div>
+    <div class="sb-sec" style="margin-top:10px">
+      <div class="sb-label">Audience age group</div>
+      <div class="chips-wrap">
+        ${["13–17","18–24","25–34","35+"].map(a=>`<div class="chip ${activeFilters.ages.includes(a)?'on':''}" onclick="toggleFilter('ages','${a}',this,'on')">${a}</div>`).join("")}
+      </div>
+    </div>
+    <div style="margin-top:16px" class="filter-actions">
+      <button class="find-btn" onclick="applyFilters()">Find matches</button>
+      <button class="reset-btn" onclick="resetBrandFilters()">Reset</button>
+    </div>`;
+}
+
+function renderCreatorSidebar(){
+  document.getElementById("sb-title").textContent="Filter brands";
+  document.getElementById("sb-subtitle").textContent="Find brands looking for you";
+  document.getElementById("results-title").textContent="Brands seeking creators";
+  document.getElementById("sidebar-inner").innerHTML=`
+    <div class="sb-sec">
+      <div class="sb-label">Your creator niche</div>
+      <input class="sb-input" id="f-creator-niche" placeholder="e.g. Fitness, Beauty" value="${activeFilters.creatorNiche||''}" oninput="activeFilters.creatorNiche=this.value;applyFilters()">
+    </div>
+    <div class="sb-sec">
+      <div class="sb-label">Your location</div>
+      <input class="sb-input" id="f-creator-loc" placeholder="e.g. New York, Los Angeles" value="${activeFilters.location||''}" oninput="activeFilters.location=this.value;applyFilters()">
+    </div>
+    <div class="divhr"></div>
+    <div class="sb-sec">
+      <div class="sb-label">Brand industry</div>
+      <div class="chips-wrap">
+        ${["Fitness","Beauty","Food","Tech","Travel","Fashion","Wellness","Gaming"].map(n=>`<div class="chip ${activeFilters.brandNiches.includes(n)?'teal':''}" onclick="toggleFilter('brandNiches','${n}',this,'teal')">${n}</div>`).join("")}
+      </div>
+    </div>
+    <div class="divhr"></div>
+    <div class="sb-sec">
+      <div class="sb-label">Min match score</div>
+      <div class="rng-header">
+        <span class="rng-lbl">0%</span>
+        <span class="rng-val teal-val" id="bmatch-val">${activeFilters.minMatch}%</span>
+      </div>
+      <input type="range" min="0" max="95" step="5" value="${activeFilters.minMatch}" oninput="activeFilters.minMatch=parseInt(this.value);document.getElementById('bmatch-val').textContent=this.value+'%';applyFilters()">
+    </div>
+    <div class="sb-sec">
+      <div class="sb-label">Budget range</div>
+      <div class="chips-wrap">
+        ${["Under $2K","$2K–$5K","$5K–$10K","$10K+"].map(b=>`<div class="chip ${activeFilters.budgets.includes(b)?'teal':''}" onclick="toggleFilter('budgets','${b}',this,'teal')">${b}</div>`).join("")}
+      </div>
+    </div>
+    <div class="sb-sec" style="margin-top:10px">
+      <div class="sb-label">Company size</div>
+      <div class="chips-wrap">
+        ${["Startup","SMB","Enterprise"].map(s=>`<div class="chip ${activeFilters.sizes.includes(s)?'teal':''}" onclick="toggleFilter('sizes','${s}',this,'teal')">${s}</div>`).join("")}
+      </div>
+    </div>
+    <div style="margin-top:16px" class="filter-actions">
+      <button class="find-btn teal-btn" onclick="applyFilters()">Find brands</button>
+      <button class="reset-btn" onclick="resetCreatorFilters()">Reset</button>
+    </div>`;
+}
+
+function toggleFilter(key,val,el,cls){
+  if(activeFilters[key].includes(val)){
+    activeFilters[key]=activeFilters[key].filter(x=>x!==val);
+    el.classList.remove(cls);
+  }else{
+    activeFilters[key].push(val);
+    el.classList.add(cls);
+  }
+  applyFilters();
+}
+
+function resetBrandFilters(){
+  activeFilters={niches:[],location:"",campNiche:"",minEng:0,maxFol:100,minMatch:0,formats:[],ages:[],budgets:[],sizes:[],brandNiches:[]};
+  renderBrandSidebar();
+  applyFilters();
+}
+function resetCreatorFilters(){
+  activeFilters={niches:[],location:"",creatorNiche:"",minEng:0,maxFol:100,minMatch:0,formats:[],ages:[],budgets:[],sizes:[],brandNiches:[]};
+  renderCreatorSidebar();
+  applyFilters();
+}
+
+/* ========== FILTERS ========== */
+function applyFilters(){
+  const sortVal=document.getElementById("sort-select")?.value||"match";
+  if(role==="brand"){
+    let items=[...INFLUENCERS];
+    const loc=(activeFilters.location||"").toLowerCase().trim();
+    if(loc)items=items.filter(i=>i.location.toLowerCase().includes(loc));
+    if(activeFilters.niches.length)items=items.filter(i=>activeFilters.niches.some(n=>i.niche.toLowerCase().includes(n.toLowerCase())||i.collab.some(c=>c.cat.toLowerCase().includes(n.toLowerCase()))));
+    if(activeFilters.formats.length)items=items.filter(i=>activeFilters.formats.some(f=>i.format.includes(f)));
+    if(activeFilters.ages.length)items=items.filter(i=>activeFilters.ages.some(a=>i.ageGroup.includes(a)));
+    items=items.filter(i=>i.eng>=activeFilters.minEng&&i.followers/1000<=activeFilters.maxFol&&score(i)>=activeFilters.minMatch);
+    if(sortVal==="engagement")items.sort((a,b)=>b.eng-a.eng);
+    else if(sortVal==="followers")items.sort((a,b)=>b.followers-a.followers);
+    else items.sort((a,b)=>score(b)-score(a));
+    document.getElementById("results-count").textContent=`${items.length} creator${items.length!==1?"s":""} found`;
+    document.getElementById("cards-grid").innerHTML=items.map(renderInfCard).join("");
+  }else{
+    let items=[...BRANDS];
+    if(activeFilters.brandNiches.length)items=items.filter(b=>activeFilters.brandNiches.some(n=>b.looking.some(l=>l.toLowerCase().includes(n.toLowerCase()))||b.industry.toLowerCase().includes(n.toLowerCase())));
+    if(activeFilters.sizes.length)items=items.filter(b=>activeFilters.sizes.includes(b.size));
+    if(activeFilters.budgets.length){
+      items=items.filter(b=>{
+        if(activeFilters.budgets.includes("Under $2K")&&b.budgetNum<2000)return true;
+        if(activeFilters.budgets.includes("$2K–$5K")&&b.budgetNum>=2000&&b.budgetNum<=5000)return true;
+        if(activeFilters.budgets.includes("$5K–$10K")&&b.budgetNum>5000&&b.budgetNum<=10000)return true;
+        if(activeFilters.budgets.includes("$10K+")&&b.budgetNum>10000)return true;
+        return false;
+      });
+    }
+    items=items.filter(b=>score(b)>=activeFilters.minMatch);
+    if(sortVal==="match"||sortVal==="engagement")items.sort((a,b)=>score(b)-score(a));
+    document.getElementById("results-count").textContent=`${items.length} brand${items.length!==1?"s":""} found`;
+    document.getElementById("cards-grid").innerHTML=items.map(renderBrandCard).join("");
+  }
+}
+
+/* ========== CARDS ========== */
+function renderInfCard(inf){
+  const sc=score(inf);
+  const {niche:n,audience:a,engagement:e,history:h}=inf.scores;
+  const t=n*.35+a*.30+e*.25+h*.10;
+  const np=Math.round(n*.35/t*100),ap=Math.round(a*.30/t*100),ep=Math.round(e*.25/t*100),hp=Math.max(0,100-np-ap-ep);
+  const isSaved=savedSet.has(inf.id);
+  return`<div class="inf-card" onclick="showInfProfile(${inf.id})">
+    <button class="save-icon ${isSaved?'saved':''}" onclick="event.stopPropagation();toggleSave(${inf.id},this)" title="${isSaved?'Unsave':'Save'}">${isSaved?'★':'☆'}</button>
+    <div class="card-top-row">
+      <div class="c-av" style="background:${inf.av.bg};color:${inf.av.c}">${inf.av.i}</div>
+      <div style="flex:1">
+        <div class="c-name">${inf.handle}</div>
+        <div class="c-sub">${inf.niche} · ${inf.location}</div>
+      </div>
+      <div class="match-badge">${sc}%</div>
+    </div>
+    <div class="stats-row-card">
+      <div class="stat-c"><div class="stat-c-v">${(inf.followers/1000).toFixed(1)}K</div><div class="stat-c-k">followers</div></div>
+      <div class="stat-c"><div class="stat-c-v">${inf.eng.toFixed(1)}%</div><div class="stat-c-k">engagement</div></div>
+      <div class="stat-c"><div class="stat-c-v">${inf.ageGroup}</div><div class="stat-c-k">audience</div></div>
+    </div>
+    <div class="score-bar">
+      <div class="sn" style="width:${np}%"></div><div class="sa" style="width:${ap}%"></div><div class="se" style="width:${ep}%"></div><div class="sh" style="width:${hp}%"></div>
+    </div>
+    <div class="score-legend">
+      <span class="sl-item"><span class="sl-dot" style="background:var(--pu)"></span>Niche</span>
+      <span class="sl-item"><span class="sl-dot" style="background:var(--teal)"></span>Audience</span>
+      <span class="sl-item"><span class="sl-dot" style="background:var(--amber)"></span>Engagement</span>
+      <span class="sl-item"><span class="sl-dot" style="background:var(--coral)"></span>History</span>
+    </div>
+    <div class="card-tags">${inf.format.map(f=>`<span class="tag">${f}</span>`).join("")}<span class="tag">${inf.contact.rate}</span></div>
+  </div>`;
+}
+
+function renderBrandCard(b){
+  const sc=score(b);
+  return`<div class="inf-card" onclick="showBrandProfile(${b.id})">
+    <button class="save-icon ${savedSet.has(b.id)?'saved':''}" onclick="event.stopPropagation();toggleSave(${b.id},this)">${savedSet.has(b.id)?'★':'☆'}</button>
+    <div class="card-top-row">
+      <div class="c-av-sq" style="background:${b.av.bg};color:${b.av.c}">${b.av.i}</div>
+      <div style="flex:1;margin-left:10px">
+        <div class="c-name">${b.name}</div>
+        <div class="c-sub">${b.industry} · ${b.location}</div>
+      </div>
+      <div class="match-badge teal">${sc}%</div>
+    </div>
+    <div class="stats-row-card">
+      <div class="stat-c"><div class="stat-c-v">${b.size}</div><div class="stat-c-k">company</div></div>
+      <div class="stat-c"><div class="stat-c-v">${b.looking.length}</div><div class="stat-c-k">niches</div></div>
+      <div class="stat-c"><div class="stat-c-v">${b.formats.length}</div><div class="stat-c-k">formats</div></div>
+    </div>
+    <div class="card-tags"><span class="tag" style="background:var(--teal-light);color:var(--teal-dark);border-color:#80DFC3">${b.budget}</span>${b.looking.map(l=>`<span class="tag">${l}</span>`).join("")}</div>
+    <div style="margin-top:10px;font-size:12px;color:var(--txt2);line-height:1.55">${b.bio.substring(0,100)}...</div>
+  </div>`;
+}
+
+function toggleSave(id,el){
+  if(savedSet.has(id)){savedSet.delete(id);el.textContent='☆';el.classList.remove("saved");showToast("Removed from saved");}
+  else{savedSet.add(id);el.textContent='★';el.classList.add("saved");showToast("Saved successfully ✓","success");}
+}
+
+/* ========== PROFILES ========== */
+function showInfProfile(id){
+  currentProfileId=id;
+  const inf=INFLUENCERS.find(i=>i.id===id);
+  const sc=score(inf);
+  const {niche:n,audience:a,engagement:e,history:h}=inf.scores;
+  const isSaved=savedSet.has(id);
+  const hasSent=sentSet.has(id);
+  document.getElementById("profile-content").innerHTML=`
+    <div class="profile-card">
+      <div class="profile-hero">
+        <div class="ph-top">
+          <div class="ph-av" style="background:${inf.av.bg};color:${inf.av.c}">${inf.av.i}</div>
+          <div style="flex:1">
+            <div class="ph-name">${inf.handle}</div>
+            <div class="ph-sub">${inf.niche} creator · ${inf.location}</div>
+          </div>
+          <div class="ph-score">${sc}% match</div>
+        </div>
+        <div class="ph-bio">${inf.bio}</div>
+      </div>
+      <div class="profile-body">
+        <div class="sec-title">Audience & reach</div>
+        <div class="det-grid">
+          <div class="det-box"><div class="det-k">Followers</div><div class="det-v">${(inf.followers/1000).toFixed(1)}K</div></div>
+          <div class="det-box"><div class="det-k">Engagement rate</div><div class="det-v">${inf.eng.toFixed(1)}%</div></div>
+          <div class="det-box"><div class="det-k">Primary age group</div><div class="det-v">${inf.ageGroup}</div></div>
+          <div class="det-box"><div class="det-k">Gender split</div><div class="det-v">${inf.gender}</div></div>
+          <div class="det-box"><div class="det-k">Location</div><div class="det-v">${inf.location}</div></div>
+          <div class="det-box"><div class="det-k">Content formats</div><div class="det-v">${inf.format.join(", ")}</div></div>
+        </div>
+        <div class="sec-title">Match score breakdown</div>
+        <div class="bk-row"><span class="bk-label">Niche fit</span><div class="bk-track"><div class="bk-fill sn" style="width:${n}%"></div></div><span class="bk-weight">35%</span><span class="bk-score">${n}</span></div>
+        <div class="bk-row"><span class="bk-label">Audience</span><div class="bk-track"><div class="bk-fill sa" style="width:${a}%"></div></div><span class="bk-weight">30%</span><span class="bk-score">${a}</span></div>
+        <div class="bk-row"><span class="bk-label">Engagement</span><div class="bk-track"><div class="bk-fill se" style="width:${e}%"></div></div><span class="bk-weight">25%</span><span class="bk-score">${e}</span></div>
+        <div class="bk-row"><span class="bk-label">History fit</span><div class="bk-track"><div class="bk-fill sh" style="width:${h}%"></div></div><span class="bk-weight">10%</span><span class="bk-score">${h}</span></div>
+        <div class="sec-title">Past collaborations</div>
+        ${inf.collab.map(c=>`<div class="collab-item"><div><div class="collab-brand">${c.brand}</div><div class="collab-cat">${c.cat}</div></div><span class="yr-pill">${c.year}</span></div>`).join("")}
+        <div class="sec-title">Contact & rates</div>
+        <div class="contact-panel">
+          <div class="contact-row-item"><span class="contact-key">Email</span><span class="contact-val">${inf.contact.email}</span></div>
+          <div class="contact-row-item"><span class="contact-key">Instagram</span><span class="contact-val">${inf.contact.ig}</span></div>
+          <div class="contact-row-item"><span class="contact-key">Rate card</span><span class="contact-val">${inf.contact.rate}</span></div>
+        </div>
+        <div class="action-row">
+          <button class="act-btn" onclick="toggleSaveProfile(${id},this)">${isSaved?'★ Saved':'☆ Save creator'}</button>
+          <button class="act-btn act-primary" id="contact-btn" onclick="openContact(${id},'influencer')" ${hasSent?"disabled style='opacity:.6'":""}>${hasSent?'Request sent ✓':'Send collab request'}</button>
+        </div>
+      </div>
+    </div>`;
+  go("profile");
+}
+
+function showBrandProfile(id){
+  currentProfileId=id;
+  const b=BRANDS.find(x=>x.id===id);
+  const sc=score(b);
+  const {niche:n,audience:a,engagement:e,history:h}=b.scores;
+  const isSaved=savedSet.has(id);
+  const hasSent=sentSet.has(id);
+  document.getElementById("profile-content").innerHTML=`
+    <div class="profile-card">
+      <div class="profile-hero teal">
+        <div class="ph-top">
+          <div class="ph-av ph-av-sq" style="background:${b.av.bg};color:${b.av.c}">${b.av.i}</div>
+          <div style="flex:1;margin-left:4px">
+            <div class="ph-name teal">${b.name}</div>
+            <div class="ph-sub teal">${b.industry} · ${b.location}</div>
+          </div>
+          <div class="ph-score teal">${sc}% match</div>
+        </div>
+        <div class="ph-bio teal">${b.bio}</div>
+      </div>
+      <div class="profile-body">
+        <div class="sec-title">Brand details</div>
+        <div class="det-grid">
+          <div class="det-box"><div class="det-k">Industry</div><div class="det-v">${b.industry}</div></div>
+          <div class="det-box"><div class="det-k">Company size</div><div class="det-v">${b.size}</div></div>
+          <div class="det-box"><div class="det-k">Campaign budget</div><div class="det-v">${b.budget}</div></div>
+          <div class="det-box"><div class="det-k">Location</div><div class="det-v">${b.location}</div></div>
+          <div class="det-box" style="grid-column:1/-1"><div class="det-k">Target audience</div><div class="det-v" style="font-size:13px">${b.target}</div></div>
+        </div>
+        <div class="sec-title">Creator niches wanted</div>
+        <div class="card-tags" style="margin-bottom:16px">${b.looking.map(l=>`<span class="tag" style="background:var(--teal-light);color:var(--teal-dark);border-color:#80DFC3">${l}</span>`).join("")}${b.formats.map(f=>`<span class="tag">${f}</span>`).join("")}</div>
+        <div class="sec-title">Your fit score for this brand</div>
+        <div class="bk-row"><span class="bk-label">Niche fit</span><div class="bk-track"><div class="bk-fill sn" style="width:${n}%"></div></div><span class="bk-weight">35%</span><span class="bk-score">${n}</span></div>
+        <div class="bk-row"><span class="bk-label">Audience</span><div class="bk-track"><div class="bk-fill sa" style="width:${a}%"></div></div><span class="bk-weight">30%</span><span class="bk-score">${a}</span></div>
+        <div class="bk-row"><span class="bk-label">Engagement</span><div class="bk-track"><div class="bk-fill se" style="width:${e}%"></div></div><span class="bk-weight">25%</span><span class="bk-score">${e}</span></div>
+        <div class="bk-row"><span class="bk-label">History fit</span><div class="bk-track"><div class="bk-fill sh" style="width:${h}%"></div></div><span class="bk-weight">10%</span><span class="bk-score">${h}</span></div>
+        <div class="sec-title">Contact information</div>
+        <div class="contact-panel">
+          <div class="contact-row-item"><span class="contact-key">Email</span><span class="contact-val teal">${b.contact.email}</span></div>
+          <div class="contact-row-item"><span class="contact-key">Website</span><span class="contact-val teal">${b.contact.web}</span></div>
+          <div class="contact-row-item"><span class="contact-key">Instagram</span><span class="contact-val teal">${b.contact.ig}</span></div>
+        </div>
+        <div class="action-row">
+          <button class="act-btn" onclick="toggleSaveProfile(${id},this)">${isSaved?'★ Saved':'☆ Save brand'}</button>
+          <button class="act-btn act-teal" id="contact-btn" onclick="openContact(${id},'brand')" ${hasSent?"disabled style='opacity:.6'":""}>${hasSent?'Pitch sent ✓':'Send pitch to brand'}</button>
+        </div>
+      </div>
+    </div>`;
+  go("profile");
+}
+
+function toggleSaveProfile(id,el){
+  if(savedSet.has(id)){savedSet.delete(id);el.textContent=role==="brand"?"☆ Save creator":"☆ Save brand";showToast("Removed from saved");}
+  else{savedSet.add(id);el.textContent="★ Saved";showToast("Saved ✓","success");}
+}
+
+/* ========== CONTACT MODAL ========== */
+function openContact(id,targetType){
+  const isBrand=targetType==="brand";
+  const item=isBrand?BRANDS.find(b=>b.id===id):INFLUENCERS.find(i=>i.id===id);
+  document.getElementById("modal-title").textContent=isBrand?`Pitch to ${item.name}`:`Collab request to ${item.handle}`;
+  document.getElementById("modal-sub").textContent=isBrand?`Introduce yourself and explain why you're a great fit.`:`Tell ${item.handle} about your brand and campaign.`;
+  document.getElementById("modal-body").innerHTML=`
+    <div class="modal-field"><div class="modal-label">${isBrand?"Your handle":"Your brand name"}</div><input class="modal-input" value="${isBrand?"@sara.fit":"FitFuel Nutrition"}"></div>
+    <div class="modal-field"><div class="modal-label">Campaign / collab idea</div><textarea class="modal-input" placeholder="Describe your campaign idea, timeline, and what you're looking for..."></textarea></div>
+    <div class="modal-field"><div class="modal-label">${isBrand?"Your rate / availability":"Budget range"}</div><input class="modal-input" placeholder="${isBrand?"e.g. $800–$1,500, available from May":"e.g. $2,000–$5,000"}"></div>
+    <div class="modal-field"><div class="modal-label">Your contact email</div><input class="modal-input" value="${isBrand?"sara@sarafit.com":"collab@fitfuel.com"}"></div>`;
+  const btn=document.getElementById("modal-confirm-btn");
+  btn.textContent=isBrand?"Send pitch":"Send request";
+  btn.className=`modal-confirm ${isBrand?"mc-teal":"mc-pu"}`;
+  btn.onclick=()=>submitContact(id);
+  document.getElementById("modal-overlay").style.display="flex";
+}
+function closeModal(e){if(!e||e.target===document.getElementById("modal-overlay"))document.getElementById("modal-overlay").style.display="none";}
+function submitContact(id){
+  sentSet.add(id);
+  document.getElementById("modal-overlay").style.display="none";
+  showToast(role==="brand"?"Collab request sent! ✓":"Pitch sent to brand! ✓","success");
+  const btn=document.getElementById("contact-btn");
+  if(btn){btn.textContent=role==="brand"?"Request sent ✓":"Pitch sent ✓";btn.disabled=true;btn.style.opacity=".6";}
+}
+
+/* ========== MY MATCHES ========== */
+function renderMatches(){
+  const items=role==="brand"
+    ?[...INFLUENCERS.filter(i=>savedSet.has(i.id)),...INFLUENCERS.filter(i=>sentSet.has(i.id)&&!savedSet.has(i.id))]
+    :[...BRANDS.filter(b=>savedSet.has(b.id)),...BRANDS.filter(b=>sentSet.has(b.id)&&!savedSet.has(b.id))];
+  const saved=role==="brand"?INFLUENCERS.filter(i=>savedSet.has(i.id)):BRANDS.filter(b=>savedSet.has(b.id));
+  const sent=role==="brand"?INFLUENCERS.filter(i=>sentSet.has(i.id)):BRANDS.filter(b=>sentSet.has(b.id));
+  document.getElementById("matches-content").innerHTML=`
+    <div class="page-title">My matches</div>
+    <div class="page-sub">${role==="brand"?"Your saved creators and sent collaboration requests":"Your saved brands and sent pitches"}</div>
+    <div class="section-block">
+      <div class="section-block-title">Saved <span class="count-pill">${saved.length}</span></div>
+      ${saved.length?`<div class="cards-grid">${role==="brand"?saved.map(renderInfCard).join(""):saved.map(renderBrandCard).join("")}</div>`:`<div class="empty-state"><div class="empty-icon">☆</div>No saved ${role==="brand"?"creators":"brands"} yet. Browse the marketplace and save your favourites.</div>`}
+    </div>
+    <div class="section-block">
+      <div class="section-block-title">Requests sent <span class="count-pill">${sent.length}</span></div>
+      ${sent.length?sent.map(item=>`
+        <div class="request-card" onclick="${role==="brand"?`showInfProfile(${item.id})`:`showBrandProfile(${item.id})`}">
+          <div class="c-av${role==="creator"?" c-av-sq":""}" style="background:${item.av.bg};color:${item.av.c};width:40px;height:40px;border-radius:${role==="brand"?"50%":"10px"};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0">${item.av.i}</div>
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:700;color:var(--txt)">${role==="brand"?item.handle:item.name}</div>
+            <div style="font-size:12px;color:var(--txt2);margin-top:2px">${role==="brand"?item.niche+" · "+item.location:item.industry+" · "+item.location}</div>
+          </div>
+          <span class="req-status req-sent">Request sent</span>
+        </div>`).join(""):`<div class="empty-state"><div class="empty-icon">✉</div>No requests sent yet. Open a profile and reach out directly.</div>`}
+    </div>`;
+}
+
+/* ========== MY PROFILE ========== */
+function renderMyProfile(){
+  const isBrand=role==="brand";
+  document.getElementById("myprofile-content").innerHTML=`
+    <div class="page-title">My profile</div>
+    <div class="page-sub">${isBrand?"Your brand profile visible to creators on PairUp":"Your creator profile visible to brands on PairUp"}</div>
+    <div class="stats-dashboard">
+      <div class="dash-stat"><div class="dash-stat-v">${isBrand?INFLUENCERS.length:BRANDS.length}</div><div class="dash-stat-k">${isBrand?"Creators matched":"Brands in marketplace"}</div></div>
+      <div class="dash-stat"><div class="dash-stat-v ${isBrand?'':'teal'}">${sentSet.size}</div><div class="dash-stat-k">${isBrand?"Requests sent":"Pitches sent"}</div></div>
+      <div class="dash-stat"><div class="dash-stat-v" style="color:var(--amber)">${savedSet.size}</div><div class="dash-stat-k">Saved</div></div>
+    </div>
+    <div class="profile-edit-card">
+      <div class="sec-title" style="margin-top:0">Profile details</div>
+      ${isBrand?`
+      <div class="det-grid">
+        <div class="det-box"><div class="det-k">Brand name</div><div class="det-v">FitFuel Nutrition</div></div>
+        <div class="det-box"><div class="det-k">Industry</div><div class="det-v">Fitness / Nutrition</div></div>
+        <div class="det-box"><div class="det-k">Campaign budget</div><div class="det-v">$3,000–$8,000</div></div>
+        <div class="det-box"><div class="det-k">Location</div><div class="det-v">Austin, US</div></div>
+        <div class="det-box" style="grid-column:1/-1"><div class="det-k">Target audience</div><div class="det-v" style="font-size:13px">Active adults 20–35, fitness-focused</div></div>
+      </div>
+      <div class="sec-title">Creator preferences</div>
+      <div class="card-tags"><span class="tag">Fitness</span><span class="tag">Wellness</span><span class="tag">Running</span><span class="tag">Reels</span><span class="tag">Stories</span></div>`:`
+      <div class="det-grid">
+        <div class="det-box"><div class="det-k">Handle</div><div class="det-v">@sara.fit</div></div>
+        <div class="det-box"><div class="det-k">Niche</div><div class="det-v">Fitness</div></div>
+        <div class="det-box"><div class="det-k">Followers</div><div class="det-v">42.4K</div></div>
+        <div class="det-box"><div class="det-k">Engagement rate</div><div class="det-v">3.8%</div></div>
+        <div class="det-box"><div class="det-k">Rate card</div><div class="det-v">$800–$1,500/post</div></div>
+        <div class="det-box"><div class="det-k">Location</div><div class="det-v">New York, US</div></div>
+      </div>
+      <div class="sec-title">Inbound brand requests</div>
+      <div class="inbound-opp" onclick="showBrandProfile(101)">
+        <div style="width:38px;height:38px;border-radius:10px;background:#EEEDFE;color:#4A42D6;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">FF</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:var(--txt)">FitFuel Nutrition</div>
+          <div style="font-size:12px;color:var(--txt2);margin-top:2px">Fitness / Nutrition · $3K–$8K · 92% match</div>
+          <div style="font-size:12px;color:var(--txt3);margin-top:4px">Protein launch campaign · Reels + Stories</div>
+        </div>
+        <span class="req-status req-sent" style="flex-shrink:0">New</span>
+      </div>
+      <div class="inbound-opp" onclick="showBrandProfile(105)">
+        <div style="width:38px;height:38px;border-radius:10px;background:#FFF3E0;color:#8B4500;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">PF</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:var(--txt)">Petal Foods</div>
+          <div style="font-size:12px;color:var(--txt2);margin-top:2px">Food / Organic · $2.5K–$6K · 76% match</div>
+          <div style="font-size:12px;color:var(--txt3);margin-top:4px">Organic meal kit launch · open to long-form</div>
+        </div>
+        <span class="req-status req-responded">Responded</span>
+      </div>`}
+      <div style="margin-top:20px;display:flex;gap:8px">
+        <button class="edit-profile-btn">Edit profile</button>
+        ${!isBrand?`<button class="download-btn">Download media kit</button>`:""}
+      </div>
+    </div>`;
+}
+
+/* ========== ONBOARDING ========== */
+const OB_STEPS=[
+  {num:"Step 1 of 4",title:"Welcome to PairUp",sub:"The smart marketplace for brands and micro-influencers. Who are you?"},
+  {num:"Step 2 of 4",title:"Tell us about yourself",sub:""},
+  {num:"Step 3 of 4",title:"Define your ideal match",sub:""},
+  {num:"Step 4 of 4",title:"You're all set",sub:"PairUp has processed your profile and found your first matches."}
+];
+
+function renderOb(){
+  const s=OB_STEPS[obStep];
+  document.getElementById("ob-fill").style.width=Math.round(((obStep+1)/4)*100)+"%";
+  document.getElementById("ob-step-num")?document.getElementById("ob-step-num").textContent=s.num:null;
+  let bodyHTML=`<div class="ob-step-num">${s.num}</div><div class="ob-title">${s.title}</div><div class="ob-sub">${s.sub}</div>`;
+  if(obStep===0){
+    bodyHTML+=`<div class="role-cards-grid">
+      <div class="role-pick-card ${obRole==='brand'?'picked':''}" id="rpc-brand" onclick="pickObRole('brand')">
+        <div class="rpc-icon" style="background:#E0DEFF;color:var(--pu-dark)">🏢</div>
+        <div class="rpc-title">Brand / Business</div>
+        <div class="rpc-desc">Find creators for your campaigns and measure match quality before reaching out</div>
+      </div>
+      <div class="role-pick-card ${obRole==='creator'?'picked':''}" id="rpc-creator" onclick="pickObRole('creator')">
+        <div class="rpc-icon" style="background:#C5F5E5;color:var(--teal-dark)">✨</div>
+        <div class="rpc-title">Creator / Influencer</div>
+        <div class="rpc-desc">Get discovered by the right brands and receive inbound collaboration opportunities</div>
+      </div>
+    </div>`;
+  }else if(obStep===1){
+    bodyHTML+=obRole==="brand"?`
+      <div style="font-size:13px;color:var(--txt2);margin-bottom:16px">Tell us about your brand so we can personalise your match scores.</div>
+      <div class="form-2col">
+        <div class="form-field"><div class="form-label">Brand name</div><input class="form-input" placeholder="e.g. FitFuel Nutrition"></div>
+        <div class="form-field"><div class="form-label">Industry / niche</div><input class="form-input" placeholder="e.g. Fitness, Tech"></div>
+        <div class="form-field"><div class="form-label">Location / market</div><input class="form-input" placeholder="e.g. United States"></div>
+        <div class="form-field"><div class="form-label">Company size</div><select class="form-input"><option>Startup</option><option>SMB</option><option>Enterprise</option></select></div>
+        <div class="form-field" style="grid-column:1/-1"><div class="form-label">Campaign budget range</div><select class="form-input"><option>Under $1,000</option><option>$1,000–$5,000</option><option>$5,000–$15,000</option><option>$15,000+</option></select></div>
+        <div class="form-field" style="grid-column:1/-1"><div class="form-label">Target audience description</div><input class="form-input" placeholder="e.g. Women 18–34 interested in fitness"></div>
+      </div>`:`
+      <div style="font-size:13px;color:var(--txt2);margin-bottom:16px">Tell us about yourself so brands can find and evaluate you accurately.</div>
+      <div class="form-2col">
+        <div class="form-field"><div class="form-label">Your handle</div><input class="form-input" placeholder="@yourhandle"></div>
+        <div class="form-field"><div class="form-label">Primary niche</div><input class="form-input" placeholder="e.g. Fitness, Beauty"></div>
+        <div class="form-field"><div class="form-label">Follower count</div><input class="form-input" type="number" placeholder="e.g. 42000"></div>
+        <div class="form-field"><div class="form-label">Engagement rate (%)</div><input class="form-input" type="number" step="0.1" placeholder="e.g. 3.8"></div>
+        <div class="form-field"><div class="form-label">Audience primary age</div><select class="form-input"><option>13–17</option><option>18–24</option><option>25–34</option><option>35+</option></select></div>
+        <div class="form-field"><div class="form-label">Gender split (% female)</div><input class="form-input" type="number" placeholder="e.g. 65"></div>
+        <div class="form-field"><div class="form-label">Location</div><input class="form-input" placeholder="e.g. New York, US"></div>
+        <div class="form-field"><div class="form-label">Rate per post</div><input class="form-input" placeholder="e.g. $800–$1,500"></div>
+      </div>`;
+  }else if(obStep===2){
+    bodyHTML+=obRole==="brand"?`
+      <div style="font-size:13px;color:var(--txt2);margin-bottom:16px">Define your ideal creator so PairUp can calculate accurate match scores.</div>
+      <div class="form-field"><div class="form-label">Creator niches you want</div><div class="chips-wrap" style="margin-top:6px">${["Fitness","Wellness","Fashion","Food","Tech","Travel","Beauty","Gaming"].map(n=>`<div class="chip" onclick="this.classList.toggle('on')">${n}</div>`).join("")}</div></div>
+      <div class="form-2col" style="margin-top:12px">
+        <div class="form-field"><div class="form-label">Min followers</div><input class="form-input" placeholder="e.g. 10,000"></div>
+        <div class="form-field"><div class="form-label">Min engagement rate</div><input class="form-input" placeholder="e.g. 2%"></div>
+      </div>
+      <div class="form-field"><div class="form-label">Preferred content formats</div><div class="chips-wrap" style="margin-top:6px">${["Reels","Stories","Long-form","Posts"].map(f=>`<div class="chip" onclick="this.classList.toggle('on')">${f}</div>`).join("")}</div></div>
+      <div class="form-field" style="margin-top:10px"><div class="form-label">Target audience age</div><div class="chips-wrap" style="margin-top:6px">${["13–17","18–24","25–34","35+"].map(a=>`<div class="chip" onclick="this.classList.toggle('on')">${a}</div>`).join("")}</div></div>`:`
+      <div style="font-size:13px;color:var(--txt2);margin-bottom:16px">Help brands understand your content style and past work.</div>
+      <div class="form-field"><div class="form-label">Content formats you create</div><div class="chips-wrap" style="margin-top:6px">${["Reels","Stories","Long-form","Posts"].map(f=>`<div class="chip" onclick="this.classList.toggle('on')">${f}</div>`).join("")}</div></div>
+      <div class="form-field" style="margin-top:12px"><div class="form-label">Past collaboration categories</div><div class="chips-wrap" style="margin-top:6px">${["Sportswear","Nutrition","Wellness","Skincare","Food","Tech","Travel","Fashion","Beauty","Gaming"].map(n=>`<div class="chip" onclick="this.classList.toggle('on')">${n}</div>`).join("")}</div></div>
+      <div class="form-field" style="margin-top:12px"><div class="form-label">Short bio (shown to brands)</div><textarea class="form-input" style="resize:vertical;min-height:80px" placeholder="Describe your content style, audience, and what makes you a great brand partner..."></textarea></div>`;
+  }else if(obStep===3){
+    bodyHTML+=`<div style="text-align:center;padding:12px 0 8px">
+      <div style="width:56px;height:56px;background:var(--pu-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:22px;color:var(--pu)">✓</div>
+      <div style="font-size:15px;font-weight:700;color:var(--txt);margin-bottom:14px">Profile created successfully</div>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:16px;text-align:left">
+        <div style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:12px;text-transform:uppercase;letter-spacing:.5px">Match summary</div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--txt2);margin-bottom:8px"><span>Profiles in database</span><span style="color:var(--txt);font-weight:700">${obRole==="brand"?"8 creators":"5 brands"}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--txt2);margin-bottom:8px"><span>Your top match</span><span style="color:var(--pu);font-weight:700">${obRole==="brand"?"@sara.fit — 94%":"FitFuel — 92%"}</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;color:var(--txt2)"><span>Avg match score</span><span style="color:var(--txt);font-weight:700">72%</span></div>
+      </div>
+    </div>`;
+  }
+  document.getElementById("ob-body").innerHTML=bodyHTML;
+  document.getElementById("ob-dots").innerHTML=[0,1,2,3].map(i=>`<div class="odot ${i===obStep?'on':''}"></div>`).join("");
+  document.getElementById("ob-back-btn").style.visibility=obStep===0?"hidden":"visible";
+  document.getElementById("ob-next-btn").textContent=obStep===3?"Go to marketplace":"Continue";
+}
+function pickObRole(r){
+  obRole=r;
+  document.querySelectorAll(".role-pick-card").forEach(el=>el.classList.remove("picked"));
+  const el=document.getElementById("rpc-"+r);
+  if(el)el.classList.add("picked");
+}
+function obNext(){
+  if(obStep===0){role=obRole;setRole(obRole);}
+  if(obStep<3){obStep++;renderOb();}
+  else{go("discover");}
+}
+function obBack(){if(obStep>0){obStep--;renderOb();}}
+
+/* ========== TOAST ========== */
+function showToast(msg,type=""){
+  const t=document.createElement("div");
+  t.className="toast-notif"+(type==="success"?" success":"");
+  t.textContent=msg;
+  document.getElementById("toast-container").appendChild(t);
+  setTimeout(()=>t.remove(),3000);
+}
+
+/* INIT */
+renderOb();
+</script>
+</body>
+</html>
