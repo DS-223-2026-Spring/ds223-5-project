@@ -1,14 +1,10 @@
-"""Shared UI helpers for the Streamlit frontend pages."""
-
 from __future__ import annotations
-
 from typing import Any
-
 import streamlit as st
 
 
 def page_header(title: str, description: str = "") -> None:
-    """Render a consistent page header across all pages."""
+    #Render a consistent page header across all pages
     st.title(title)
     if description:
         st.caption(description)
@@ -16,7 +12,7 @@ def page_header(title: str, description: str = "") -> None:
 
 
 def placeholder_chart(chart_title: str) -> None:
-    """Render a placeholder chart area with a chart-specific message."""
+    #Render a placeholder chart area with a chart-specific message
     container = st.container(border=True)
     with container:
         st.subheader(chart_title)
@@ -25,7 +21,7 @@ def placeholder_chart(chart_title: str) -> None:
 
 
 def placeholder_form(form_title: str) -> None:
-    """Render a placeholder form container."""
+    #Render a placeholder form container
     container = st.container(border=True)
     with container:
         st.subheader(form_title)
@@ -33,7 +29,7 @@ def placeholder_form(form_title: str) -> None:
 
 
 def metric_row(metrics: list[dict[str, Any]]) -> None:
-    """Render a row of metric cards using label, value, and optional delta."""
+    #Render a row of metric cards using label, value, and optional delta
     if not metrics:
         st.info("No metrics configured yet.")
         return
@@ -48,5 +44,5 @@ def metric_row(metrics: list[dict[str, Any]]) -> None:
 
 
 def show_info_banner(message: str) -> None:
-    """Display a highlighted information banner."""
+    #Display a highlighted information banner
     st.info(message)

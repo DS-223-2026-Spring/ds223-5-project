@@ -1,4 +1,4 @@
-"""Page for simulated carousel interactions."""
+#Page for simulated carousel interactions
 
 import streamlit as st
 

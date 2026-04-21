@@ -1,4 +1,4 @@
-"""Page for creating carousel configurations."""
+#Page for creating carousel configurations
 
 import streamlit as st
 

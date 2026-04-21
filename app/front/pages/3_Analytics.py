@@ -1,4 +1,4 @@
-"""Analytics dashboard page with placeholder KPI and charts."""
+#Analytics dashboard page with placeholder KPI and charts
 
 import numpy as np
 import pandas as pd

@@ -1,11 +1,6 @@
-"""Streamlit entry point for DS223 frontend."""
-
 import streamlit as st
-
 from bandit_utils import page_header, show_info_banner
-
 st.set_page_config(page_title="DS223 Carousel Bandit", page_icon="🎯", layout="wide")
-
 page_header(
     "DS223 Group Project Frontend",
     "Welcome to the multi-page Streamlit interface for carousel experimentation.",
