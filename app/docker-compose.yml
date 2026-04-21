@@ -2,18 +2,18 @@ version: '3.8'
 
 services:
   back:
-    build: .
+    build: ./backend
     container_name: back
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
+      - ./backend:/app
     environment:
       - ENVIRONMENT=development
   front:
-    build: ../front
+    build: ./front
     container_name: front
     ports:
       - "8501:8501"
     volumes:
-      - ../front:/app
+      - ./front:/app
