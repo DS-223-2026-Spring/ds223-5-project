@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Query
 from typing import List, Optional
-from app.schemas.influencer import Influencer, InfluencerCreate, InfluencerUpdate
+from schemas.influencer import Influencer, InfluencerCreate, InfluencerUpdate
 
 router = APIRouter()
 
