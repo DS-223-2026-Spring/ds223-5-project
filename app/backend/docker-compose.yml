@@ -10,3 +10,10 @@ services:
       - .:/app
     environment:
       - ENVIRONMENT=development
+  front:
+    build: ../front
+    container_name: front
+    ports:
+      - "8501:8501"
+    volumes:
+      - ../front:/app

@@ -1,0 +1,15 @@
+[project]
+name = "ds223-front"
+version = "0.1.0"
+description = "DS223 Streamlit frontend for carousel bandit workflows."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "pandas",
+    "streamlit",
+]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
