@@ -1,10 +1,10 @@
 FROM python:3.11-slim
 
-WORKDIR /workspace
+WORKDIR /app/ds
 
-COPY requirements.txt /workspace/requirements.txt
-RUN pip install --no-cache-dir -r /workspace/requirements.txt
+COPY requirements.txt /app/ds/requirements.txt
+RUN pip install --no-cache-dir -r /app/ds/requirements.txt
 
-COPY . /workspace
+COPY . /app/ds
 
-CMD ["python", "src/eda_modeling.py"]
+CMD ["python", "eda_modeling.py"]
