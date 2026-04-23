@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  ds:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ds
+    working_dir: /app/ds
+    volumes:
+      - .:/app/ds
+    command: python eda_modeling.py
