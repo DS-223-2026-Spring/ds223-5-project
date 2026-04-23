@@ -10,3 +10,13 @@ services:
       - .:/app
     environment:
       - ENVIRONMENT=development
+  ds:
+    build: ../ds
+    container_name: ds
+    depends_on:
+      - back
+    volumes:
+      - ../ds:/workspace
+      - .:/backend
+    working_dir: /workspace
+    command: python src/eda_modeling.py
