@@ -2,14 +2,14 @@ version: '3.8'
 
 services:
   db:
-    image: postgres:16
+    image: postgres:17
     container_name: db
     environment:
       - POSTGRES_DB=imp
       - POSTGRES_USER=imp_user
       - POSTGRES_PASSWORD=imp_password
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ../db/init:/docker-entrypoint-initdb.d:ro
@@ -19,13 +19,16 @@ services:
       timeout: 3s
       retries: 10
 
+
   back:
-    build: .
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: back
     ports:
       - "8000:8000"
     volumes:
-      - .:/app
+      - ./backend:/app
     depends_on:
       db:
         condition: service_healthy
@@ -36,6 +39,29 @@ services:
       - DB_NAME=imp
       - DB_USER=imp_user
       - DB_PASSWORD=imp_password
+
+  ds:
+    build:
+      context: ./ds
+      dockerfile: Dockerfile
+    container_name: ds
+    working_dir: /app/ds
+    volumes:
+      - ./ds:/app/ds
+    command: python eda_modeling.py
+
+
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    container_name: front
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./front:/app
+    depends_on:
+      - back
 
 volumes:
   postgres_data:
