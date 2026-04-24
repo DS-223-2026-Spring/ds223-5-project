@@ -39,7 +39,7 @@ def insert_one(
     data: Mapping[str, Any],
     *,
     engine: Optional[Engine] = None,
-    returning: Sequence[str] = ("id",),
+    returning: Sequence[str] = (),
 ) -> Dict[str, Any]:
     """Insert a single row and return selected columns.
 
@@ -47,7 +47,7 @@ def insert_one(
         table: Target table name.
         data: Column/value mapping.
         engine: Optional SQLAlchemy engine.
-        returning: Columns to return (default: `("id",)`).
+        returning: Columns to return (default: empty, because PK names vary by table in the ERD).
 
     Returns:
         A dict containing the returned columns.
