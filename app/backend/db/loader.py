@@ -56,7 +56,7 @@ def load_flat_file(
     table: str,
     path: str | Path,
     engine: Optional[Engine] = None,
-    json_format_tags_field: str = "content_format_tags",
+    json_format_tags_field: str = "content_formats",
 ) -> Dict[str, Any]:
     """Load a CSV/JSON file into a table and validate row counts + schema shape.
 
@@ -67,8 +67,8 @@ def load_flat_file(
         table: Target database table.
         path: Path to a `.csv` or `.json` file.
         engine: Optional SQLAlchemy engine; defaults to `get_engine()`.
-        json_format_tags_field: If present in JSON/CSV and the value is a JSON string,
-            it will be parsed into a Python list to match `TEXT[]` columns.
+        json_format_tags_field: If present in JSON/CSV and the value is a JSON string or list,
+            it will be normalized to a comma-separated string (to match ERD `TEXT`).
 
     Returns:
         A dict with load summary and validation results.
@@ -97,11 +97,17 @@ def load_flat_file(
         if unknown:
             raise ValueError(f"Record contains unknown columns for table '{table}': {unknown}")
 
-        # Attempt to coerce array-like field when provided as JSON string (common in CSV exports).
-        if json_format_tags_field in record and isinstance(record[json_format_tags_field], str):
-            raw = record[json_format_tags_field].strip()
-            if raw.startswith("[") and raw.endswith("]"):
-                record[json_format_tags_field] = json.loads(raw)
+        # Normalize array-like field to comma-separated string (common in exports).
+        if json_format_tags_field in record:
+            val = record[json_format_tags_field]
+            if isinstance(val, str):
+                raw = val.strip()
+                if raw.startswith("[") and raw.endswith("]"):
+                    parsed = json.loads(raw)
+                    if isinstance(parsed, list):
+                        record[json_format_tags_field] = ", ".join(str(x) for x in parsed)
+            elif isinstance(val, list):
+                record[json_format_tags_field] = ", ".join(str(x) for x in val)
 
         insert_one(table, record, engine=eng, returning=())
         inserted += 1
