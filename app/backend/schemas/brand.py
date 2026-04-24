@@ -1,25 +1,35 @@
-from pydantic import BaseModel
+from datetime import datetime
 from typing import Optional
+
+from pydantic import BaseModel
+
 
 class BrandBase(BaseModel):
     name: str
     industry: str
-    target_audience_description: str
-    budget_range: str
-    preferred_niche: str
+    location: str
+    company_size: str
+    budget_min: int
+    budget_max: int
+    target_audience: str
+    preferred_niches: str
+
 
 class BrandCreate(BrandBase):
     pass
 
+
 class BrandUpdate(BaseModel):
     name: Optional[str] = None
     industry: Optional[str] = None
-    target_audience_description: Optional[str] = None
-    budget_range: Optional[str] = None
-    preferred_niche: Optional[str] = None
+    location: Optional[str] = None
+    company_size: Optional[str] = None
+    budget_min: Optional[int] = None
+    budget_max: Optional[int] = None
+    target_audience: Optional[str] = None
+    preferred_niches: Optional[str] = None
 
-class BrandInDB(BrandBase):
-    id: int
 
-class Brand(BrandInDB):
-    pass
+class Brand(BrandBase):
+    brand_id: int
+    created_at: datetime
