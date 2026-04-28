@@ -34,22 +34,58 @@ INSERT INTO ref_contact_status (status) VALUES
   ('closed')
 ON CONFLICT DO NOTHING;
 
+INSERT INTO ref_audience_age_group (age_group) VALUES
+  ('13-17'),
+  ('18-24'),
+  ('25-34'),
+  ('35-44'),
+  ('45-54'),
+  ('55+')
+ON CONFLICT DO NOTHING;
+
+INSERT INTO ref_audience_gender (gender) VALUES
+  ('female'),
+  ('male'),
+  ('non_binary'),
+  ('unknown')
+ON CONFLICT DO NOTHING;
+
 -- Enforce referential integrity via FKs (keep ERD columns as-is).
-ALTER TABLE contact_requests
-  ADD CONSTRAINT fk_contact_requests_direction
-  FOREIGN KEY (direction) REFERENCES ref_contact_direction (direction);
+DO $$
+BEGIN
+  ALTER TABLE contact_requests
+    ADD CONSTRAINT fk_contact_requests_direction
+    FOREIGN KEY (direction) REFERENCES ref_contact_direction (direction);
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
-ALTER TABLE contact_requests
-  ADD CONSTRAINT fk_contact_requests_status
-  FOREIGN KEY (status) REFERENCES ref_contact_status (status);
+DO $$
+BEGIN
+  ALTER TABLE contact_requests
+    ADD CONSTRAINT fk_contact_requests_status
+    FOREIGN KEY (status) REFERENCES ref_contact_status (status);
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
-ALTER TABLE influencers
-  ADD CONSTRAINT fk_influencers_audience_age_group
-  FOREIGN KEY (audience_age_group) REFERENCES ref_audience_age_group (age_group);
+DO $$
+BEGIN
+  ALTER TABLE influencers
+    ADD CONSTRAINT fk_influencers_audience_age_group
+    FOREIGN KEY (audience_age_group) REFERENCES ref_audience_age_group (age_group);
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
-ALTER TABLE influencers
-  ADD CONSTRAINT fk_influencers_audience_gender
-  FOREIGN KEY (audience_gender) REFERENCES ref_audience_gender (gender);
+DO $$
+BEGIN
+  ALTER TABLE influencers
+    ADD CONSTRAINT fk_influencers_audience_gender
+    FOREIGN KEY (audience_gender) REFERENCES ref_audience_gender (gender);
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
 -- Helpful indexes for frequent filtering.
 CREATE INDEX IF NOT EXISTS idx_influencers_handle ON influencers (handle);
@@ -78,6 +114,7 @@ CREATE TABLE IF NOT EXISTS ds_influencer_predictions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_ds_influencer_predictions_model ON ds_influencer_predictions (model);
+CREATE INDEX IF NOT EXISTS idx_ds_influencer_predictions_influencer_id ON ds_influencer_predictions (influencer_id);
 
 -- Upsert functions so DS/backend can write/overwrite results safely.
 CREATE OR REPLACE FUNCTION upsert_ds_model_metric(

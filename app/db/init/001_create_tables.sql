@@ -45,6 +45,20 @@ INSERT INTO ref_contact_status (status) VALUES
   ('rejected'),
   ('closed');
 
+INSERT INTO ref_audience_age_group (age_group) VALUES
+  ('13-17'),
+  ('18-24'),
+  ('25-34'),
+  ('35-44'),
+  ('45-54'),
+  ('55+');
+
+INSERT INTO ref_audience_gender (gender) VALUES
+  ('female'),
+  ('male'),
+  ('non_binary'),
+  ('unknown');
+
 CREATE TABLE brands (
   brand_id SERIAL PRIMARY KEY,
   name VARCHAR NOT NULL,
@@ -156,6 +170,7 @@ CREATE TABLE ds_influencer_predictions (
 );
 
 CREATE INDEX idx_ds_influencer_predictions_model ON ds_influencer_predictions (model);
+CREATE INDEX idx_ds_influencer_predictions_influencer_id ON ds_influencer_predictions (influencer_id);
 
 CREATE OR REPLACE FUNCTION upsert_ds_model_metric(
   p_model VARCHAR,
