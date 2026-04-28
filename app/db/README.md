@@ -46,6 +46,18 @@ result = load_flat_file(table="influencers", path="path/to/influencers.json")
 print(result)
 ```
 
+### Publishing DS model outputs
+
+The schema includes tables and upsert functions for DS outputs:
+- `ds_model_metrics`
+- `ds_influencer_predictions`
+
+To publish baseline model metrics from the DS CSV output into Postgres:
+
+```bash
+python app/db/tools/publish_ds_metrics.py --csv app/ds/outputs/baseline_model_comparison.csv
+```
+
 ### Assumptions
 
 - **ERD-aligned schema**: tables/columns match the PM-approved ERD image:
