@@ -24,17 +24,11 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from sklearn.compose import ColumnTransformer
 
-# ----------------------------
-# Make backend DB helpers importable
-# ----------------------------
-
-APP_DIR = Path(__file__).resolve().parents[1]  # app/
-BACKEND_DIR = APP_DIR / "backend"  # app/backend/
+APP_DIR = Path(__file__).resolve().parents[1]
+BACKEND_DIR = APP_DIR / "backend"
 sys.path.insert(0, str(BACKEND_DIR))
 
 try:
-    # These imports require SQLAlchemy; keep them optional so `--offline` works
-    # in environments where backend deps aren't installed.
     from db.connection import get_engine  # noqa: E402
     from db.crud import delete_many, insert_one, select_many, update_many  # noqa: E402
 except ModuleNotFoundError:  # pragma: no cover
@@ -54,7 +48,6 @@ def _utc_now_iso() -> str:
 
 
 def _sanitize_feature_name(name: str) -> str:
-    # Column names are internal to the model pipeline; keep them stable and safe.
     s = re.sub(r"[^0-9a-zA-Z_]+", "_", name).strip("_")
     return s or "unknown"
 
@@ -64,9 +57,6 @@ def _tag_feature_col(tag: str) -> str:
 
 
 def _coerce_tags(value: Any) -> List[str]:
-    """
-    Normalize a DB field that is expected to be a list of strings (TEXT[]).
-    """
     if value is None:
         return []
     if isinstance(value, list):
@@ -82,19 +72,14 @@ def _coerce_tags(value: Any) -> List[str]:
                     return [str(x) for x in parsed if x is not None]
             except json.JSONDecodeError:
                 pass
-        # Fallback: comma-separated list
         if "," in raw:
             return [p.strip() for p in raw.split(",") if p.strip()]
         return [raw] if raw else []
-    # Unknown shape
     return [str(value)]
 
 
 def ensure_model_output_tables(engine: Any) -> None:
-    """
-    Best-effort schema creation so DS scripts are rerunnable on an existing DB.
-    """
-    from sqlalchemy import text  # local import to keep top imports minimal
+    from sqlalchemy import text
 
     ddl = [
         """
@@ -157,9 +142,6 @@ def ensure_model_output_tables(engine: Any) -> None:
 
 
 def fetch_influencers(engine: Any, limit: Optional[int] = None) -> pd.DataFrame:
-    """
-    Load influencer rows for training/inference.
-    """
     columns = [
         "id",
         "niche",
@@ -178,20 +160,15 @@ def fetch_influencers(engine: Any, limit: Optional[int] = None) -> pd.DataFrame:
     if not rows:
         return pd.DataFrame(columns=columns)
     df = pd.DataFrame(rows)
-    # SQLAlchemy RowMapping -> DataFrame may already include lists for TEXT[]; normalize anyway.
     df["content_format_tags"] = df["content_format_tags"].apply(_coerce_tags)
     df["bio"] = df.get("bio")
     return df
 
 
 def compute_top_tags(df: pd.DataFrame, top_k: int = 15, min_freq: int = 2) -> List[str]:
-    """
-    Pick stable tag vocabulary for the model.
-    """
     counter: Counter[str] = Counter()
     for tags in df["content_format_tags"].tolist():
         counter.update(tags)
-    # Apply min frequency filtering first.
     filtered = [(t, c) for t, c in counter.items() if c >= min_freq]
     filtered.sort(key=lambda x: (-x[1], x[0]))
     tags = [t for t, _c in filtered][:top_k]
@@ -203,26 +180,15 @@ def build_feature_dataframe(
     *,
     top_tags: Sequence[str],
 ) -> pd.DataFrame:
-    """
-    Feature engineering step.
-
-    Notes:
-    - We intentionally exclude `engagement_rate` from features to avoid label leakage.
-    - Tag features are computed as binary indicators for the most frequent tags
-      and a separate `tag_count` numeric feature.
-    """
-    # Numeric features
     engineered = pd.DataFrame(index=df.index)
     engineered["follower_count"] = pd.to_numeric(df["follower_count"], errors="coerce")
     engineered["tag_count"] = df["content_format_tags"].apply(lambda tags: len(tags) if tags else 0)
     engineered["bio_length"] = df["bio"].fillna("").astype(str).apply(len)
     engineered["has_bio"] = (engineered["bio_length"] > 0).astype(int)
 
-    # Tag indicator features
     for tag in top_tags:
         engineered[_tag_feature_col(tag)] = df["content_format_tags"].apply(lambda tags: 1 if (tags and tag in tags) else 0)
 
-    # Categorical features
     engineered["niche"] = df["niche"].astype(str)
     engineered["location"] = df["location"].astype(str)
     return engineered
@@ -240,9 +206,6 @@ def build_target(
 
 
 def compute_segments(proba: np.ndarray, n_bins: int = 3) -> List[str]:
-    """
-    Convert confidence scores into interpretable segments.
-    """
     proba_s = pd.Series(proba)
     labels = ["low", "medium", "high"][:n_bins]
     if n_bins == 3:
@@ -252,7 +215,6 @@ def compute_segments(proba: np.ndarray, n_bins: int = 3) -> List[str]:
             return seg.tolist()
         except Exception:
             pass
-    # Fallback: fixed thresholds
     out: List[str] = []
     for p in proba:
         if p >= 0.66:
@@ -328,7 +290,6 @@ def train_and_select_best_model(
         ),
     ]
 
-    # If the target is degenerate, fall back to a trivial baseline model.
     if int(y.nunique()) < 2:
         dummy = DummyClassifier(strategy="most_frequent")
         best_pipe: Pipeline = Pipeline([("prep", preprocessor), ("model", dummy)])
@@ -348,7 +309,6 @@ def train_and_select_best_model(
     n_splits = max(2, min(5, min_class))
     skf = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=seed)
 
-    # Train/validation split for concrete metrics
     X_train, X_test, y_train, y_test = train_test_split(
         X,
         y,
@@ -383,7 +343,6 @@ def train_and_select_best_model(
             }
         )
 
-    # Select by ROC-AUC first, then F1, then accuracy.
     def _key(d: Dict[str, Any]) -> Tuple[float, float, float]:
         roc = d["roc_auc"]
         if roc is None or (isinstance(roc, float) and np.isnan(roc)):
@@ -470,12 +429,7 @@ def store_predictions(
     predicted_label = (proba >= 0.5).astype(int)
     is_recommended = [seg == "high" for seg in segments]
 
-    # Keep columns aligned with what we trained on.
     tag_feature_cols = [_tag_feature_col(t) for t in top_tags]
-    # engineered_df has the tag indicator columns; but for storage we also include
-    # tag_count and bio_length from engineered_df numeric features.
-
-    # Delete then re-insert for idempotency per model_run_id
     delete_many("influencer_predictions", where={"model_run_id": model_run_id}, engine=engine)
 
     inserted = 0
@@ -523,8 +477,6 @@ def train_and_store(
     rng = np.random.default_rng(seed)
 
     if offline:
-        # Synthetic fallback for local development when Postgres isn't available.
-        # This validates the modeling + feature engineering logic end-to-end.
         n = int(db_limit) if db_limit is not None else 250
         niche_choices = ["Tech", "Fashion", "Fitness", "Food", "Travel"]
         location_choices = ["New York", "Los Angeles", "Austin", "Seattle", "Chicago"]
@@ -548,7 +500,6 @@ def train_and_store(
         location_effect = np.array([1.0 if x in {"New York", "Los Angeles"} else 0.85 for x in location], dtype=float)
         tag_effect = np.array([1.0 + 0.03 * len(t) for t in content_format_tags], dtype=float)
 
-        # engagement_rate: bounded, correlated with features so the model has signal.
         raw = (
             1.5
             + 0.000004 * follower_count
@@ -585,7 +536,6 @@ def train_and_store(
                 "No rows found in `influencers` table. Load influencer data before running DS scripts."
             )
 
-    # Normalize/clean expected fields
     df["niche"] = df["niche"].astype(str)
     df["location"] = df["location"].astype(str)
     df["follower_count"] = pd.to_numeric(df["follower_count"], errors="coerce")
