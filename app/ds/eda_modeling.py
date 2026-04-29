@@ -20,10 +20,8 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def build_dataset() -> pd.DataFrame:
-    """Build example data with explicit synthetic labeling."""
     np.random.seed(42)
 
-    # Base records can be treated as seed examples.
     base = pd.DataFrame(
         [
             {
@@ -47,7 +45,6 @@ def build_dataset() -> pd.DataFrame:
         ]
     )
 
-    # Synthetic rows used to make baseline modeling feasible.
     n_synth = 198
     synth = pd.DataFrame(
         {

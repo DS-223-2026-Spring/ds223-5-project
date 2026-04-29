@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  ds:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ds
+    working_dir: /app/ds
+    volumes:
+      - .:/app/ds
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=imp
+      - DB_USER=imp_user
+      - DB_PASSWORD=imp_password
+    command: python train_and_store_model.py
