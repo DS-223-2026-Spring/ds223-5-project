@@ -7,7 +7,11 @@ modeling of influencer performance data.
 - `Dockerfile`: DS service container setup
 - `docker-compose.yml`: DS container configuration
 - `requirements.txt`: Python dependencies
-- `eda_modeling.py`: EDA and baseline model comparison pipeline
+- `eda_modeling.py`: EDA and baseline model comparison pipeline (legacy / exploratory)
+- `train_and_store_model.py`: Train best model from DB and persist model + predictions
+- `predict_and_store_model.py`: Load stored model artifact and persist fresh predictions
+- `modeling_pipeline.py`: Shared feature engineering + modeling + DB write-back logic
+- `modeling_pipeline.md`: Full documentation of feature engineering + pipeline behavior
 - `data_understanding_and_modeling.md`: data assumptions and feature notes
 
 ## Run locally
@@ -15,6 +19,22 @@ modeling of influencer performance data.
 pip install -r requirements.txt
 python eda_modeling.py
 ```
+
+## Run DB-persisted modeling
+
+1. Ensure PostgreSQL is running (via `docker compose up --build` in `app/backend/`)
+2. Load influencer rows into the `influencers` table (if your DB is empty)
+3. Train and persist outputs:
+```bash
+python train_and_store_model.py
+```
+
+4. Recompute persisted predictions without retraining:
+```bash
+python predict_and_store_model.py
+```
+
+Predictions, confidence scores, and segments are written to PostgreSQL tables `model_runs` and `influencer_predictions`.
 
 ## Run with Docker
 ```bash
