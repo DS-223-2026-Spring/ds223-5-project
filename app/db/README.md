@@ -35,7 +35,7 @@ The Compose file sets the defaults below (override as needed):
 
 ### Loading flat-file data
 
-The loader expects keys that match DB column names (excluding generated columns like `id`, `created_at`).
+The loader expects keys that match DB column names (excluding generated columns like primary keys and `created_at`).
 
 Example usage from Python:
 
@@ -48,8 +48,13 @@ print(result)
 
 ### Assumptions
 
-- **ERD not present in repo**: schema was inferred from existing FastAPI Pydantic schemas:
-  - `app/backend/schemas/influencer.py`
-  - `app/backend/schemas/brand.py`
-- `content_format_tags` is stored as `TEXT[]` in PostgreSQL.
+- **ERD-aligned schema**: tables/columns match the PM-approved ERD image:
+  - `brands`
+  - `influencers`
+  - `matches`
+  - `contact_requests`
+  - `past_collaborations`
+- **FK load order**: load parent tables before child tables:
+  - `brands`, `influencers` → then `matches`, `contact_requests`, `past_collaborations`
+- **`content_formats`**: stored as `TEXT` (comma-separated string). The loader will normalize JSON lists into a comma-separated string.
 
