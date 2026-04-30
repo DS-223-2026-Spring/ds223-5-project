@@ -1,0 +1,201 @@
+name,niche,follower_count,engagement_rate,location,campaign_conversions,synthetic_data,target_high_performer
+Alex Doe,Tech,50000,4.5,New York,120,False,0
+Jane Smith,Fashion,120000,5.2,Los Angeles,240,False,0
+Synthetic Creator 1,Food,290486,4.92,New York,177,True,0
+Synthetic Creator 2,Travel,171229,7.57,Los Angeles,304,True,1
+Synthetic Creator 3,Fitness,109081,1.43,New York,330,True,0
+Synthetic Creator 4,Travel,92045,6.09,Austin,414,True,1
+Synthetic Creator 5,Travel,37698,2.43,New York,122,True,0
+Synthetic Creator 6,Fashion,113078,2.08,Chicago,229,True,0
+Synthetic Creator 7,Fitness,25671,4.08,Seattle,536,True,0
+Synthetic Creator 8,Fitness,89202,1.83,New York,117,True,0
+Synthetic Creator 9,Fitness,54663,1.85,Chicago,144,True,0
+Synthetic Creator 10,Travel,18708,3.8,Chicago,563,True,0
+Synthetic Creator 11,Food,136883,9.82,Austin,5,True,1
+Synthetic Creator 12,Fitness,115547,2.58,Chicago,94,True,0
+Synthetic Creator 13,Travel,37754,1.15,Chicago,324,True,0
+Synthetic Creator 14,Fashion,229814,7.87,Chicago,554,True,1
+Synthetic Creator 15,Food,240714,8.26,Chicago,143,True,1
+Synthetic Creator 16,Fashion,145483,4.12,Los Angeles,515,True,0
+Synthetic Creator 17,Food,136983,5.18,Los Angeles,263,True,0
+Synthetic Creator 18,Travel,217835,6.85,Austin,14,True,1
+Synthetic Creator 19,Tech,87896,1.43,New York,265,True,0
+Synthetic Creator 20,Food,74295,9.54,Chicago,176,True,1
+Synthetic Creator 21,Fashion,222686,8.98,New York,17,True,1
+Synthetic Creator 22,Travel,276255,3.35,New York,172,True,0
+Synthetic Creator 23,Food,135874,1.14,Austin,325,True,0
+Synthetic Creator 24,Tech,11155,9.4,Chicago,323,True,1
+Synthetic Creator 25,Tech,50254,5.51,Chicago,333,True,1
+Synthetic Creator 26,Fitness,287062,5.85,Seattle,554,True,1
+Synthetic Creator 27,Fitness,88981,7.16,New York,423,True,1
+Synthetic Creator 28,Fashion,33306,6.54,New York,99,True,1
+Synthetic Creator 29,Food,150718,9.5,Los Angeles,585,True,1
+Synthetic Creator 30,Food,123975,9.5,Seattle,322,True,1
+Synthetic Creator 31,Fitness,110512,8.8,Los Angeles,240,True,1
+Synthetic Creator 32,Food,150443,6.73,Los Angeles,338,True,1
+Synthetic Creator 33,Food,136121,8.21,Los Angeles,380,True,1
+Synthetic Creator 34,Tech,165688,7.09,Austin,463,True,1
+Synthetic Creator 35,Fitness,286076,6.16,Austin,141,True,1
+Synthetic Creator 36,Travel,120796,2.16,Los Angeles,592,True,0
+Synthetic Creator 37,Fitness,294999,8.3,Seattle,551,True,1
+Synthetic Creator 38,Travel,195506,8.39,New York,517,True,1
+Synthetic Creator 39,Tech,177088,6.63,Seattle,300,True,1
+Synthetic Creator 40,Fashion,272544,8.38,Chicago,324,True,1
+Synthetic Creator 41,Food,176714,6.86,Austin,576,True,1
+Synthetic Creator 42,Tech,18151,2.86,New York,353,True,0
+Synthetic Creator 43,Food,69690,3.47,New York,233,True,0
+Synthetic Creator 44,Fashion,7499,2.93,Chicago,274,True,0
+Synthetic Creator 45,Fashion,9295,4.4,Chicago,295,True,0
+Synthetic Creator 46,Tech,277327,1.35,Los Angeles,169,True,0
+Synthetic Creator 47,Fashion,146946,6.56,Austin,9,True,1
+Synthetic Creator 48,Travel,35711,4.03,Austin,383,True,0
+Synthetic Creator 49,Fashion,270683,6.9,Seattle,82,True,1
+Synthetic Creator 50,Food,187423,4.47,Los Angeles,414,True,0
+Synthetic Creator 51,Food,182426,7.13,Los Angeles,578,True,1
+Synthetic Creator 52,Food,136629,4.07,Los Angeles,136,True,0
+Synthetic Creator 53,Food,216090,3.35,Los Angeles,46,True,0
+Synthetic Creator 54,Travel,136272,5.46,Austin,93,True,0
+Synthetic Creator 55,Fitness,246548,7.24,Austin,406,True,1
+Synthetic Creator 56,Tech,181047,4.14,Los Angeles,300,True,0
+Synthetic Creator 57,Food,286501,9.43,Seattle,299,True,1
+Synthetic Creator 58,Fashion,122121,1.35,New York,530,True,0
+Synthetic Creator 59,Food,80505,4.76,New York,426,True,0
+Synthetic Creator 60,Fashion,5869,9.71,Seattle,27,True,1
+Synthetic Creator 61,Fashion,260186,5.93,Los Angeles,579,True,1
+Synthetic Creator 62,Food,115296,4.81,Austin,147,True,0
+Synthetic Creator 63,Travel,97179,6.12,New York,149,True,1
+Synthetic Creator 64,Fashion,93272,6.18,Chicago,229,True,1
+Synthetic Creator 65,Fashion,41467,7.58,Chicago,507,True,1
+Synthetic Creator 66,Food,288472,2.15,Seattle,108,True,0
+Synthetic Creator 67,Fashion,138059,3.25,Los Angeles,43,True,0
+Synthetic Creator 68,Fashion,61871,6.22,New York,202,True,1
+Synthetic Creator 69,Food,131391,8.8,Los Angeles,583,True,1
+Synthetic Creator 70,Food,89416,6.06,New York,395,True,1
+Synthetic Creator 71,Tech,259687,3.15,Seattle,183,True,0
+Synthetic Creator 72,Travel,204163,7.12,Seattle,558,True,1
+Synthetic Creator 73,Travel,110450,7.66,Chicago,452,True,1
+Synthetic Creator 74,Fashion,174890,3.14,Los Angeles,504,True,0
+Synthetic Creator 75,Travel,284974,4.4,Chicago,19,True,0
+Synthetic Creator 76,Fashion,119381,5.81,Los Angeles,293,True,1
+Synthetic Creator 77,Tech,50333,5.47,Chicago,482,True,1
+Synthetic Creator 78,Food,137508,4.51,Austin,235,True,0
+Synthetic Creator 79,Food,208362,3.68,Austin,424,True,0
+Synthetic Creator 80,Food,153810,1.9,Austin,161,True,0
+Synthetic Creator 81,Travel,295890,1.48,Austin,554,True,0
+Synthetic Creator 82,Tech,52377,9.63,New York,445,True,1
+Synthetic Creator 83,Travel,139672,8.62,Austin,101,True,1
+Synthetic Creator 84,Travel,228732,4.19,Seattle,415,True,0
+Synthetic Creator 85,Tech,174836,9.61,Seattle,293,True,1
+Synthetic Creator 86,Tech,208615,7.09,New York,258,True,1
+Synthetic Creator 87,Tech,48714,5.34,Austin,200,True,0
+Synthetic Creator 88,Tech,105946,5.44,Austin,526,True,0
+Synthetic Creator 89,Food,108983,1.75,Austin,521,True,0
+Synthetic Creator 90,Fitness,190563,1.83,Chicago,122,True,0
+Synthetic Creator 91,Fitness,127123,6.42,Los Angeles,163,True,1
+Synthetic Creator 92,Tech,85989,5.98,Chicago,232,True,1
+Synthetic Creator 93,Fitness,181274,2.91,Los Angeles,220,True,0
+Synthetic Creator 94,Fitness,166707,9.52,Austin,19,True,1
+Synthetic Creator 95,Tech,298972,8.03,Austin,161,True,1
+Synthetic Creator 96,Fitness,268564,2.02,Chicago,265,True,0
+Synthetic Creator 97,Travel,134373,9.38,Chicago,161,True,1
+Synthetic Creator 98,Fashion,118294,9.77,Los Angeles,51,True,1
+Synthetic Creator 99,Fashion,127019,9.96,Seattle,328,True,1
+Synthetic Creator 100,Tech,68726,1.5,Los Angeles,134,True,0
+Synthetic Creator 101,Food,144564,7.63,Chicago,415,True,1
+Synthetic Creator 102,Tech,271246,5.91,Chicago,99,True,1
+Synthetic Creator 103,Food,184408,7.35,New York,296,True,1
+Synthetic Creator 104,Fashion,121015,9.72,Chicago,287,True,1
+Synthetic Creator 105,Tech,219386,7.19,New York,73,True,1
+Synthetic Creator 106,Travel,257079,8.53,Seattle,15,True,1
+Synthetic Creator 107,Fitness,29641,8.8,Los Angeles,258,True,1
+Synthetic Creator 108,Food,168656,8.55,Los Angeles,554,True,1
+Synthetic Creator 109,Fitness,166817,4.83,New York,138,True,0
+Synthetic Creator 110,Fitness,39631,3.0,Los Angeles,27,True,0
+Synthetic Creator 111,Tech,245289,4.57,Chicago,350,True,0
+Synthetic Creator 112,Fitness,75991,9.03,Austin,306,True,1
+Synthetic Creator 113,Travel,7014,2.32,New York,367,True,0
+Synthetic Creator 114,Fitness,276237,5.62,Los Angeles,400,True,1
+Synthetic Creator 115,Tech,21070,3.1,New York,222,True,0
+Synthetic Creator 116,Travel,59958,6.23,New York,145,True,1
+Synthetic Creator 117,Fashion,85074,8.77,Austin,214,True,1
+Synthetic Creator 118,Fitness,13729,8.92,Chicago,464,True,1
+Synthetic Creator 119,Tech,233785,3.13,New York,360,True,0
+Synthetic Creator 120,Fashion,179089,9.17,Los Angeles,328,True,1
+Synthetic Creator 121,Fashion,200392,6.33,Seattle,137,True,1
+Synthetic Creator 122,Food,161823,4.15,New York,131,True,0
+Synthetic Creator 123,Travel,108864,7.37,New York,110,True,1
+Synthetic Creator 124,Fitness,212141,5.34,Austin,382,True,0
+Synthetic Creator 125,Tech,57748,4.4,Chicago,55,True,0
+Synthetic Creator 126,Food,8801,7.35,Seattle,33,True,1
+Synthetic Creator 127,Travel,153262,3.24,Los Angeles,466,True,0
+Synthetic Creator 128,Food,238362,3.97,Seattle,300,True,0
+Synthetic Creator 129,Travel,32592,4.91,Los Angeles,301,True,0
+Synthetic Creator 130,Travel,275791,3.28,Chicago,411,True,0
+Synthetic Creator 131,Fitness,142788,4.65,Los Angeles,409,True,0
+Synthetic Creator 132,Travel,222963,6.14,Austin,350,True,1
+Synthetic Creator 133,Food,251710,7.67,Austin,424,True,1
+Synthetic Creator 134,Travel,223984,7.9,Austin,186,True,1
+Synthetic Creator 135,Fitness,261067,8.41,Austin,5,True,1
+Synthetic Creator 136,Fitness,267512,7.7,Seattle,571,True,1
+Synthetic Creator 137,Food,80575,7.13,Chicago,375,True,1
+Synthetic Creator 138,Fashion,271799,3.14,Los Angeles,435,True,0
+Synthetic Creator 139,Fashion,240549,4.6,Los Angeles,313,True,0
+Synthetic Creator 140,Travel,73031,5.3,Austin,141,True,0
+Synthetic Creator 141,Tech,90922,1.75,Austin,206,True,0
+Synthetic Creator 142,Travel,127046,5.76,New York,440,True,1
+Synthetic Creator 143,Food,35097,4.93,Chicago,317,True,0
+Synthetic Creator 144,Food,145038,8.22,Seattle,121,True,1
+Synthetic Creator 145,Food,127862,9.8,Los Angeles,579,True,1
+Synthetic Creator 146,Food,233229,6.0,New York,248,True,1
+Synthetic Creator 147,Food,121834,3.9,New York,541,True,0
+Synthetic Creator 148,Fitness,96848,1.39,Los Angeles,79,True,0
+Synthetic Creator 149,Fashion,55921,9.32,Seattle,390,True,1
+Synthetic Creator 150,Food,183798,9.27,New York,214,True,1
+Synthetic Creator 151,Tech,129141,3.28,New York,479,True,0
+Synthetic Creator 152,Tech,184372,7.26,Chicago,422,True,1
+Synthetic Creator 153,Tech,287821,1.68,Seattle,351,True,0
+Synthetic Creator 154,Tech,58609,2.5,New York,533,True,0
+Synthetic Creator 155,Fitness,230897,2.95,Seattle,183,True,0
+Synthetic Creator 156,Tech,34024,3.65,Los Angeles,186,True,0
+Synthetic Creator 157,Food,73313,9.96,Austin,29,True,1
+Synthetic Creator 158,Travel,187078,7.27,New York,184,True,1
+Synthetic Creator 159,Tech,116632,4.46,Chicago,505,True,0
+Synthetic Creator 160,Fitness,254451,7.63,Los Angeles,165,True,1
+Synthetic Creator 161,Fitness,6051,9.24,Seattle,181,True,1
+Synthetic Creator 162,Tech,182819,9.63,Los Angeles,289,True,1
+Synthetic Creator 163,Travel,90235,1.52,New York,67,True,0
+Synthetic Creator 164,Tech,200484,4.55,Seattle,160,True,0
+Synthetic Creator 165,Fitness,192407,1.96,Austin,473,True,0
+Synthetic Creator 166,Fashion,214810,4.02,Los Angeles,53,True,0
+Synthetic Creator 167,Food,206687,2.53,New York,88,True,0
+Synthetic Creator 168,Fitness,76523,6.82,Chicago,365,True,1
+Synthetic Creator 169,Tech,239175,4.49,Seattle,152,True,0
+Synthetic Creator 170,Food,97476,3.06,Los Angeles,346,True,0
+Synthetic Creator 171,Tech,236841,3.39,Los Angeles,480,True,0
+Synthetic Creator 172,Tech,282163,4.24,Austin,67,True,0
+Synthetic Creator 173,Fashion,225866,3.34,Austin,364,True,0
+Synthetic Creator 174,Food,89672,5.08,Chicago,565,True,0
+Synthetic Creator 175,Food,76847,1.29,Chicago,331,True,0
+Synthetic Creator 176,Fashion,213706,3.52,New York,145,True,0
+Synthetic Creator 177,Fitness,31251,4.7,New York,219,True,0
+Synthetic Creator 178,Tech,106481,6.43,Chicago,439,True,1
+Synthetic Creator 179,Travel,28945,3.44,Chicago,322,True,0
+Synthetic Creator 180,Tech,35217,2.2,Seattle,36,True,0
+Synthetic Creator 181,Tech,11308,1.69,Austin,289,True,0
+Synthetic Creator 182,Fitness,271093,9.46,New York,309,True,1
+Synthetic Creator 183,Tech,186062,4.75,Austin,433,True,0
+Synthetic Creator 184,Fashion,223552,6.23,Austin,481,True,1
+Synthetic Creator 185,Fashion,103235,9.27,Chicago,290,True,1
+Synthetic Creator 186,Food,77740,1.74,Seattle,148,True,0
+Synthetic Creator 187,Travel,228913,8.89,Los Angeles,428,True,1
+Synthetic Creator 188,Tech,282040,5.96,Seattle,23,True,1
+Synthetic Creator 189,Tech,180247,2.48,Seattle,22,True,0
+Synthetic Creator 190,Fitness,141877,4.7,Austin,594,True,0
+Synthetic Creator 191,Fashion,8237,8.0,Seattle,375,True,1
+Synthetic Creator 192,Travel,23056,5.32,New York,179,True,0
+Synthetic Creator 193,Food,179615,9.87,Austin,198,True,1
+Synthetic Creator 194,Fashion,190628,4.39,New York,506,True,0
+Synthetic Creator 195,Food,117548,7.75,Los Angeles,117,True,1
+Synthetic Creator 196,Fitness,137415,4.54,Austin,118,True,0
+Synthetic Creator 197,Fitness,32375,8.46,Los Angeles,226,True,1
+Synthetic Creator 198,Tech,143734,6.12,Austin,268,True,1

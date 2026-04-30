@@ -6,6 +6,7 @@
 
 BEGIN;
 
+DROP TABLE IF EXISTS ds_modeling_dataset CASCADE;
 DROP TABLE IF EXISTS ds_influencer_predictions CASCADE;
 DROP TABLE IF EXISTS ds_model_metrics CASCADE;
 DROP TABLE IF EXISTS ref_audience_gender CASCADE;
