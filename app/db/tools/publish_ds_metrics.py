@@ -11,6 +11,7 @@ Expected CSV columns (see `app/ds/outputs/baseline_model_comparison.csv`):
   - f1
   - precision
   - recall
+  - rmse
 
 Usage:
   python app/db/tools/publish_ds_metrics.py --csv app/ds/outputs/baseline_model_comparison.csv
@@ -45,6 +46,7 @@ def _parse_row(row: Dict[str, str]) -> Dict[str, object]:
         "f1": float(row["f1"]),
         "precision": float(row["precision"]),
         "recall": float(row["recall"]),
+        "rmse": float(row["rmse"]) if row.get("rmse") not in (None, "") else None,
     }
 
 
@@ -69,13 +71,14 @@ def publish_metrics(csv_path: Path) -> int:
                 for raw in reader:
                     parsed = _parse_row(raw)
                     cur.execute(
-                        "SELECT upsert_ds_model_metric(%s, %s, %s, %s, %s, NOW());",
+                        "SELECT upsert_ds_model_metric(%s, %s, %s, %s, %s, %s, NOW());",
                         (
                             parsed["model"],
                             parsed["accuracy"],
                             parsed["f1"],
                             parsed["precision"],
                             parsed["recall"],
+                            parsed["rmse"],
                         ),
                     )
                     upserted += 1

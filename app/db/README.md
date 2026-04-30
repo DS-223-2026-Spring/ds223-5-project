@@ -58,6 +58,12 @@ To publish baseline model metrics from the DS CSV output into Postgres:
 python app/db/tools/publish_ds_metrics.py --csv app/ds/outputs/baseline_model_comparison.csv
 ```
 
+To publish the DS modeling dataset snapshot into Postgres:
+
+```bash
+python app/db/tools/publish_ds_modeling_dataset.py --csv app/ds/outputs/modeling_dataset.csv
+```
+
 ### Assumptions
 
 - **ERD-aligned schema**: tables/columns match the PM-approved ERD image:
