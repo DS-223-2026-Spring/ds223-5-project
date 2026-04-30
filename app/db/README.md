@@ -46,6 +46,24 @@ result = load_flat_file(table="influencers", path="path/to/influencers.json")
 print(result)
 ```
 
+### Publishing DS model outputs
+
+The schema includes tables and upsert functions for DS outputs:
+- `ds_model_metrics`
+- `ds_influencer_predictions`
+
+To publish baseline model metrics from the DS CSV output into Postgres:
+
+```bash
+python app/db/tools/publish_ds_metrics.py --csv app/ds/outputs/baseline_model_comparison.csv
+```
+
+To publish the DS modeling dataset snapshot into Postgres:
+
+```bash
+python app/db/tools/publish_ds_modeling_dataset.py --csv app/ds/outputs/modeling_dataset.csv
+```
+
 ### Assumptions
 
 - **ERD-aligned schema**: tables/columns match the PM-approved ERD image:
@@ -54,6 +72,15 @@ print(result)
   - `matches`
   - `contact_requests`
   - `past_collaborations`
+- **Reference tables** (lookup tables) used for integrity:
+  - `ref_contact_direction`, `ref_contact_status`
+  - `ref_audience_age_group`, `ref_audience_gender`
+- **DS outputs** are stored in:
+  - `ds_model_metrics` (metrics columns match `app/ds/outputs/baseline_model_comparison.csv`)
+  - `ds_influencer_predictions` (per-influencer predictions keyed by `(influencer_id, model)`)
+- **Upsert mechanism**: use SQL functions to write/overwrite DS results:
+  - `upsert_ds_model_metric(...)`
+  - `upsert_ds_influencer_prediction(...)`
 - **FK load order**: load parent tables before child tables:
   - `brands`, `influencers` → then `matches`, `contact_requests`, `past_collaborations`
 - **`content_formats`**: stored as `TEXT` (comma-separated string). The loader will normalize JSON lists into a comma-separated string.
