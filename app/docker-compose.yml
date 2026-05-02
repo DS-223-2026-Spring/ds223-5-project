@@ -48,7 +48,16 @@ services:
     working_dir: /app/ds
     volumes:
       - ./ds:/app/ds
-    command: python eda_modeling.py
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=imp
+      - DB_USER=imp_user
+      - DB_PASSWORD=imp_password
+    command: python train_and_store_model.py
 
 
   front:

@@ -138,6 +138,6 @@ cython_debug/
 .idea/
 
 # Outputs
-.outputs/distribution_engagement_rate.png
-.outputs/distribution_follower_count.png
-.outputs/correlation_heatmap.png
+outputs/distribution_engagement_rate.png
+outputs/distribution_follower_count.png
+outputs/correlation_heatmap.png
