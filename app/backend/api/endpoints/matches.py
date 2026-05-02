@@ -1,66 +1,62 @@
-from fastapi import APIRouter, HTTPException, Query
-from typing import List, Optional
+from __future__ import annotations
 
-from schemas.match import Match, MatchCreate, MatchUpdate
-from db.crud import insert_one, select_many, update_many, delete_many
+from fastapi import APIRouter, HTTPException
+
+from schemas.match import MatchGenerateRequest, MatchResponse
+from db.crud import select_many, upsert_one
+from services.scoring import compute_match
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[Match])
-def get_matches(
-    brand_id: Optional[int] = Query(None, description="Filter by brand ID"),
-    influencer_id: Optional[int] = Query(None, description="Filter by influencer ID"),
-):
-    # list matches with optional filters
-    where = {}
-    if brand_id is not None:
-        where["brand_id"] = brand_id
-    if influencer_id is not None:
-        where["influencer_id"] = influencer_id
+# POST /matches/generate — compute scores and persist to matches table
+@router.post("/generate", response_model=MatchResponse)
+def generate_match(body: MatchGenerateRequest):
+    # Fetch brand row
+    brand_rows = select_many("brands", where={"brand_id": body.brand_id})
+    if not brand_rows:
+        raise HTTPException(status_code=404, detail="Brand not found")
+    brand = dict(brand_rows[0])
 
-    rows = select_many("matches", where=where or None, order_by=[("total_score", "DESC")])
-    return [dict(r) for r in rows]
+    # Fetch influencer row
+    inf_rows = select_many("influencers", where={"influencer_id": body.influencer_id})
+    if not inf_rows:
+        raise HTTPException(status_code=404, detail="Influencer not found")
+    influencer = dict(inf_rows[0])
 
+    # Fetch collaboration history for history_score calculation
+    collab_rows = select_many(
+        "past_collaborations",
+        where={"influencer_id": body.influencer_id},
+    )
+    past_collabs = [dict(r) for r in collab_rows]
 
-@router.get("/{match_id}", response_model=Match)
-def get_match(match_id: int):
-    # get single match by id
-    rows = select_many("matches", where={"match_id": match_id})
-    if not rows:
-        raise HTTPException(status_code=404, detail="Match not found")
-    return dict(rows[0])
+    # Compute weighted sub-scores via scoring service
+    scores = compute_match(brand, influencer, past_collabs)
 
+    # Upsert into matches table — ON CONFLICT updates existing pair
+    match_data = {
+        "brand_id": body.brand_id,
+        "influencer_id": body.influencer_id,
+        "total_score": scores["total_score"],
+        "niche_score": scores["niche_score"],
+        "audience_score": scores["audience_score"],
+        "engagement_score": scores["engagement_score"],
+        "history_score": scores["history_score"],
+    }
+    upsert_one(
+        "matches",
+        match_data,
+        conflict_columns=["brand_id", "influencer_id"],
+        update_columns=[
+            "total_score", "niche_score", "audience_score",
+            "engagement_score", "history_score",
+        ],
+        returning=["match_id"],
+    )
 
-@router.post("/", response_model=Match, status_code=201)
-def create_match(match_in: MatchCreate):
-    # create new match
-    data = match_in.model_dump()
-    result = insert_one("matches", data, returning=["match_id"])
-    created_id = result["match_id"]
-    rows = select_many("matches", where={"match_id": created_id})
-    return dict(rows[0])
-
-
-@router.put("/{match_id}", response_model=Match)
-def update_match(match_id: int, match_in: MatchUpdate):
-    # update existing match
-    rows = select_many("matches", where={"match_id": match_id})
-    if not rows:
-        raise HTTPException(status_code=404, detail="Match not found")
-
-    update_data = match_in.model_dump(exclude_unset=True)
-    if not update_data:
-        return dict(rows[0])
-
-    update_many("matches", update_data, where={"match_id": match_id})
-    rows = select_many("matches", where={"match_id": match_id})
-    return dict(rows[0])
-
-
-@router.delete("/{match_id}", status_code=204)
-def delete_match(match_id: int):
-    # delete match
-    deleted = delete_many("matches", where={"match_id": match_id})
-    if deleted == 0:
-        raise HTTPException(status_code=404, detail="Match not found")
+    return {
+        "brand_id": body.brand_id,
+        "influencer_id": body.influencer_id,
+        **scores,
+    }
