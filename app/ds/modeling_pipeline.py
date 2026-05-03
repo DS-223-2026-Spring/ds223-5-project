@@ -27,20 +27,37 @@ from sklearn.compose import ColumnTransformer
 APP_DIR = Path(__file__).resolve().parents[1]
 BACKEND_DIR = APP_DIR / "backend"
 sys.path.insert(0, str(BACKEND_DIR))
+sys.path.insert(0, str(APP_DIR))
 
 try:
     from db.connection import get_engine  # noqa: E402
     from db.crud import delete_many, insert_one, select_many, update_many  # noqa: E402
 except ModuleNotFoundError:  # pragma: no cover
-    get_engine = None  # type: ignore[assignment]
-    delete_many = None  # type: ignore[assignment]
-    insert_one = None  # type: ignore[assignment]
-    select_many = None  # type: ignore[assignment]
-    update_many = None  # type: ignore[assignment]
+    try:
+        from backend.db.connection import get_engine  # type: ignore[no-redef]  # noqa: E402
+        from backend.db.crud import (  # type: ignore[no-redef]  # noqa: E402
+            delete_many,
+            insert_one,
+            select_many,
+            update_many,
+        )
+    except ModuleNotFoundError:
+        get_engine = None  # type: ignore[assignment]
+        delete_many = None  # type: ignore[assignment]
+        insert_one = None  # type: ignore[assignment]
+        select_many = None  # type: ignore[assignment]
+        update_many = None  # type: ignore[assignment]
 
 
 RUN_KEY_DEFAULT = "influencer_high_performer_v1"
 FEATURE_SCHEMA_VERSION_DEFAULT = "v1_exclude_engagement_rate_with_top_tags"
+
+
+def has_backend_dependencies() -> bool:
+    return all(
+        func is not None
+        for func in (get_engine, delete_many, insert_one, select_many, update_many)
+    )
 
 
 def _utc_now_iso() -> str:
@@ -475,6 +492,10 @@ def train_and_store(
     offline: bool = False,
 ) -> Dict[str, Any]:
     rng = np.random.default_rng(seed)
+    backend_ready = has_backend_dependencies()
+
+    if not offline and not backend_ready:
+        offline = True
 
     if offline:
         n = int(db_limit) if db_limit is not None else 250
@@ -522,7 +543,7 @@ def train_and_store(
             }
         )
     else:
-        if get_engine is None:
+        if not backend_ready:
             raise RuntimeError(
                 "DB mode requires backend dependencies (SQLAlchemy + CRUD helpers). "
                 "Install app/backend/requirements.txt or run with --offline."
@@ -609,7 +630,7 @@ def predict_and_store(
     run_key: str = RUN_KEY_DEFAULT,
     db_limit: Optional[int] = None,
 ) -> Dict[str, Any]:
-    if get_engine is None:
+    if not has_backend_dependencies():
         raise RuntimeError(
             "DB mode requires backend dependencies (SQLAlchemy + CRUD helpers). "
             "Install app/backend/requirements.txt."
@@ -668,11 +689,17 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--db-limit", type=int, default=None)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--offline", action="store_true", help="Run with synthetic data (no DB read/write).")
+    parser.set_defaults(offline=not has_backend_dependencies())
     return parser
 
 
 def main_train() -> None:
     args = build_arg_parser().parse_args()
+    if args.offline and not has_backend_dependencies():
+        print(
+            "Backend dependencies not found; running in offline mode. "
+            "Install app/backend/requirements.txt to enable DB mode."
+        )
     res = train_and_store(
         run_key=args.run_key,
         top_k_tags=args.top_k_tags,
