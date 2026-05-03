@@ -12,8 +12,8 @@ from db.connection import get_engine, wait_for_db
 from db.crud import insert_one
 
 
+# Parse JSON file into list of record dicts
 def _read_json_records(path: Path) -> List[Dict[str, Any]]:
-    """Read a JSON file containing either a list of objects or a dict with a `records` list."""
     with path.open("r", encoding="utf-8") as f:
         payload = json.load(f)
     if isinstance(payload, list):
@@ -23,15 +23,15 @@ def _read_json_records(path: Path) -> List[Dict[str, Any]]:
     raise ValueError("JSON must be a list of objects or an object with a 'records' list")
 
 
+# Parse CSV file into list of record dicts via DictReader
 def _read_csv_records(path: Path) -> List[Dict[str, Any]]:
-    """Read a CSV file into a list of dict records."""
     with path.open("r", encoding="utf-8", newline="") as f:
         reader = csv.DictReader(f)
         return [dict(row) for row in reader]
 
 
+# Introspect table schema via information_schema for column validation
 def _table_columns(engine: Engine, table: str, schema: str = "public") -> Dict[str, str]:
-    """Return column_name -> data_type for a table using information_schema."""
     sql = text(
         """
         SELECT column_name, data_type
@@ -45,12 +45,13 @@ def _table_columns(engine: Engine, table: str, schema: str = "public") -> Dict[s
     return {r["column_name"]: r["data_type"] for r in rows}
 
 
+# Retrieve current row count for pre/post ingestion comparison
 def _row_count(engine: Engine, table: str) -> int:
-    """Return SELECT COUNT(*) for a table."""
     with engine.connect() as conn:
         return int(conn.execute(text(f'SELECT COUNT(*) AS c FROM "{table}"')).mappings().one()["c"])
 
 
+# Ingest a flat file (CSV/JSON) into a target table with schema validation
 def load_flat_file(
     *,
     table: str,
@@ -58,21 +59,6 @@ def load_flat_file(
     engine: Optional[Engine] = None,
     json_format_tags_field: str = "content_formats",
 ) -> Dict[str, Any]:
-    """Load a CSV/JSON file into a table and validate row counts + schema shape.
-
-    This loader is intentionally lightweight and expects the flat-file keys to match
-    database column names (excluding generated columns like `id`, `created_at`).
-
-    Args:
-        table: Target database table.
-        path: Path to a `.csv` or `.json` file.
-        engine: Optional SQLAlchemy engine; defaults to `get_engine()`.
-        json_format_tags_field: If present in JSON/CSV and the value is a JSON string or list,
-            it will be normalized to a comma-separated string (to match ERD `TEXT`).
-
-    Returns:
-        A dict with load summary and validation results.
-    """
     eng = engine or get_engine()
     wait_for_db(eng)
 
@@ -92,12 +78,12 @@ def load_flat_file(
 
     inserted = 0
     for record in records:
-        # Basic schema consistency check: incoming keys must be subset of table columns
+        # Reject records with columns absent from the target table
         unknown = [k for k in record.keys() if k not in cols]
         if unknown:
             raise ValueError(f"Record contains unknown columns for table '{table}': {unknown}")
 
-        # Normalize array-like field to comma-separated string (common in exports).
+        # Normalize list/array values to comma-delimited strings for DB storage
         if json_format_tags_field in record:
             val = record[json_format_tags_field]
             if isinstance(val, str):
@@ -124,4 +110,3 @@ def load_flat_file(
         "row_count_match": (after - before) == len(records),
         "table_columns": cols,
     }
-

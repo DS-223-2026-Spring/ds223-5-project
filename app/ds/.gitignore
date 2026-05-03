@@ -136,3 +136,8 @@ cython_debug/
 
 # PyCharm
 .idea/
+
+# Outputs
+outputs/distribution_engagement_rate.png
+outputs/distribution_follower_count.png
+outputs/correlation_heatmap.png

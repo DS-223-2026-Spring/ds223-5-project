@@ -12,28 +12,19 @@ from db.connection import get_engine, wait_for_db
 _IDENTIFIER_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
 
+# Validate SQL identifier against injection (alphanumeric + underscore only)
 def _validate_identifier(name: str) -> str:
-    """Validate a SQL identifier to prevent SQL injection.
-
-    Args:
-        name: Table or column name.
-
-    Returns:
-        The same name if valid.
-
-    Raises:
-        ValueError: If the identifier is invalid.
-    """
     if not _IDENTIFIER_RE.fullmatch(name):
         raise ValueError(f"Invalid SQL identifier: {name!r}")
     return name
 
 
+# Double-quote a validated identifier for PostgreSQL
 def _q(name: str) -> str:
-    """Quote a validated SQL identifier for Postgres."""
     return f"\"{_validate_identifier(name)}\""
 
 
+# INSERT single row with parameterized values, optionally returning columns
 def insert_one(
     table: str,
     data: Mapping[str, Any],
@@ -41,17 +32,6 @@ def insert_one(
     engine: Optional[Engine] = None,
     returning: Sequence[str] = (),
 ) -> Dict[str, Any]:
-    """Insert a single row and return selected columns.
-
-    Args:
-        table: Target table name.
-        data: Column/value mapping.
-        engine: Optional SQLAlchemy engine.
-        returning: Columns to return (default: empty, because PK names vary by table in the ERD).
-
-    Returns:
-        A dict containing the returned columns.
-    """
     if not data:
         raise ValueError("insert_one requires non-empty data")
 
@@ -73,6 +53,7 @@ def insert_one(
         return dict(row) if row is not None else {}
 
 
+# SELECT with equality filters, ordering, and pagination
 def select_many(
     table: str,
     *,
@@ -83,20 +64,6 @@ def select_many(
     offset: Optional[int] = None,
     engine: Optional[Engine] = None,
 ) -> List[RowMapping]:
-    """Select rows from a table.
-
-    Args:
-        table: Table name.
-        where: Optional equality filters (ANDed together).
-        columns: Columns to fetch (use `("*",)` for all).
-        order_by: Optional list of (column, direction) where direction is `ASC`/`DESC`.
-        limit: Optional row limit.
-        offset: Optional row offset.
-        engine: Optional SQLAlchemy engine.
-
-    Returns:
-        Rows as SQLAlchemy `RowMapping` objects.
-    """
     eng = engine or get_engine()
     wait_for_db(eng)
 
@@ -139,6 +106,7 @@ def select_many(
         return list(res.mappings().all())
 
 
+# UPDATE rows matching WHERE clause with parameterized SET values
 def update_many(
     table: str,
     data: Mapping[str, Any],
@@ -146,17 +114,6 @@ def update_many(
     where: Mapping[str, Any],
     engine: Optional[Engine] = None,
 ) -> int:
-    """Update rows in a table.
-
-    Args:
-        table: Table name.
-        data: Columns to update.
-        where: Equality filters (ANDed together). Must be non-empty.
-        engine: Optional SQLAlchemy engine.
-
-    Returns:
-        Number of updated rows.
-    """
     if not data:
         raise ValueError("update_many requires non-empty data")
     if not where:
@@ -186,22 +143,13 @@ def update_many(
         return int(res.rowcount or 0)
 
 
+# DELETE rows matching WHERE clause (requires non-empty filter)
 def delete_many(
     table: str,
     *,
     where: Mapping[str, Any],
     engine: Optional[Engine] = None,
 ) -> int:
-    """Delete rows from a table.
-
-    Args:
-        table: Table name.
-        where: Equality filters (ANDed together). Must be non-empty.
-        engine: Optional SQLAlchemy engine.
-
-    Returns:
-        Number of deleted rows.
-    """
     if not where:
         raise ValueError("delete_many requires non-empty where clause")
 
@@ -221,3 +169,47 @@ def delete_many(
         res = conn.execute(text(sql), params)
         return int(res.rowcount or 0)
 
+
+# Execute arbitrary SQL with named parameters, returns list of row mappings
+def execute_raw(
+    sql_str: str,
+    params: Optional[Mapping[str, Any]] = None,
+    *,
+    engine: Optional[Engine] = None,
+) -> List[RowMapping]:
+    eng = engine or get_engine()
+    wait_for_db(eng)
+    with eng.connect() as conn:
+        res = conn.execute(text(sql_str), dict(params) if params else {})
+        return list(res.mappings().all())
+
+
+# INSERT with ON CONFLICT DO UPDATE (PostgreSQL upsert)
+def upsert_one(
+    table: str,
+    data: Mapping[str, Any],
+    *,
+    conflict_columns: Sequence[str],
+    update_columns: Sequence[str],
+    engine: Optional[Engine] = None,
+    returning: Sequence[str] = (),
+) -> Dict[str, Any]:
+    eng = engine or get_engine()
+    wait_for_db(eng)
+
+    cols = list(data.keys())
+    col_sql = ", ".join(_q(c) for c in cols)
+    val_sql = ", ".join(f":{c}" for c in cols)
+    conflict_sql = ", ".join(_q(c) for c in conflict_columns)
+    update_sql = ", ".join(f"{_q(c)} = EXCLUDED.{_q(c)}" for c in update_columns)
+    ret_sql = ", ".join(_q(c) for c in returning) if returning else ""
+
+    sql = f"INSERT INTO {_q(table)} ({col_sql}) VALUES ({val_sql})"
+    sql += f" ON CONFLICT ({conflict_sql}) DO UPDATE SET {update_sql}"
+    if ret_sql:
+        sql += f" RETURNING {ret_sql}"
+
+    with eng.begin() as conn:
+        res = conn.execute(text(sql), dict(data))
+        row = res.mappings().first()
+        return dict(row) if row is not None else {}

@@ -1,66 +1,175 @@
-from fastapi import APIRouter, HTTPException, Query
+from __future__ import annotations
+
 from typing import List, Optional
 
-from schemas.brand import Brand, BrandCreate, BrandUpdate
-from db.crud import insert_one, select_many, update_many, delete_many
+from fastapi import APIRouter, HTTPException, Query
+
+from schemas.brand import BrandCreate, BrandResponse, BrandUpdate
+from db.crud import execute_raw, insert_one, select_many, update_many
 
 router = APIRouter()
 
 
-@router.get("/", response_model=List[Brand])
+# Transform DB row dict to response schema
+def _db_row_to_response(row: dict, scores: dict | None = None) -> dict:
+    s = scores or {}
+    prefs_str = row.get("preferred_niches") or ""
+    preferences = [p.strip() for p in prefs_str.split(",") if p.strip()]
+    return {
+        "id": row["brand_id"],
+        "name": row.get("name", ""),
+        "industry": row.get("industry", ""),
+        "size": row.get("company_size", ""),
+        "budget_min": int(row.get("budget_min", 0)),
+        "budget_max": int(row.get("budget_max", 0)),
+        "target": row.get("target_audience", ""),
+        "location": row.get("location", ""),
+        "preferences": preferences,
+        # email/website/instagram columns not in DB yet (pending migration 0004)
+        "email": row.get("email", ""),
+        "website": row.get("website", ""),
+        "instagram": row.get("instagram", ""),
+        "total_score": s.get("total_score", 0),
+        "niche_score": s.get("niche_score", 0),
+        "audience_score": s.get("audience_score", 0),
+        "engagement_score": s.get("engagement_score", 0),
+        "history_score": s.get("history_score", 0),
+    }
+
+
+# Map BrandCreate fields to DB column names for INSERT
+def _create_body_to_db(data: BrandCreate) -> dict:
+    return {
+        "name": data.name,
+        "industry": data.industry,
+        "company_size": data.size,
+        "budget_min": data.budget_min,
+        "budget_max": data.budget_max,
+        "target_audience": data.target,
+        "location": data.location,
+        "preferred_niches": ", ".join(data.preferences),
+        # email/website/instagram excluded — columns not in DB yet (migration 0004)
+    }
+
+
+# Map BrandUpdate fields to DB column names, excluding unset fields
+def _update_body_to_db(data: BrandUpdate) -> dict:
+    db_data: dict = {}
+    raw = data.model_dump(exclude_unset=True)
+    field_map = {
+        "name": "name",
+        "industry": "industry",
+        "size": "company_size",
+        "budget_min": "budget_min",
+        "budget_max": "budget_max",
+        "target": "target_audience",
+        "location": "location",
+        # email/website/instagram excluded — columns not in DB yet
+    }
+    for api_field, db_col in field_map.items():
+        if api_field in raw:
+            db_data[db_col] = raw[api_field]
+    if "preferences" in raw:
+        db_data["preferred_niches"] = ", ".join(raw["preferences"])
+    return db_data
+
+
+# Load cached match scores from the matches table, keyed by brand_id
+def _get_scores_map(influencer_id: int | None) -> dict[int, dict]:
+    if influencer_id is None:
+        return {}
+    rows = select_many("matches", where={"influencer_id": influencer_id})
+    return {
+        int(r["brand_id"]): {
+            "total_score": int(r["total_score"]),
+            "niche_score": int(r["niche_score"]),
+            "audience_score": int(r["audience_score"]),
+            "engagement_score": int(r["engagement_score"]),
+            "history_score": int(r["history_score"]),
+        }
+        for r in rows
+    }
+
+
+# GET /brands — filterable list with optional pre-computed scores
+@router.get("/", response_model=List[BrandResponse])
 def get_brands(
-    industry: Optional[str] = Query(None, description="Filter by industry"),
-    location: Optional[str] = Query(None, description="Filter by location"),
+    industry: Optional[str] = Query(None),
+    size: Optional[str] = Query(None),
+    budget_min: Optional[int] = Query(None),
+    budget_max: Optional[int] = Query(None),
+    min_match_score: Optional[int] = Query(None),
+    influencer_id: Optional[int] = Query(None),
 ):
-    # search & filter brands
-    where = {}
+    clauses: list[str] = []
+    params: dict = {}
+
     if industry:
-        where["industry"] = industry
-    if location:
-        where["location"] = location
+        clauses.append('"industry" ILIKE :industry')
+        params["industry"] = f"%{industry}%"
+    if size:
+        clauses.append('"company_size" = :size')
+        params["size"] = size
+    if budget_min is not None:
+        clauses.append('"budget_max" >= :budget_min')
+        params["budget_min"] = budget_min
+    if budget_max is not None:
+        clauses.append('"budget_min" <= :budget_max')
+        params["budget_max"] = budget_max
 
-    rows = select_many("brands", where=where or None, order_by=[("brand_id", "ASC")])
-    return [dict(r) for r in rows]
+    sql = 'SELECT * FROM "brands"'
+    if clauses:
+        sql += " WHERE " + " AND ".join(clauses)
+    sql += ' ORDER BY "brand_id" ASC'
+
+    rows = execute_raw(sql, params)
+    scores_map = _get_scores_map(influencer_id)
+
+    results = []
+    for r in rows:
+        row = dict(r)
+        scores = scores_map.get(row["brand_id"], {})
+        resp = _db_row_to_response(row, scores)
+
+        if min_match_score is not None and resp["total_score"] < min_match_score:
+            continue
+
+        results.append(resp)
+
+    results.sort(key=lambda x: x["total_score"], reverse=True)
+    return results
 
 
-@router.get("/{brand_id}", response_model=Brand)
+# GET /brands/{id} — single profile lookup
+@router.get("/{brand_id}", response_model=BrandResponse)
 def get_brand(brand_id: int):
-    # get single brand by id
     rows = select_many("brands", where={"brand_id": brand_id})
     if not rows:
         raise HTTPException(status_code=404, detail="Brand not found")
-    return dict(rows[0])
+    return _db_row_to_response(dict(rows[0]))
 
 
-@router.post("/", response_model=Brand, status_code=201)
+# POST /brands — register new brand profile
+@router.post("/", response_model=BrandResponse, status_code=201)
 def create_brand(brand_in: BrandCreate):
-    # create new brand
-    data = brand_in.model_dump()
-    result = insert_one("brands", data, returning=["brand_id"])
+    db_data = _create_body_to_db(brand_in)
+    result = insert_one("brands", db_data, returning=["brand_id"])
     created_id = result["brand_id"]
     rows = select_many("brands", where={"brand_id": created_id})
-    return dict(rows[0])
+    return _db_row_to_response(dict(rows[0]))
 
 
-@router.put("/{brand_id}", response_model=Brand)
+# PUT /brands/{id} — partial profile update
+@router.put("/{brand_id}", response_model=BrandResponse)
 def update_brand(brand_id: int, brand_in: BrandUpdate):
-    # update existing brand
     rows = select_many("brands", where={"brand_id": brand_id})
     if not rows:
         raise HTTPException(status_code=404, detail="Brand not found")
 
-    update_data = brand_in.model_dump(exclude_unset=True)
-    if not update_data:
-        return dict(rows[0])
+    db_data = _update_body_to_db(brand_in)
+    if not db_data:
+        return _db_row_to_response(dict(rows[0]))
 
-    update_many("brands", update_data, where={"brand_id": brand_id})
+    update_many("brands", db_data, where={"brand_id": brand_id})
     rows = select_many("brands", where={"brand_id": brand_id})
-    return dict(rows[0])
-
-
-@router.delete("/{brand_id}", status_code=204)
-def delete_brand(brand_id: int):
-    # delete brand
-    deleted = delete_many("brands", where={"brand_id": brand_id})
-    if deleted == 0:
-        raise HTTPException(status_code=404, detail="Brand not found")
+    return _db_row_to_response(dict(rows[0]))

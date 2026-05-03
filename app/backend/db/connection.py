@@ -12,21 +12,9 @@ from sqlalchemy.pool import QueuePool
 from sqlalchemy import create_engine
 
 
+# Immutable connection config populated from environment variables
 @dataclass(frozen=True)
 class DatabaseConfig:
-    """PostgreSQL connection configuration.
-
-    Reads configuration from environment variables exposed in `docker-compose.yml`.
-
-    Attributes:
-        host: Database hostname (e.g., `db` when using Docker Compose).
-        port: Database port (default 5432).
-        name: Database name.
-        user: Database user.
-        password: Database password.
-        connect_timeout_s: Server-side connect timeout.
-    """
-
     host: str
     port: int
     name: str
@@ -36,7 +24,6 @@ class DatabaseConfig:
 
     @staticmethod
     def from_env() -> "DatabaseConfig":
-        """Create a config from environment variables."""
         return DatabaseConfig(
             host=os.getenv("DB_HOST", "localhost"),
             port=int(os.getenv("DB_PORT", "5432")),
@@ -47,7 +34,6 @@ class DatabaseConfig:
         )
 
     def sqlalchemy_url(self) -> str:
-        """Build a SQLAlchemy PostgreSQL URL."""
         return (
             f"postgresql+psycopg2://{self.user}:{self.password}"
             f"@{self.host}:{self.port}/{self.name}"
@@ -58,14 +44,9 @@ class DatabaseConfig:
 _ENGINE: Optional[Engine] = None
 
 
+# Lazy-initialized singleton engine with connection pooling
 def get_engine(config: Optional[DatabaseConfig] = None) -> Engine:
-    """Get a singleton SQLAlchemy engine with connection pooling.
-
-    Pooling notes:
-        - Uses `QueuePool` (default for psycopg2) with explicit sizing.
-        - `pool_pre_ping=True` helps avoid stale connections.
-    """
-    global _ENGINE  # noqa: PLW0603
+    global _ENGINE
     if _ENGINE is not None:
         return _ENGINE
 
@@ -81,6 +62,7 @@ def get_engine(config: Optional[DatabaseConfig] = None) -> Engine:
     return _ENGINE
 
 
+# Block until DB accepts connections; exponential backoff with ceiling
 def wait_for_db(
     engine: Optional[Engine] = None,
     *,
@@ -88,17 +70,6 @@ def wait_for_db(
     initial_delay_s: float = 0.5,
     max_delay_s: float = 5.0,
 ) -> None:
-    """Wait until the database is reachable.
-
-    Args:
-        engine: Optional SQLAlchemy engine; if not provided, uses `get_engine()`.
-        timeout_s: Total time budget for retries.
-        initial_delay_s: First sleep interval between retries.
-        max_delay_s: Maximum sleep interval between retries.
-
-    Raises:
-        TimeoutError: If the database is not reachable within the timeout.
-    """
     eng = engine or get_engine()
     deadline = time.time() + timeout_s
     delay = initial_delay_s
@@ -115,11 +86,10 @@ def wait_for_db(
             delay = min(max_delay_s, delay * 1.5)
 
 
+# Non-throwing connectivity probe for /health endpoint
 def health_check(engine: Optional[Engine] = None) -> bool:
-    """Return True if the database connection is alive."""
     try:
         wait_for_db(engine=engine, timeout_s=5)
         return True
     except Exception:
         return False
-
