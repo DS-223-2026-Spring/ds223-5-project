@@ -1,5 +1,5 @@
 import streamlit as st
-from ui_core import inject_css, init_session, nav_header, NICHES, FORMATS, COLLAB_CATS, INDUSTRIES, AGE_GROUPS, GENDERS
+from ui_core import inject_css, init_session, nav_header, NICHES, FORMATS, COLLAB_CATS
 from api import create_brand, create_influencer
 
 st.set_page_config(
@@ -99,12 +99,12 @@ if st.session_state.show_onboarding:
                     st.selectbox("", ["Under $1,000","$1,000–$5,000","$5,000–$15,000","$15,000+"],
                                  label_visibility="collapsed", key="ob_budget")
                 with c2:
-                    st.markdown("<div class='form-lbl'>INDUSTRY</div>", unsafe_allow_html=True)
-                    st.selectbox("", INDUSTRIES, label_visibility="collapsed", key="ob_industry")
+                    st.markdown("<div class='form-lbl'>INDUSTRY / NICHE</div>", unsafe_allow_html=True)
+                    st.text_input("", placeholder="e.g. Fitness, Tech", label_visibility="collapsed", key="ob_industry")
                     st.markdown("<div class='form-lbl'>COMPANY SIZE</div>", unsafe_allow_html=True)
                     st.selectbox("", ["Startup","SMB","Enterprise"], label_visibility="collapsed", key="ob_size")
                     st.markdown("<div class='form-lbl'>TARGET AUDIENCE</div>", unsafe_allow_html=True)
-                    st.text_input("", placeholder="e.g. Women 18-34 into fitness",
+                    st.text_input("", placeholder="e.g. Women 18–34 into fitness",
                                  label_visibility="collapsed", key="ob_target")
             else:
                 st.markdown("""<div class='ob-step-lbl'>STEP 2 OF 4</div>
@@ -115,24 +115,20 @@ if st.session_state.show_onboarding:
                     st.markdown("<div class='form-lbl'>YOUR HANDLE</div>", unsafe_allow_html=True)
                     st.text_input("", placeholder="@yourhandle", label_visibility="collapsed", key="ob_handle")
                     st.markdown("<div class='form-lbl'>FOLLOWER COUNT</div>", unsafe_allow_html=True)
-                    st.number_input("", min_value=0, max_value=10_000_000, value=0, step=1000, label_visibility="collapsed", key="ob_followers")
+                    st.text_input("", placeholder="e.g. 42000", label_visibility="collapsed", key="ob_followers")
                     st.markdown("<div class='form-lbl'>AUDIENCE PRIMARY AGE</div>", unsafe_allow_html=True)
-                    st.selectbox("", AGE_GROUPS, label_visibility="collapsed", key="ob_age")
+                    st.selectbox("", ["13–17","18–24","25–34","35+"], label_visibility="collapsed", key="ob_age")
                     st.markdown("<div class='form-lbl'>LOCATION</div>", unsafe_allow_html=True)
                     st.text_input("", placeholder="e.g. New York, US", label_visibility="collapsed", key="ob_loc")
                 with c2:
                     st.markdown("<div class='form-lbl'>PRIMARY NICHE</div>", unsafe_allow_html=True)
-                    st.selectbox("", NICHES, label_visibility="collapsed", key="ob_niche")
+                    st.text_input("", placeholder="e.g. Fitness, Beauty", label_visibility="collapsed", key="ob_niche")
                     st.markdown("<div class='form-lbl'>ENGAGEMENT RATE (%)</div>", unsafe_allow_html=True)
-                    st.number_input("", min_value=0.0, max_value=100.0, value=0.0, step=0.1, format="%.1f", label_visibility="collapsed", key="ob_eng")
-                    st.markdown("<div class='form-lbl'>AUDIENCE GENDER</div>", unsafe_allow_html=True)
-                    st.selectbox("", GENDERS, format_func=lambda x: x.replace('_',' ').title(), label_visibility="collapsed", key="ob_gender")
-                    st.markdown("<div class='form-lbl'>RATE PER POST ($)</div>", unsafe_allow_html=True)
-                    rc1, rc2 = st.columns(2)
-                    with rc1:
-                        st.number_input("Min", min_value=0, max_value=100_000, value=0, step=50, key="ob_rate_min")
-                    with rc2:
-                        st.number_input("Max", min_value=0, max_value=100_000, value=0, step=50, key="ob_rate_max")
+                    st.text_input("", placeholder="e.g. 3.8", label_visibility="collapsed", key="ob_eng")
+                    st.markdown("<div class='form-lbl'>GENDER SPLIT (% FEMALE)</div>", unsafe_allow_html=True)
+                    st.text_input("", placeholder="e.g. 65", label_visibility="collapsed", key="ob_gender")
+                    st.markdown("<div class='form-lbl'>RATE PER POST</div>", unsafe_allow_html=True)
+                    st.text_input("", placeholder="e.g. $800–$1,500", label_visibility="collapsed", key="ob_rate")
 
             bc, _, nc = st.columns([1,3,1])
             with bc:
@@ -161,7 +157,7 @@ if st.session_state.show_onboarding:
                 st.markdown("<div class='form-lbl'>PREFERRED CONTENT FORMATS</div>", unsafe_allow_html=True)
                 st.multiselect("", FORMATS, label_visibility="collapsed", key="ob_formats")
                 st.markdown("<div class='form-lbl'>TARGET AUDIENCE AGE</div>", unsafe_allow_html=True)
-                st.multiselect("", AGE_GROUPS, label_visibility="collapsed", key="ob_ages")
+                st.multiselect("", ["13–17","18–24","25–34","35+"], label_visibility="collapsed", key="ob_ages")
             else:
                 st.markdown("""<div class='ob-step-lbl'>STEP 3 OF 4</div>
                 <div class='ob-title'>Define your ideal match</div>
@@ -210,51 +206,6 @@ if st.session_state.show_onboarding:
                     st.session_state.ob_step = 2; st.rerun()
             with nc:
                 if st.button("Go to marketplace", type="primary", key="ob3_finish", use_container_width=True):
-                    # ── persist the profile to the backend ──────────────
-                    try:
-                        if role == "brand":
-                            # parse budget string to min/max integers
-                            budget_str = st.session_state.get("ob_budget", "$1,000–$5,000")
-                            budget_map = {
-                                "Under $1,000": (0, 1000),
-                                "$1,000–$5,000": (1000, 5000),
-                                "$5,000–$15,000": (5000, 15000),
-                                "$15,000+": (15000, 50000),
-                            }
-                            b_min, b_max = budget_map.get(budget_str, (1000, 5000))
-
-                            payload = {
-                                "name": st.session_state.get("ob_bname", "My Brand"),
-                                "industry": st.session_state.get("ob_industry", ""),
-                                "size": st.session_state.get("ob_size", "SMB"),
-                                "budget_min": b_min,
-                                "budget_max": b_max,
-                                "target": st.session_state.get("ob_target", ""),
-                                "location": st.session_state.get("ob_bloc", ""),
-                                "preferences": st.session_state.get("ob_niches", []) + st.session_state.get("ob_formats", []),
-                            }
-                            result = create_brand(payload)
-                            st.session_state.user_id = result["id"]
-                        else:
-                            payload = {
-                                "name": st.session_state.get("ob_handle", "@creator"),
-                                "niche": st.session_state.get("ob_niche", ""),
-                                "follower_count": int(st.session_state.get("ob_followers", 0)),
-                                "engagement_rate": float(st.session_state.get("ob_eng", 0.0)),
-                                "location": st.session_state.get("ob_loc", ""),
-                                "audience_age_group": st.session_state.get("ob_age", "18-24"),
-                                "audience_gender": st.session_state.get("ob_gender", "unknown"),
-                                "content_formats": st.session_state.get("ob_creator_formats", []),
-                                "rate_min": int(st.session_state.get("ob_rate_min", 0)),
-                                "rate_max": int(st.session_state.get("ob_rate_max", 0)),
-                                "bio": st.session_state.get("ob_bio", ""),
-                            }
-                            result = create_influencer(payload)
-                            st.session_state.user_id = result["id"]
-                    except Exception as e:
-                        st.error(f"Failed to save profile: {e}")
-                        st.stop()
-
                     st.session_state.show_onboarding = False
                     st.switch_page("pages/1_Discover.py")
     st.stop()
@@ -289,11 +240,11 @@ with center:
     with c1:
         if st.button("🏢  I'm a brand", use_container_width=True, type="primary"):
             st.session_state.role = "brand"; st.session_state.ob_role = "brand"
-            st.session_state.ob_step = 0; st.session_state.show_onboarding = True; st.rerun()
+            st.session_state.ob_step = 0; st.session_state.show_onboarding = True; st.session_state.ob_submitted = False; st.rerun()
     with c2:
         if st.button("✨  I'm a creator", use_container_width=True):
             st.session_state.role = "creator"; st.session_state.ob_role = "creator"
-            st.session_state.ob_step = 0; st.session_state.show_onboarding = True; st.rerun()
+            st.session_state.ob_step = 0; st.session_state.show_onboarding = True; st.session_state.ob_submitted = False; st.rerun()
     with c3:
         if st.button("🔍  Browse marketplace", use_container_width=True):
             st.switch_page("pages/1_Discover.py")
