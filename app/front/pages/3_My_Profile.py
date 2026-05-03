@@ -1,8 +1,8 @@
 import streamlit as st
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
-from ui_core import inject_css, nav_header, init_session, score_bars, initials, NICHES, FORMATS, INDUSTRIES, SIZES
-from api import get_influencer, get_brand, get_past_collaborations, send_contact, update_influencer, update_brand, INFLUENCERS, BRANDS
+from ui_core import inject_css, nav_header, init_session, score_bars, initials, NICHES, FORMATS, INDUSTRIES, SIZES, AGE_GROUPS, GENDERS
+from api import get_influencer, get_brand, get_past_collaborations, send_contact, update_influencer, update_brand, get_contact_requests
 
 st.set_page_config(page_title="My Profile · PairUp", page_icon="👤", layout="wide")
 inject_css()
@@ -48,16 +48,16 @@ def collab_modal(profile: dict, is_brand_profile: bool):
                 st.markdown("<div class='form-lbl'>YOUR CONTACT EMAIL</div>", unsafe_allow_html=True)
                 your_email = st.text_input("", placeholder="you@email.com", label_visibility="collapsed", key="modal_email")
             else:
-                own_brand = BRANDS[0]
+                own_brand = get_brand(user_id) or {"name": "", "email": ""}
                 st.markdown("<div class='form-lbl'>YOUR BRAND NAME</div>", unsafe_allow_html=True)
-                your_brand = st.text_input("", value=own_brand["name"], label_visibility="collapsed", key="modal_brand")
+                your_brand = st.text_input("", value=own_brand.get("name", ""), label_visibility="collapsed", key="modal_brand")
                 st.markdown("<div class='form-lbl'>CAMPAIGN / COLLAB IDEA</div>", unsafe_allow_html=True)
                 campaign_idea = st.text_area("", placeholder="Describe your campaign idea, timeline, and what you're looking for...",
                                             height=100, label_visibility="collapsed", key="modal_idea")
                 st.markdown("<div class='form-lbl'>BUDGET RANGE</div>", unsafe_allow_html=True)
                 budget = st.text_input("", placeholder="e.g. $2,000–$5,000", label_visibility="collapsed", key="modal_budget")
                 st.markdown("<div class='form-lbl'>YOUR CONTACT EMAIL</div>", unsafe_allow_html=True)
-                contact_email = st.text_input("", value=own_brand["email"], label_visibility="collapsed", key="modal_email")
+                contact_email = st.text_input("", value=own_brand.get("email", ""), label_visibility="collapsed", key="modal_email")
 
             col_cancel, col_send = st.columns(2)
             with col_cancel:
@@ -294,7 +294,15 @@ else:
     st.session_state.show_collab_modal = False
 
     if role == "brand":
-        own = BRANDS[0]
+        own = get_brand(user_id)
+        if not own:
+            st.info("Your brand profile hasn't been created yet. Complete the onboarding to get started.")
+            if st.button("Go to onboarding", type="primary"):
+                st.session_state.show_onboarding = True
+                st.session_state.ob_role = "brand"
+                st.session_state.ob_step = 0
+                st.switch_page("main.py")
+            st.stop()
         st.markdown("""<div style='font-size:26px;font-weight:800;color:#0D0E1A;margin-bottom:4px'>My profile</div>
         <div style='font-size:14px;color:#9899B0;margin-bottom:24px'>Your brand profile visible to creators on PairUp</div>""",
         unsafe_allow_html=True)
@@ -328,14 +336,32 @@ else:
 
         col_edit, col_dl = st.columns(2)
         with col_edit:
-            if st.button("Edit profile", type="primary", use_container_width=True):
-                # TODO: update_brand(user_id, {...})
-                st.success("Profile updated! (will persist once backend is connected)")
+            if st.button("Save changes", type="primary", use_container_width=True):
+                update_payload = {
+                    "name": brand_name,
+                    "industry": industry,
+                    "location": location,
+                    "target": target,
+                    "preferences": prefs,
+                }
+                try:
+                    update_brand(user_id, update_payload)
+                    st.success("Profile updated!")
+                except Exception as e:
+                    st.error(f"Update failed: {e}")
         with col_dl:
             st.button("Download media kit", use_container_width=True)
 
     else:
-        own = INFLUENCERS[0]
+        own = get_influencer(user_id)
+        if not own:
+            st.info("Your creator profile hasn't been created yet. Complete the onboarding to get started.")
+            if st.button("Go to onboarding", type="primary"):
+                st.session_state.show_onboarding = True
+                st.session_state.ob_role = "creator"
+                st.session_state.ob_step = 0
+                st.switch_page("main.py")
+            st.stop()
         st.markdown("""<div style='font-size:26px;font-weight:800;color:#0D0E1A;margin-bottom:4px'>My profile</div>
         <div style='font-size:14px;color:#9899B0;margin-bottom:24px'>Your creator profile visible to brands on PairUp</div>""",
         unsafe_allow_html=True)
@@ -368,35 +394,37 @@ else:
 
         # inbound requests
         st.markdown("<div class='sec-title'>INBOUND BRAND REQUESTS</div>", unsafe_allow_html=True)
-        # placeholder inbound requests (will come from GET /contact-requests?user_id=&direction=brand_to_influencer)
-        inbound = [
-            {"brand": "FitFuel Nutrition", "industry": "Fitness / Nutrition", "budget": "$3K–$8K", "score": 92, "campaign": "Protein launch campaign · Reels + Stories", "status": "new"},
-            {"brand": "Petal Foods",       "industry": "Food / Organic",       "budget": "$2.5K–$6K","score": 76, "campaign": "Organic meal kit launch · open to long-form", "status": "responded"},
-        ]
-        for req in inbound:
-            score_cls = "score-high" if req["score"]>=75 else "score-mid"
-            status_color = "#E0FBF4" if req["status"]=="responded" else "#FFF8EC"
-            status_text_color = "#007A5A" if req["status"]=="responded" else "#D48A00"
-            st.markdown(f"""
-            <div class='creator-card' style='margin-bottom:8px'>
-                <div style='display:flex;align-items:flex-start;justify-content:space-between'>
-                    <div style='display:flex;align-items:center;gap:12px'>
-                        <div class='avatar' style='background:#E0FBF4;color:#00A87D;width:36px;height:36px;font-size:11px'>{req['brand'][:2].upper()}</div>
+        inbound = get_contact_requests(user_id, direction="brand_to_influencer")
+        if not inbound:
+            st.markdown("<div style='font-size:13px;color:#9899B0;padding:12px 0'>No inbound requests yet. Brands will appear here when they reach out.</div>", unsafe_allow_html=True)
+        else:
+            for req in inbound:
+                status = req.get('status', 'pending')
+                status_color = "#E0FBF4" if status == "accepted" else "#FFF8EC"
+                status_text_color = "#007A5A" if status == "accepted" else "#D48A00"
+                st.markdown(f"""
+                <div class='creator-card' style='margin-bottom:8px'>
+                    <div style='display:flex;align-items:flex-start;justify-content:space-between'>
                         <div>
-                            <div style='font-size:14px;font-weight:700;color:#0D0E1A'>{req['brand']}</div>
-                            <div style='font-size:12px;color:#9899B0'>{req['industry']} · {req['budget']} · {req['score']}% match</div>
-                            <div style='font-size:12px;color:#5A5B72;margin-top:2px'>{req['campaign']}</div>
+                            <div style='font-size:14px;font-weight:700;color:#0D0E1A'>Request #{req.get('id','—')}</div>
+                            <div style='font-size:12px;color:#9899B0;margin-top:2px'>{req.get('message','')[:80]}</div>
                         </div>
+                        <span style='background:{status_color};color:{status_text_color};font-size:11px;font-weight:700;
+                                     padding:3px 10px;border-radius:10px;white-space:nowrap'>{status.capitalize()}</span>
                     </div>
-                    <span style='background:{status_color};color:{status_text_color};font-size:11px;font-weight:700;
-                                 padding:3px 10px;border-radius:10px;white-space:nowrap'>{req['status'].capitalize()}</span>
-                </div>
-            </div>""", unsafe_allow_html=True)
+                </div>""", unsafe_allow_html=True)
 
         col_edit, col_dl = st.columns(2)
         with col_edit:
-            if st.button("Edit profile", type="primary", use_container_width=True):
-                # TODO: update_influencer(user_id, {...})
-                st.success("Profile updated! (will persist once backend is connected)")
+            if st.button("Save changes", type="primary", use_container_width=True):
+                update_payload = {
+                    "name": own.get("name", ""),
+                    "niche": own.get("niche", ""),
+                }
+                try:
+                    update_influencer(user_id, update_payload)
+                    st.success("Profile updated!")
+                except Exception as e:
+                    st.error(f"Update failed: {e}")
         with col_dl:
             st.button("Download media kit", use_container_width=True)

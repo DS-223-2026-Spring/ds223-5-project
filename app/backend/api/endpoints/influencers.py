@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import re
 from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException, Query
@@ -11,43 +10,20 @@ from db.crud import execute_raw, insert_one, select_many, update_many
 router = APIRouter()
 
 
-# Extract numeric rate range from display string (e.g. "$800–$1,500/post" -> (800, 1500))
-def _parse_rate(rate_str: str) -> tuple[int, int]:
-    nums = re.findall(r"[\d,]+", rate_str.replace(",", ""))
-    if len(nums) >= 2:
-        return int(nums[0]), int(nums[1])
-    if len(nums) == 1:
-        return int(nums[0]), int(nums[0])
-    return 0, 0
-
-
-# Format rate range as display string with en-dash separator
-def _format_rate(rate_min: int, rate_max: int) -> str:
-    return f"${rate_min:,}\u2013${rate_max:,}/post"
-
-
-# Normalize free-text gender input to ref_audience_gender FK value
-def _normalize_gender(raw: str) -> str:
-    low = raw.strip().lower().replace("%", "")
-    if "f" in low and "m" not in low:
-        return "female"
-    if "m" in low and "f" not in low:
-        return "male"
-    if "non" in low or "nb" in low:
-        return "non_binary"
-    return "unknown"
-
-
 # Normalize age group to ref_audience_age_group FK value (en-dash -> hyphen)
 def _normalize_age_group(raw: str) -> str:
     normalized = raw.strip().replace("\u2013", "-").replace("\u2014", "-")
     valid = {"13-17", "18-24", "25-34", "35-44", "45-54", "55+"}
     if normalized in valid:
         return normalized
-    # Handle "35+" style
-    if "+" in normalized:
-        return normalized
     return normalized
+
+
+# Format rate range as display string with en-dash separator
+def _format_rate(rate_min: int, rate_max: int) -> str:
+    if rate_min == 0 and rate_max == 0:
+        return "—"
+    return f"${rate_min:,}\u2013${rate_max:,}/post"
 
 
 # Transform DB row dict to response schema
@@ -55,6 +31,8 @@ def _db_row_to_response(row: dict, scores: dict | None = None) -> dict:
     s = scores or {}
     formats_str = row.get("content_formats") or ""
     formats = [f.strip() for f in formats_str.split(",") if f.strip()]
+    r_min = int(row.get("rate_min", 0))
+    r_max = int(row.get("rate_max", 0))
     return {
         "id": row["influencer_id"],
         "name": row["handle"],
@@ -65,10 +43,9 @@ def _db_row_to_response(row: dict, scores: dict | None = None) -> dict:
         "age": row.get("audience_age_group", ""),
         "gender": row.get("audience_gender", ""),
         "formats": formats,
-        "rate": _format_rate(
-            int(row.get("rate_min", 0)),
-            int(row.get("rate_max", 0)),
-        ),
+        "rate_min": r_min,
+        "rate_max": r_max,
+        "rate": _format_rate(r_min, r_max),
         "bio": row.get("bio"),
         "is_synthetic": bool(row.get("is_synthetic", False)),
         "total_score": s.get("total_score", 0),
@@ -81,7 +58,6 @@ def _db_row_to_response(row: dict, scores: dict | None = None) -> dict:
 
 # Map InfluencerCreate fields to DB column names for INSERT
 def _create_body_to_db(data: InfluencerCreate) -> dict:
-    rate_min, rate_max = _parse_rate(data.rate)
     handle = data.name
     # DB requires email; derive from handle since contract doesn't include it
     email = handle.lstrip("@") + "@pairup.placeholder"
@@ -93,10 +69,10 @@ def _create_body_to_db(data: InfluencerCreate) -> dict:
         "follower_count": data.follower_count,
         "engagement_rate": data.engagement_rate,
         "audience_age_group": _normalize_age_group(data.audience_age_group),
-        "audience_gender": _normalize_gender(data.gender_split),
+        "audience_gender": data.audience_gender,
         "content_formats": ", ".join(data.content_formats),
-        "rate_min": rate_min,
-        "rate_max": rate_max,
+        "rate_min": data.rate_min,
+        "rate_max": max(data.rate_min, data.rate_max),
         "bio": data.bio or "",
         "email": email,
         "is_synthetic": False,
@@ -120,14 +96,14 @@ def _update_body_to_db(data: InfluencerUpdate) -> dict:
         db_data["engagement_rate"] = raw["engagement_rate"]
     if "audience_age_group" in raw:
         db_data["audience_age_group"] = _normalize_age_group(raw["audience_age_group"])
-    if "gender_split" in raw:
-        db_data["audience_gender"] = _normalize_gender(raw["gender_split"])
+    if "audience_gender" in raw:
+        db_data["audience_gender"] = raw["audience_gender"]
     if "content_formats" in raw:
         db_data["content_formats"] = ", ".join(raw["content_formats"])
-    if "rate" in raw:
-        rate_min, rate_max = _parse_rate(raw["rate"])
-        db_data["rate_min"] = rate_min
-        db_data["rate_max"] = rate_max
+    if "rate_min" in raw:
+        db_data["rate_min"] = raw["rate_min"]
+    if "rate_max" in raw:
+        db_data["rate_max"] = raw["rate_max"]
     if "bio" in raw:
         db_data["bio"] = raw["bio"]
     return db_data

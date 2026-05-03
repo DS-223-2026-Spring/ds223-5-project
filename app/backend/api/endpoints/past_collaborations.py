@@ -18,9 +18,7 @@ def _db_row_to_response(row: dict) -> dict:
         "brand": row.get("brand_name", ""),
         "category": row.get("brand_category", ""),
         "year": str(row.get("collab_year", "")),
-        "campaign_type": row.get("campaign_type", ""),
-        "estimated_reach": int(row.get("estimated_reach", 0) or 0),
-        "outcome_tag": row.get("outcome_tag", "neutral"),
+        "content_type": row.get("content_type", ""),
     }
 
 

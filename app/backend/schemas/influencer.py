@@ -15,7 +15,9 @@ class InfluencerResponse(BaseModel):
     age: str
     gender: str
     formats: List[str] = Field(default_factory=list)
-    rate: str
+    rate_min: int = 0
+    rate_max: int = 0
+    rate: str = ""
     bio: Optional[str] = None
     is_synthetic: bool = False
     total_score: int = 0
@@ -25,7 +27,7 @@ class InfluencerResponse(BaseModel):
     history_score: int = 0
 
 
-# POST request body
+# POST request body — typed fields, no manual string parsing needed
 class InfluencerCreate(BaseModel):
     name: str
     niche: str
@@ -33,11 +35,11 @@ class InfluencerCreate(BaseModel):
     engagement_rate: float
     location: str
     audience_age_group: str
-    gender_split: str
+    audience_gender: str
     content_formats: List[str]
-    rate: str
+    rate_min: int = 0
+    rate_max: int = 0
     bio: Optional[str] = None
-    past_collab_categories: Optional[List[str]] = None
 
 
 # PUT request body — partial update, only provided fields are applied
@@ -48,8 +50,8 @@ class InfluencerUpdate(BaseModel):
     engagement_rate: Optional[float] = None
     location: Optional[str] = None
     audience_age_group: Optional[str] = None
-    gender_split: Optional[str] = None
+    audience_gender: Optional[str] = None
     content_formats: Optional[List[str]] = None
-    rate: Optional[str] = None
+    rate_min: Optional[int] = None
+    rate_max: Optional[int] = None
     bio: Optional[str] = None
-    past_collab_categories: Optional[List[str]] = None

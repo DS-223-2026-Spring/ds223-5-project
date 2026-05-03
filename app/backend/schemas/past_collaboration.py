@@ -10,9 +10,7 @@ class PastCollaborationResponse(BaseModel):
     brand: str
     category: str
     year: str
-    campaign_type: str = ""
-    estimated_reach: int = 0
-    outcome_tag: str = "neutral"
+    content_type: str = ""
 
 
 # Internal creation schema — uses DB column names directly
@@ -22,9 +20,6 @@ class PastCollaborationCreate(BaseModel):
     brand_category: str
     collab_year: int
     content_type: str
-    campaign_type: str = ""
-    estimated_reach: int = 0
-    outcome_tag: str = "neutral"
 
 
 # Internal update schema — partial update, only provided fields are applied
@@ -33,6 +28,3 @@ class PastCollaborationUpdate(BaseModel):
     brand_category: Optional[str] = None
     collab_year: Optional[int] = None
     content_type: Optional[str] = None
-    campaign_type: Optional[str] = None
-    estimated_reach: Optional[int] = None
-    outcome_tag: Optional[str] = None

@@ -2,6 +2,7 @@
 api.py — Backend API client
 ============================
 Connects Streamlit frontend to the FastAPI backend.
+All functions return parsed JSON (dict/list) or None on 404.
 """
 
 import requests
@@ -9,12 +10,12 @@ import requests
 BASE_URL = "http://back:8000/api/v1"
 
 
-# Influencer endpoints
+# ── Influencer endpoints ─────────────────────────────────────────────────────
 
 def get_influencers(niche=None, location=None, min_engagement=None,
                     max_followers=None, min_match_score=None,
                     format_=None, age_group=None) -> list[dict]:
-    """GET /influencers"""
+    """GET /influencers with optional query filters."""
     params = {}
     if niche:           params["niche"] = niche
     if location:        params["location"] = location
@@ -23,18 +24,24 @@ def get_influencers(niche=None, location=None, min_engagement=None,
     if min_match_score: params["min_match_score"] = min_match_score
     if format_:         params["format"] = format_
     if age_group:       params["age_group"] = age_group
-    r = requests.get(f"{BASE_URL}/influencers", params=params, timeout=10)
-    r.raise_for_status()
-    return r.json()
+    try:
+        r = requests.get(f"{BASE_URL}/influencers", params=params, timeout=10)
+        r.raise_for_status()
+        return r.json()
+    except Exception:
+        return []
 
 
 def get_influencer(influencer_id: int) -> dict | None:
     """GET /influencers/{id}"""
-    r = requests.get(f"{BASE_URL}/influencers/{influencer_id}", timeout=10)
-    if r.status_code == 404:
+    try:
+        r = requests.get(f"{BASE_URL}/influencers/{influencer_id}", timeout=10)
+        if r.status_code == 404:
+            return None
+        r.raise_for_status()
+        return r.json()
+    except Exception:
         return None
-    r.raise_for_status()
-    return r.json()
 
 
 def create_influencer(payload: dict) -> dict:
@@ -51,29 +58,35 @@ def update_influencer(influencer_id: int, payload: dict) -> dict:
     return r.json()
 
 
-# Brand endpoints
+# ── Brand endpoints ──────────────────────────────────────────────────────────
 
 def get_brands(industry=None, size=None, budget_min=None,
                budget_max=None, min_match_score=None) -> list[dict]:
-    """GET /brands"""
+    """GET /brands with optional query filters."""
     params = {}
     if industry:        params["industry"] = industry
     if size:            params["size"] = size
     if budget_min:      params["budget_min"] = budget_min
     if budget_max:      params["budget_max"] = budget_max
     if min_match_score: params["min_match_score"] = min_match_score
-    r = requests.get(f"{BASE_URL}/brands", params=params, timeout=10)
-    r.raise_for_status()
-    return r.json()
+    try:
+        r = requests.get(f"{BASE_URL}/brands", params=params, timeout=10)
+        r.raise_for_status()
+        return r.json()
+    except Exception:
+        return []
 
 
 def get_brand(brand_id: int) -> dict | None:
     """GET /brands/{id}"""
-    r = requests.get(f"{BASE_URL}/brands/{brand_id}", timeout=10)
-    if r.status_code == 404:
+    try:
+        r = requests.get(f"{BASE_URL}/brands/{brand_id}", timeout=10)
+        if r.status_code == 404:
+            return None
+        r.raise_for_status()
+        return r.json()
+    except Exception:
         return None
-    r.raise_for_status()
-    return r.json()
 
 
 def create_brand(payload: dict) -> dict:
@@ -90,7 +103,7 @@ def update_brand(brand_id: int, payload: dict) -> dict:
     return r.json()
 
 
-# Match endpoints
+# ── Match endpoints ──────────────────────────────────────────────────────────
 
 def generate_match(brand_id: int, influencer_id: int) -> dict:
     """POST /matches/generate"""
@@ -105,16 +118,19 @@ def generate_match(brand_id: int, influencer_id: int) -> dict:
 
 def get_past_collaborations(influencer_id: int) -> list[dict]:
     """GET /past-collaborations?influencer_id={id}"""
-    r = requests.get(
-        f"{BASE_URL}/past-collaborations",
-        params={"influencer_id": influencer_id},
-        timeout=10,
-    )
-    r.raise_for_status()
-    return r.json()
+    try:
+        r = requests.get(
+            f"{BASE_URL}/past-collaborations",
+            params={"influencer_id": influencer_id},
+            timeout=10,
+        )
+        r.raise_for_status()
+        return r.json()
+    except Exception:
+        return []
 
 
-# Contact endpoints
+# ── Contact endpoints ────────────────────────────────────────────────────────
 
 def send_contact(brand_id: int, influencer_id: int, direction: str,
                  message: str = "", budget: str = "", email: str = "") -> dict:
@@ -140,6 +156,48 @@ def get_contact_requests(user_id: int, direction: str = None) -> list[dict]:
     params = {"user_id": user_id}
     if direction:
         params["direction"] = direction
-    r = requests.get(f"{BASE_URL}/contact-requests", params=params, timeout=10)
-    r.raise_for_status()
-    return r.json()
+    try:
+        r = requests.get(f"{BASE_URL}/contact-requests", params=params, timeout=10)
+        r.raise_for_status()
+        return r.json()
+    except Exception:
+        return []
+
+
+# ── Lazy-loaded lists for backward compat (used by 2_My_Matches.py) ──────────
+
+class _LazyList(list):
+    """List subclass that fetches data from the backend on first access."""
+    def __init__(self, fetcher):
+        super().__init__()
+        self._fetcher = fetcher
+        self._loaded = False
+
+    def _ensure_loaded(self):
+        if not self._loaded:
+            self._loaded = True
+            try:
+                data = self._fetcher()
+                super().extend(data)
+            except Exception:
+                pass
+
+    def __iter__(self):
+        self._ensure_loaded()
+        return super().__iter__()
+
+    def __len__(self):
+        self._ensure_loaded()
+        return super().__len__()
+
+    def __getitem__(self, index):
+        self._ensure_loaded()
+        return super().__getitem__(index)
+
+    def __bool__(self):
+        self._ensure_loaded()
+        return super().__bool__()
+
+
+INFLUENCERS = _LazyList(get_influencers)
+BRANDS = _LazyList(get_brands)
