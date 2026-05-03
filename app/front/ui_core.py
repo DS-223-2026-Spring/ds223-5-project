@@ -7,7 +7,8 @@ import streamlit as st
 # ── constants ──────────────────────────────────────────────────────────────────
 NICHES     = ["Fitness","Wellness","Fashion","Food","Tech","Travel","Beauty","Gaming","Running","Lifestyle","Parenting"]
 FORMATS    = ["Reels","Stories","Long-form","Posts"]
-AGE_GROUPS = ["13–17","18–24","25–34","35+"]
+AGE_GROUPS = ["13-17","18-24","25-34","35-44","45-54","55+"]
+GENDERS    = ["female","male","non_binary","unknown"]
 INDUSTRIES = ["Fitness / Nutrition","Beauty / Skincare","Food / Organic","Tech / SaaS",
               "Travel / Lifestyle","Fashion","Gaming","Wellness","Productivity / SaaS"]
 SIZES      = ["Startup","SMB","Enterprise"]

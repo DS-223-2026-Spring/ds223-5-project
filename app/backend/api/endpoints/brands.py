@@ -25,7 +25,6 @@ def _db_row_to_response(row: dict, scores: dict | None = None) -> dict:
         "target": row.get("target_audience", ""),
         "location": row.get("location", ""),
         "preferences": preferences,
-        # email/website/instagram columns not in DB yet (pending migration 0004)
         "email": row.get("email", ""),
         "website": row.get("website", ""),
         "instagram": row.get("instagram", ""),
@@ -48,7 +47,9 @@ def _create_body_to_db(data: BrandCreate) -> dict:
         "target_audience": data.target,
         "location": data.location,
         "preferred_niches": ", ".join(data.preferences),
-        # email/website/instagram excluded — columns not in DB yet (migration 0004)
+        "email": data.email,
+        "website": data.website,
+        "instagram": data.instagram,
     }
 
 
@@ -64,7 +65,9 @@ def _update_body_to_db(data: BrandUpdate) -> dict:
         "budget_max": "budget_max",
         "target": "target_audience",
         "location": "location",
-        # email/website/instagram excluded — columns not in DB yet
+        "email": "email",
+        "website": "website",
+        "instagram": "instagram",
     }
     for api_field, db_col in field_map.items():
         if api_field in raw:

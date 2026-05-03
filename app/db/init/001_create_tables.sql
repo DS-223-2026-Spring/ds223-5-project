@@ -70,6 +70,9 @@ CREATE TABLE brands (
   budget_max INT NOT NULL CHECK (budget_max >= budget_min),
   target_audience TEXT NOT NULL,
   preferred_niches TEXT NOT NULL,
+  email VARCHAR NOT NULL DEFAULT '',
+  website VARCHAR NOT NULL DEFAULT '',
+  instagram VARCHAR NOT NULL DEFAULT '',
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   CONSTRAINT uq_brands_name UNIQUE (name)
 );
