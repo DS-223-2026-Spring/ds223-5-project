@@ -48,6 +48,7 @@ services:
     working_dir: /app/ds
     volumes:
       - ./ds:/app/ds
+      - ./backend:/app/backend
     depends_on:
       db:
         condition: service_healthy

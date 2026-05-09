@@ -1,9 +1,8 @@
 # PairUp — Backend API Requirements
 
 This document is the contract between the frontend and backend teams.
-The frontend is fully built and ready. All functions in `api.py` return
-placeholder data. To connect the backend, replace each function body
-with a real HTTP call to the endpoints documented below.
+The frontend is fully built and ready. All functions in `api.js` connect
+to the real HTTP endpoints documented below.
 
 ---
 
@@ -22,7 +21,7 @@ All responses are JSON. All list endpoints return results sorted by
 ## 1. Influencers
 
 ### `GET /influencers`
-Search and filter influencers. Called on every filter change in `1_Discover.py`.
+Search and filter influencers. Called on every filter change in `DiscoverPage.jsx`.
 
 **Query params:**
 
@@ -69,7 +68,7 @@ Search and filter influencers. Called on every filter change in `1_Discover.py`.
 ---
 
 ### `GET /influencers/{id}`
-Single influencer profile. Called when loading `3_My_Profile.py`.
+Single influencer profile. Called when loading `ProfilePage.jsx`.
 
 **Response:** same object as above (single item, not array).
 
@@ -101,7 +100,7 @@ Create a new influencer profile. Called at the end of onboarding (creator flow, 
 ---
 
 ### `PUT /influencers/{id}`
-Update influencer profile. Called when creator clicks "Edit profile" in `3_My_Profile.py`.
+Update influencer profile. Called when creator clicks "Save Profile" in `ProfilePage.jsx`.
 
 **Request body:** same fields as POST, all optional.
 
@@ -112,7 +111,7 @@ Update influencer profile. Called when creator clicks "Edit profile" in `3_My_Pr
 ## 2. Brands
 
 ### `GET /brands`
-Search and filter brands. Called on every filter change in `1_Discover.py` (creator view).
+Search and filter brands. Called on every filter change in `DiscoverPage.jsx` (creator view).
 
 **Query params:**
 
@@ -154,7 +153,7 @@ Search and filter brands. Called on every filter change in `1_Discover.py` (crea
 ---
 
 ### `GET /brands/{id}`
-Single brand profile. Called when loading `3_My_Profile.py`.
+Single brand profile. Called when loading `ProfilePage.jsx`.
 
 **Response:** same object as above (single item).
 
@@ -186,7 +185,7 @@ Create a new brand profile. Called at end of onboarding (brand flow, step 4).
 ---
 
 ### `PUT /brands/{id}`
-Update brand profile. Called when brand clicks "Edit profile" in `3_My_Profile.py`.
+Update brand profile. Called when brand clicks "Save Profile" in `ProfilePage.jsx`.
 
 **Request body:** same fields as POST, all optional.
 
@@ -198,7 +197,6 @@ Update brand profile. Called when brand clicks "Edit profile" in `3_My_Profile.p
 
 ### `POST /matches/generate`
 Compute or refresh the match score for a brand–influencer pair.
-Called when a brand runs a search or selects an influencer.
 
 **Request body:**
 
@@ -225,7 +223,7 @@ Called when a brand runs a search or selects an influencer.
 ## 4. Past Collaborations
 
 ### `GET /past-collaborations`
-Called when loading a creator's full profile in `3_My_Profile.py`.
+Called when loading a creator's full profile in `ProfilePage.jsx`.
 
 **Query params:**
 
@@ -292,7 +290,7 @@ Called when brand clicks "Send collab request" or creator clicks "Send pitch to 
 ---
 
 ### `GET /contact-requests`
-Load sent and received requests. Called when loading `2_My_Matches.py`.
+Load sent and received requests. Called when loading `MatchesPage.jsx`.
 
 **Query params:**
 
@@ -302,67 +300,3 @@ Load sent and received requests. Called when loading `2_My_Matches.py`.
 | `direction` | string | no | `"brand_to_influencer"` or `"influencer_to_brand"` to filter |
 
 **Response:** array of contact request objects (same shape as POST response above).
-
----
-
-## 6. Scoring algorithm (backend implementation notes)
-
-The matching algorithm is defined in the backend spec. Summary for reference:
-
-| Sub-score | Weight | Logic |
-|---|---|---|
-| `niche_score` | 35% | Exact match = 100, adjacent = 60–80, mismatch = 0–30 |
-| `audience_score` | 30% | Age + gender + location, each scored independently, averaged |
-| `engagement_score` | 25% | Normalised against follower tier benchmark |
-| `history_score` | 10% | Past collab category match = boost, no history = 60, mismatch = small penalty |
-
-```
-total_score = round(
-    niche_score * 0.35 +
-    audience_score * 0.30 +
-    engagement_score * 0.25 +
-    history_score * 0.10
-)
-```
-
----
-
-## 7. Connecting the backend (step by step)
-
-1. Start the backend service (`app/back/`) and confirm it runs on `http://localhost:8000`
-2. Open `api.py` in `app/front/`
-3. Set `BASE_URL = "http://back:8000"` (docker) or `"http://localhost:8000"` (local)
-4. For each function, replace the placeholder return with the commented HTTP call:
-
-```python
-# example — get_influencers()
-def get_influencers(...) -> list[dict]:
-    # remove: return sorted(list(INFLUENCERS), ...)
-    # add:
-    params = {k: v for k, v in {...}.items() if v is not None}
-    r = requests.get(f"{BASE_URL}/influencers", params=params, timeout=5)
-    r.raise_for_status()
-    return r.json()
-```
-
-5. Test each page and verify data loads correctly
-6. Remove `INFLUENCERS` and `BRANDS` placeholder lists from `api.py` once all endpoints are connected
-
----
-
-## Summary table
-
-| Method | Endpoint | Used in | Purpose |
-|---|---|---|---|
-| GET | `/influencers` | `1_Discover.py` | Creator search |
-| GET | `/influencers/{id}` | `3_My_Profile.py` | Creator detail |
-| POST | `/influencers` | `main.py` onboarding | Create creator profile |
-| PUT | `/influencers/{id}` | `3_My_Profile.py` | Edit creator profile |
-| GET | `/brands` | `1_Discover.py` | Brand search |
-| GET | `/brands/{id}` | `3_My_Profile.py` | Brand detail |
-| POST | `/brands` | `main.py` onboarding | Create brand profile |
-| PUT | `/brands/{id}` | `3_My_Profile.py` | Edit brand profile |
-| POST | `/matches/generate` | `1_Discover.py` | Compute match score |
-| GET | `/past-collaborations` | `3_My_Profile.py` | Past collab list |
-| POST | `/contact` | `3_My_Profile.py` | Send request/pitch |
-| GET | `/contact-requests` | `2_My_Matches.py` | Load sent/received requests |

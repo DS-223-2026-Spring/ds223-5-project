@@ -4,27 +4,23 @@ from fastapi import APIRouter, HTTPException
 
 from schemas.contact_request import ContactCreate, ContactResponse
 from db.crud import insert_one, select_many
+from services.notifications import send_collab_email
 
 router = APIRouter()
 
 
 # POST /contact — create a new collaboration request between brand and influencer
-@router.post("/", response_model=ContactResponse, status_code=201)
+@router.post("/", response_model=ContactResponse, status_code=201, description="Create a new collaboration pitch or contact request between a brand and an influencer. Dispatches an automated mock email notification to the recipient.")
 def send_contact(body: ContactCreate):
-    # Validate direction enum
-    valid_directions = {"brand_to_influencer", "influencer_to_brand"}
-    if body.direction not in valid_directions:
-        raise HTTPException(
-            status_code=422,
-            detail=f"direction must be one of {valid_directions}",
-        )
 
     # Verify referenced brand exists
-    if not select_many("brands", where={"brand_id": body.brand_id}):
+    brand_rows = select_many("brands", where={"brand_id": body.brand_id})
+    if not brand_rows:
         raise HTTPException(status_code=404, detail="Brand not found")
 
     # Verify referenced influencer exists
-    if not select_many("influencers", where={"influencer_id": body.influencer_id}):
+    influencer_rows = select_many("influencers", where={"influencer_id": body.influencer_id})
+    if not influencer_rows:
         raise HTTPException(status_code=404, detail="Influencer not found")
 
     # Map contract field names to DB column names (budget -> budget_offer, email -> contact_email)
@@ -42,6 +38,22 @@ def send_contact(body: ContactCreate):
     created_id = result["request_id"]
     rows = select_many("contact_requests", where={"request_id": created_id})
     row = dict(rows[0])
+
+    # Determine recipient and send mock email
+    brand = dict(brand_rows[0])
+    influencer = dict(influencer_rows[0])
+    
+    if body.direction == "brand_to_influencer":
+        to_email = influencer.get("email")
+        subject = f"New Collaboration Request from {brand.get('name')}"
+        email_body = f"Message:\n{body.message}\n\nBudget: {body.budget}\nReply to: {body.email}"
+    else:
+        to_email = brand.get("email")
+        subject = f"New Collaboration Pitch from {influencer.get('handle')}"
+        email_body = f"Message:\n{body.message}\n\nReply to: {body.email}"
+        
+    if to_email:
+        send_collab_email(to_email, subject, email_body)
 
     # Map DB columns back to contract field names for response
     return {

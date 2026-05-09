@@ -159,7 +159,23 @@ def ensure_model_output_tables(engine: Any) -> None:
 
 
 def fetch_influencers(engine: Any, limit: Optional[int] = None) -> pd.DataFrame:
-    columns = [
+    db_columns = [
+        "influencer_id",
+        "niche",
+        "follower_count",
+        "engagement_rate",
+        "location",
+        "content_formats",
+        "bio",
+    ]
+    rows = select_many(
+        "influencers",
+        columns=db_columns,
+        limit=limit,
+        engine=engine,
+    )
+    
+    df_columns = [
         "id",
         "niche",
         "follower_count",
@@ -168,15 +184,11 @@ def fetch_influencers(engine: Any, limit: Optional[int] = None) -> pd.DataFrame:
         "content_format_tags",
         "bio",
     ]
-    rows = select_many(
-        "influencers",
-        columns=columns,
-        limit=limit,
-        engine=engine,
-    )
     if not rows:
-        return pd.DataFrame(columns=columns)
+        return pd.DataFrame(columns=df_columns)
+        
     df = pd.DataFrame(rows)
+    df.rename(columns={"influencer_id": "id", "content_formats": "content_format_tags"}, inplace=True)
     df["content_format_tags"] = df["content_format_tags"].apply(_coerce_tags)
     df["bio"] = df.get("bio")
     return df

@@ -23,7 +23,7 @@ def _db_row_to_response(row: dict) -> dict:
 
 
 # GET /past-collaborations — list collaboration history for a given influencer
-@router.get("/", response_model=List[PastCollaborationResponse])
+@router.get("/", response_model=List[PastCollaborationResponse], description="Retrieve the portfolio of past brand collaborations for a given influencer, used in history score calculation.")
 def get_past_collaborations(
     influencer_id: int = Query(...),
 ):

@@ -10,7 +10,7 @@ router = APIRouter()
 
 
 # POST /matches/generate — compute scores and persist to matches table
-@router.post("/generate", response_model=MatchResponse)
+@router.post("/generate", response_model=MatchResponse, description="Generate and persist match scores between a specific brand and influencer based on niche, audience demographics, engagement, and collaboration history.")
 def generate_match(body: MatchGenerateRequest):
     # Fetch brand row
     brand_rows = select_many("brands", where={"brand_id": body.brand_id})

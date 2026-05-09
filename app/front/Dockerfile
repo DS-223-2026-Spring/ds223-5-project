@@ -1,12 +1,4 @@
-FROM python:3.11-slim
-
+FROM node:20-alpine
 WORKDIR /app
-
-COPY pyproject.toml .
-RUN pip install --no-cache-dir streamlit requests
-
-COPY . .
-
-EXPOSE 8501
-
-CMD ["streamlit", "run", "main.py", "--server.port=8501", "--server.address=0.0.0.0"]
+COPY package*.json ./
+CMD ["sh", "-c", "npm install && npm run dev -- --port=8501 --host=0.0.0.0"]

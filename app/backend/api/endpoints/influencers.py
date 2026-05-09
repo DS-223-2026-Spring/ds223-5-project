@@ -47,6 +47,7 @@ def _db_row_to_response(row: dict, scores: dict | None = None) -> dict:
         "rate_max": r_max,
         "rate": _format_rate(r_min, r_max),
         "bio": row.get("bio"),
+        "email": row.get("email", ""),
         "is_synthetic": bool(row.get("is_synthetic", False)),
         "total_score": s.get("total_score", 0),
         "niche_score": s.get("niche_score", 0),
@@ -59,8 +60,6 @@ def _db_row_to_response(row: dict, scores: dict | None = None) -> dict:
 # Map InfluencerCreate fields to DB column names for INSERT
 def _create_body_to_db(data: InfluencerCreate) -> dict:
     handle = data.name
-    # DB requires email; derive from handle since contract doesn't include it
-    email = handle.lstrip("@") + "@pairup.placeholder"
     return {
         "handle": handle,
         "full_name": handle,
@@ -74,7 +73,7 @@ def _create_body_to_db(data: InfluencerCreate) -> dict:
         "rate_min": data.rate_min,
         "rate_max": max(data.rate_min, data.rate_max),
         "bio": data.bio or "",
-        "email": email,
+        "email": data.email,
         "is_synthetic": False,
     }
 
@@ -106,10 +105,12 @@ def _update_body_to_db(data: InfluencerUpdate) -> dict:
         db_data["rate_max"] = raw["rate_max"]
     if "bio" in raw:
         db_data["bio"] = raw["bio"]
+    if "email" in raw:
+        db_data["email"] = raw["email"]
     return db_data
 
 
-# Load cached match scores from the matches table, keyed by influencer_id
+# Load cached match scores from the matches table, keyed by influencer_id (Fallback)
 def _get_scores_map(brand_id: int | None) -> dict[int, dict]:
     if brand_id is None:
         return {}
@@ -127,7 +128,7 @@ def _get_scores_map(brand_id: int | None) -> dict[int, dict]:
 
 
 # GET /influencers — filterable list with optional pre-computed scores
-@router.get("/", response_model=List[InfluencerResponse])
+@router.get("/", response_model=List[InfluencerResponse], description="Retrieve a list of influencers matching optional filter criteria such as niche, location, engagement rate, follower count, and audience demographics. If `brand_id` is provided, dynamically calculates and includes match scores.")
 def get_influencers(
     niche: Optional[str] = Query(None),
     location: Optional[str] = Query(None),
@@ -164,7 +165,25 @@ def get_influencers(
     sql += ' ORDER BY "influencer_id" ASC'
 
     rows = execute_raw(sql, params)
-    scores_map = _get_scores_map(brand_id)
+    
+    # Compute scores on the fly if brand_id is provided
+    scores_map = {}
+    if brand_id:
+        from services.scoring import compute_match
+        from collections import defaultdict
+        
+        brand_rows = select_many("brands", where={"brand_id": brand_id})
+        if brand_rows:
+            brand = dict(brand_rows[0])
+            # Fetch all past collaborations to calculate history_score
+            collab_rows = execute_raw('SELECT * FROM "past_collaborations"')
+            collabs_by_inf = defaultdict(list)
+            for cr in collab_rows:
+                collabs_by_inf[cr["influencer_id"]].append(dict(cr))
+                
+            for r in rows:
+                iid = r["influencer_id"]
+                scores_map[iid] = compute_match(brand, dict(r), collabs_by_inf[iid])
 
     results = []
     for r in rows:
@@ -187,16 +206,25 @@ def get_influencers(
 
 
 # GET /influencers/{id} — single profile lookup
-@router.get("/{influencer_id}", response_model=InfluencerResponse)
-def get_influencer(influencer_id: int):
+@router.get("/{influencer_id}", response_model=InfluencerResponse, description="Retrieve a specific influencer's profile by their ID. If `brand_id` is provided, dynamically calculates and includes match scores against that brand.")
+def get_influencer(influencer_id: int, brand_id: Optional[int] = Query(None)):
     rows = select_many("influencers", where={"influencer_id": influencer_id})
     if not rows:
         raise HTTPException(status_code=404, detail="Influencer not found")
-    return _db_row_to_response(dict(rows[0]))
+        
+    scores = {}
+    if brand_id:
+        brand_rows = select_many("brands", where={"brand_id": brand_id})
+        if brand_rows:
+            collab_rows = select_many("past_collaborations", where={"influencer_id": influencer_id})
+            from services.scoring import compute_match
+            scores = compute_match(dict(brand_rows[0]), dict(rows[0]), [dict(r) for r in collab_rows])
+            
+    return _db_row_to_response(dict(rows[0]), scores)
 
 
 # POST /influencers — register new influencer profile
-@router.post("/", response_model=InfluencerResponse, status_code=201)
+@router.post("/", response_model=InfluencerResponse, status_code=201, description="Register a new influencer profile in the system. Required fields include handle, niche, location, follower count, and audience demographics.")
 def create_influencer(influencer_in: InfluencerCreate):
     db_data = _create_body_to_db(influencer_in)
     result = insert_one("influencers", db_data, returning=["influencer_id"])
@@ -206,7 +234,7 @@ def create_influencer(influencer_in: InfluencerCreate):
 
 
 # PUT /influencers/{id} — partial profile update
-@router.put("/{influencer_id}", response_model=InfluencerResponse)
+@router.put("/{influencer_id}", response_model=InfluencerResponse, description="Update an existing influencer's profile. Accepts a partial payload, modifying only the provided fields.")
 def update_influencer(influencer_id: int, influencer_in: InfluencerUpdate):
     rows = select_many("influencers", where={"influencer_id": influencer_id})
     if not rows:

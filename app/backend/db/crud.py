@@ -49,8 +49,10 @@ def insert_one(
 
     with eng.begin() as conn:
         res = conn.execute(text(sql), dict(data))
-        row = res.mappings().first()
-        return dict(row) if row is not None else {}
+        if returning:
+            row = res.mappings().first()
+            return dict(row) if row is not None else {}
+        return {}
 
 
 # SELECT with equality filters, ordering, and pagination
@@ -211,5 +213,7 @@ def upsert_one(
 
     with eng.begin() as conn:
         res = conn.execute(text(sql), dict(data))
-        row = res.mappings().first()
-        return dict(row) if row is not None else {}
+        if returning:
+            row = res.mappings().first()
+            return dict(row) if row is not None else {}
+        return {}

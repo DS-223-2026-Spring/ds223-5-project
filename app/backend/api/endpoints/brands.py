@@ -95,7 +95,7 @@ def _get_scores_map(influencer_id: int | None) -> dict[int, dict]:
 
 
 # GET /brands — filterable list with optional pre-computed scores
-@router.get("/", response_model=List[BrandResponse])
+@router.get("/", response_model=List[BrandResponse], description="Retrieve a list of brand profiles matching optional filter criteria such as industry, size, and budget range. If `influencer_id` is provided, dynamically calculates and includes match scores.")
 def get_brands(
     industry: Optional[str] = Query(None),
     size: Optional[str] = Query(None),
@@ -126,7 +126,18 @@ def get_brands(
     sql += ' ORDER BY "brand_id" ASC'
 
     rows = execute_raw(sql, params)
-    scores_map = _get_scores_map(influencer_id)
+    
+    scores_map = {}
+    if influencer_id:
+        from services.scoring import compute_match
+        inf_rows = select_many("influencers", where={"influencer_id": influencer_id})
+        if inf_rows:
+            influencer = dict(inf_rows[0])
+            collab_rows = execute_raw('SELECT * FROM "past_collaborations" WHERE "influencer_id" = :inf_id', {"inf_id": influencer_id})
+            past_collabs = [dict(cr) for cr in collab_rows]
+            
+            for r in rows:
+                scores_map[r["brand_id"]] = compute_match(dict(r), influencer, past_collabs)
 
     results = []
     for r in rows:
@@ -144,16 +155,25 @@ def get_brands(
 
 
 # GET /brands/{id} — single profile lookup
-@router.get("/{brand_id}", response_model=BrandResponse)
-def get_brand(brand_id: int):
+@router.get("/{brand_id}", response_model=BrandResponse, description="Retrieve a specific brand's profile by their ID.")
+def get_brand(brand_id: int, influencer_id: Optional[int] = Query(None)):
     rows = select_many("brands", where={"brand_id": brand_id})
     if not rows:
         raise HTTPException(status_code=404, detail="Brand not found")
-    return _db_row_to_response(dict(rows[0]))
+        
+    scores = {}
+    if influencer_id:
+        inf_rows = select_many("influencers", where={"influencer_id": influencer_id})
+        if inf_rows:
+            collab_rows = select_many("past_collaborations", where={"influencer_id": influencer_id})
+            from services.scoring import compute_match
+            scores = compute_match(dict(rows[0]), dict(inf_rows[0]), [dict(r) for r in collab_rows])
+            
+    return _db_row_to_response(dict(rows[0]), scores)
 
 
 # POST /brands — register new brand profile
-@router.post("/", response_model=BrandResponse, status_code=201)
+@router.post("/", response_model=BrandResponse, status_code=201, description="Register a new brand profile in the system. Required fields include name, industry, company size, and budget parameters.")
 def create_brand(brand_in: BrandCreate):
     db_data = _create_body_to_db(brand_in)
     result = insert_one("brands", db_data, returning=["brand_id"])
@@ -163,7 +183,7 @@ def create_brand(brand_in: BrandCreate):
 
 
 # PUT /brands/{id} — partial profile update
-@router.put("/{brand_id}", response_model=BrandResponse)
+@router.put("/{brand_id}", response_model=BrandResponse, description="Update an existing brand's profile. Accepts a partial payload, modifying only the provided fields.")
 def update_brand(brand_id: int, brand_in: BrandUpdate):
     rows = select_many("brands", where={"brand_id": brand_id})
     if not rows:

@@ -35,7 +35,7 @@ class BrandCreate(BaseModel):
     target: str
     location: str
     preferences: List[str]
-    email: str = ""
+    email: str
     website: str = ""
     instagram: str = ""
 
