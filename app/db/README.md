@@ -72,9 +72,11 @@ python app/db/tools/publish_ds_modeling_dataset.py --csv app/ds/outputs/modeling
   - `matches`
   - `contact_requests`
   - `past_collaborations`
-- **Reference tables** (lookup tables) used for integrity:
-  - `ref_contact_direction`, `ref_contact_status`
-  - `ref_audience_age_group`, `ref_audience_gender`
+- **Reference tables** (seeded lookups):
+  - `ref_contact_direction`, `ref_contact_status` — FKs from `contact_requests`
+  - `ref_audience_age_group`, `ref_audience_gender` — seeded for docs/examples; **`influencers.audience_*` are free-form `VARCHAR`** (migration `0004`, Milestone 3) so APIs can accept display strings
+- **`brands`**: `email`, `website`, `instagram` (empty-string defaults until populated)
+- **`past_collaborations`**: `campaign_type`, `estimated_reach`, `outcome_tag` (see migration `0004`)
 - **DS outputs** are stored in:
   - `ds_model_metrics` (metrics columns match `app/ds/outputs/baseline_model_comparison.csv`)
   - `ds_influencer_predictions` (per-influencer predictions keyed by `(influencer_id, model)`)
@@ -85,3 +87,23 @@ python app/db/tools/publish_ds_modeling_dataset.py --csv app/ds/outputs/modeling
   - `brands`, `influencers` → then `matches`, `contact_requests`, `past_collaborations`
 - **`content_formats`**: stored as `TEXT` (comma-separated string). The loader will normalize JSON lists into a comma-separated string.
 
+## M4 Validation Notes (Issue #109)
+
+Validated all tables against backend routes and DS scripts:
+
+- `brands` — all columns used by backend endpoints exist ✅
+- `influencers` — all columns used by backend and DS scripts exist ✅
+- `matches` — UNIQUE(brand_id, influencer_id) confirmed ✅
+- `contact_requests` — schema confirmed against backend routes ✅
+- `past_collaborations` — campaign_type, estimated_reach, outcome_tag added in M3 ✅
+- `ds_model_metrics` — confirmed for DS metric storage ✅
+- `ds_influencer_predictions` — confirmed for DS prediction storage ✅
+- `ds_modeling_dataset` — confirmed, matches DS output CSV columns exactly ✅
+
+## M4 Stability Notes (Issue #110)
+
+- All upsert functions use ON CONFLICT DO UPDATE — safe for unlimited re-runs ✅
+- publish_ds_metrics.py handles null rmse gracefully ✅
+- publish_ds_modeling_dataset.py handles bool parsing for CSV inputs ✅
+- connect_with_retry() uses exponential backoff — stable under slow DB startup ✅
+- All indexes confirmed present for DS and backend query patterns ✅
