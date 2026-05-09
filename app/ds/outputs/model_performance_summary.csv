@@ -1,0 +1,2 @@
+selected_model_name,dataset_size,median_engagement_rate,accuracy,f1,roc_auc
+hist_gradient_boosting,250,5.133290360465601,0.5873015873015873,0.59375,0.6129032258064516
