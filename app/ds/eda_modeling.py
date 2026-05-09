@@ -1,13 +1,16 @@
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, HistGradientBoostingClassifier
 from sklearn.impute import SimpleImputer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, f1_score, mean_squared_error
@@ -15,54 +18,44 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
+# Wire up backend imports so we can query the DB
+APP_DIR = Path(__file__).resolve().parents[1]
+BACKEND_DIR = APP_DIR / "backend"
+sys.path.insert(0, str(BACKEND_DIR))
+
+from db.connection import get_engine, wait_for_db
+from db.crud import select_many
+
 OUTPUT_DIR = Path(__file__).resolve().parent / "outputs"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def build_dataset() -> pd.DataFrame:
-    np.random.seed(42)
+def fetch_dataset_from_db() -> pd.DataFrame:
+    """Pull influencer data from the live database."""
+    engine = get_engine()
+    wait_for_db(engine)
 
-    base = pd.DataFrame(
-        [
-            {
-                "name": "Alex Doe",
-                "niche": "Tech",
-                "follower_count": 50000,
-                "engagement_rate": 4.5,
-                "location": "New York",
-                "campaign_conversions": 120,
-                "synthetic_data": False,
-            },
-            {
-                "name": "Jane Smith",
-                "niche": "Fashion",
-                "follower_count": 120000,
-                "engagement_rate": 5.2,
-                "location": "Los Angeles",
-                "campaign_conversions": 240,
-                "synthetic_data": False,
-            },
-        ]
+    rows = select_many(
+        "influencers",
+        columns=(
+            "influencer_id",
+            "full_name",
+            "niche",
+            "follower_count",
+            "engagement_rate",
+            "location",
+            "is_synthetic",
+        ),
+        engine=engine,
     )
+    if not rows:
+        raise RuntimeError("No rows found in `influencers` table. Seed the DB first.")
 
-    n_synth = 198
-    synth = pd.DataFrame(
-        {
-            "name": [f"Synthetic Creator {i+1}" for i in range(n_synth)],
-            "niche": np.random.choice(
-                ["Tech", "Fashion", "Fitness", "Food", "Travel"], size=n_synth
-            ),
-            "follower_count": np.random.randint(3000, 300000, size=n_synth),
-            "engagement_rate": np.round(np.random.uniform(1.0, 10.0, size=n_synth), 2),
-            "location": np.random.choice(
-                ["New York", "Los Angeles", "Austin", "Seattle", "Chicago"], size=n_synth
-            ),
-            "campaign_conversions": np.random.randint(5, 600, size=n_synth),
-            "synthetic_data": True,
-        }
-    )
+    df = pd.DataFrame(rows)
+    df.rename(columns={"influencer_id": "id", "full_name": "name"}, inplace=True)
+    df["synthetic_data"] = df.pop("is_synthetic")
 
-    df = pd.concat([base, synth], ignore_index=True)
+
     df["target_high_performer"] = (
         df["engagement_rate"] >= df["engagement_rate"].median()
     ).astype(int)
@@ -76,7 +69,6 @@ def run_eda(df: pd.DataFrame) -> None:
     corr_cols = [
         "follower_count",
         "engagement_rate",
-        "campaign_conversions",
         "target_high_performer",
     ]
     corr = df[corr_cols].corr()
@@ -107,8 +99,6 @@ def run_eda(df: pd.DataFrame) -> None:
 def train_and_compare_models(df: pd.DataFrame) -> pd.DataFrame:
     features = [
         "follower_count",
-        "engagement_rate",
-        "campaign_conversions",
         "niche",
         "location",
     ]
@@ -117,7 +107,7 @@ def train_and_compare_models(df: pd.DataFrame) -> pd.DataFrame:
     X = df[features]
     y = df[target]
 
-    numeric_cols = ["follower_count", "engagement_rate", "campaign_conversions"]
+    numeric_cols = ["follower_count"]
     categorical_cols = ["niche", "location"]
 
     preprocessor = ColumnTransformer(
@@ -137,7 +127,7 @@ def train_and_compare_models(df: pd.DataFrame) -> pd.DataFrame:
                 Pipeline(
                     [
                         ("imputer", SimpleImputer(strategy="most_frequent")),
-                        ("onehot", OneHotEncoder(handle_unknown="ignore")),
+                        ("onehot", OneHotEncoder(handle_unknown="ignore", sparse_output=False)),
                     ]
                 ),
                 categorical_cols,
@@ -148,6 +138,7 @@ def train_and_compare_models(df: pd.DataFrame) -> pd.DataFrame:
     models = {
         "logistic_regression": LogisticRegression(max_iter=1000),
         "random_forest": RandomForestClassifier(n_estimators=250, random_state=42),
+        "hist_gradient_boosting": HistGradientBoostingClassifier(random_state=42),
     }
 
     X_train, X_test, y_train, y_test = train_test_split(
@@ -176,11 +167,11 @@ def train_and_compare_models(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def main() -> None:
-    df = build_dataset()
+    df = fetch_dataset_from_db()
     df.to_csv(OUTPUT_DIR / "modeling_dataset.csv", index=False)
     run_eda(df)
     results = train_and_compare_models(df)
-    print("EDA and modeling complete.")
+    print(f"EDA and modeling complete. {len(df)} influencers from DB.")
     print(results.to_string(index=False))
 
 

@@ -392,6 +392,7 @@ def train_and_select_best_model(
             "f1": selected["f1"],
             "accuracy": selected["accuracy"],
         },
+        "all_candidate_scores": candidate_scores,
     }
     return best_pipe, meta
 
@@ -491,6 +492,25 @@ def store_predictions(
         insert_one("influencer_predictions", payload, engine=engine, returning=())
         inserted += 1
     return inserted
+
+
+# Write all candidate model metrics to outputs/baseline_model_comparison.csv
+def _export_model_comparison_csv(candidate_scores: List[Dict[str, Any]]) -> None:
+    if not candidate_scores:
+        return
+    output_dir = Path(__file__).resolve().parent / "outputs"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    rows = []
+    for cs in candidate_scores:
+        rmse = (1 - cs.get("accuracy", 0)) ** 0.5 if cs.get("accuracy") is not None else 0
+        rows.append({
+            "model": cs["model_name"],
+            "accuracy": round(cs.get("accuracy", 0), 4),
+            "f1": round(cs.get("f1", 0), 4),
+            "rmse": round(rmse, 4),
+        })
+    df = pd.DataFrame(rows).sort_values(by="f1", ascending=False)
+    df.to_csv(output_dir / "baseline_model_comparison.csv", index=False)
 
 
 def train_and_store(
@@ -625,6 +645,9 @@ def train_and_store(
         y_true=y,
         top_tags=top_tags,
     )
+
+    # Export all candidate model metrics to CSV for downstream tooling
+    _export_model_comparison_csv(meta.get("all_candidate_scores", []))
 
     return {
         "model_run_id": run_id,

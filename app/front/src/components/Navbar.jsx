@@ -71,9 +71,9 @@ export default function Navbar() {
           Brand
         </button>
         <button
-          className={state.role === 'creator' ? 'stButton-primary' : 'stButton-secondary'}
+          className={state.role === 'influencer' ? 'stButton-primary' : 'stButton-secondary'}
           onClick={() => {
-            dispatch({ type: 'SET_ROLE', payload: 'creator' });
+            dispatch({ type: 'SET_ROLE', payload: 'influencer' });
             navigate('/discover');
           }}
         >

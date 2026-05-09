@@ -1,0 +1,36 @@
+feature,coefficient
+"cat__location_Paris, FR",-1.0742762843196947
+"cat__location_Austin, TX",0.7243569542961074
+cat__niche_Wellness,-0.6487041466731721
+"cat__location_Los Angeles, CA",0.5987203548717255
+"cat__location_Sydney, AU",-0.5832016295592547
+cat__location_Daa,0.5367649415788014
+cat__location_Location,-0.4925820234083189
+cat__niche_Food,-0.4519819758715009
+cat__niche_Sports,0.41395510077420017
+cat__niche_Lifestyle,0.3900643080354502
+num__tag__Reel,-0.33825081063262713
+num__tag__Blog,0.3028369190106205
+cat__niche_Fashion,0.28685246908080825
+cat__location_Remote,0.26015277004923704
+cat__niche_Gaming,0.22390961875868942
+"cat__location_Toronto, CA",0.19914916697380566
+cat__niche_Travel,-0.18714660161549942
+cat__niche_Tech,0.18130522176153707
+num__tag__Stories,-0.17251911337222334
+num__tag__Static_Post,-0.15727185147955333
+num__bio_length,-0.13901859120882978
+cat__niche_Beauty,-0.119991029703925
+"cat__location_London, UK",-0.11599172899283439
+num__tag__YouTube_Video,0.10925480552126851
+num__tag__TikTok,0.10577136988766012
+cat__niche_Fitness,-0.09556790753393336
+cat__location_Yerevan,-0.03261504844999912
+num__tag__YouTube_Shorts,-0.02704632651796486
+num__tag_count,0.02635669095819727
+"cat__location_Tokyo, JP",-0.01343620642063322
+num__tag__Reels,-0.012419638822881222
+"cat__location_New York, NY",-0.010890989421579402
+"cat__location_Berlin, DE",-0.003455220184708062
+num__follower_count,-0.0011351914331782025
+num__has_bio,0.0

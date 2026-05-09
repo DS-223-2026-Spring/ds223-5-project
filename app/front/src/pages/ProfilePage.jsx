@@ -64,7 +64,7 @@ export default function ProfilePage() {
         // If update failed (likely 404), create it
         const createRes = await createBrand(editData);
         if (createRes && createRes.id) {
-          dispatch({ type: 'SET_USER_ID', payload: createRes.id });
+          dispatch({ type: 'SET_BRAND_ID', payload: createRes.id });
         } else {
           success = false;
         }
@@ -89,7 +89,7 @@ export default function ProfilePage() {
         // Create if update fails
         const createRes = await createInfluencer(payload);
         if (createRes && createRes.id) {
-          dispatch({ type: 'SET_USER_ID', payload: createRes.id });
+          dispatch({ type: 'SET_INFLUENCER_ID', payload: createRes.id });
         } else {
           success = false;
         }

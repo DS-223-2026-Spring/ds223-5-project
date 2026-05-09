@@ -27,7 +27,7 @@ export default function OnboardingPage() {
       alert("Please fill in the required fields (Name and Email).");
       return;
     }
-    if (role === 'creator' && (!creatorData.name || !creatorData.email)) {
+    if (role === 'influencer' && (!creatorData.name || !creatorData.email)) {
       alert("Please fill in the required fields (Handle and Email).");
       return;
     }
@@ -36,11 +36,14 @@ export default function OnboardingPage() {
     let res;
     if (role === 'brand') {
       res = await createBrand(brandData);
+      if (res && res.id) {
+        dispatch({ type: 'SET_BRAND_ID', payload: res.id });
+      }
     } else {
       res = await createInfluencer(creatorData);
-    }
-    if (res && res.id) {
-      dispatch({ type: 'SET_USER_ID', payload: res.id });
+      if (res && res.id) {
+        dispatch({ type: 'SET_INFLUENCER_ID', payload: res.id });
+      }
     }
     setStep(3);
   };
@@ -61,8 +64,8 @@ export default function OnboardingPage() {
               <div style={{ fontWeight: '700', marginBottom: '4px' }}>Brand / Business</div>
             </div>
             <div 
-              style={{ flex: 1, border: `2px solid ${role === 'creator' ? 'var(--color-primary)' : 'var(--color-border)'}`, borderRadius: '14px', padding: '24px', cursor: 'pointer', background: role === 'creator' ? 'var(--color-primary-light)' : '#fff' }}
-              onClick={() => setRole('creator')}
+              style={{ flex: 1, border: `2px solid ${role === 'influencer' ? 'var(--color-primary)' : 'var(--color-border)'}`, borderRadius: '14px', padding: '24px', cursor: 'pointer', background: role === 'influencer' ? 'var(--color-primary-light)' : '#fff' }}
+              onClick={() => setRole('influencer')}
             >
               <div style={{ fontSize: '24px', marginBottom: '8px' }}>✨</div>
               <div style={{ fontWeight: '700', marginBottom: '4px' }}>Creator / Influencer</div>

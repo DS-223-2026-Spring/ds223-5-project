@@ -1,11 +1,11 @@
 {
-  "model_path": "C:\\Users\\user\\ds223-5-project\\app\\ds\\outputs\\model.pkl",
-  "outputs_dir": "C:\\Users\\user\\ds223-5-project\\app\\ds\\outputs",
-  "selected_model_name": "hist_gradient_boosting",
+  "model_path": "/app/ds/outputs/model.pkl",
+  "outputs_dir": "/app/ds/outputs",
+  "selected_model_name": "logistic_regression",
   "metrics": {
-    "roc_auc": 0.6129032258064516,
-    "f1": 0.59375,
-    "accuracy": 0.5873015873015873
+    "roc_auc": 0.3956043956043956,
+    "f1": 0.45161290322580644,
+    "accuracy": 0.37037037037037035
   },
-  "dataset_size": 250
+  "dataset_size": 107
 }

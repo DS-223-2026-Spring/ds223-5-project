@@ -40,7 +40,7 @@ export default function LandingPage() {
           <button className="stButton-primary" onClick={() => handleRoleSelect('brand')} style={{ padding: '12px 24px', fontSize: '15px' }}>
             🏢 I'm a brand
           </button>
-          <button className="stButton-secondary" onClick={() => handleRoleSelect('creator')} style={{ padding: '12px 24px', fontSize: '15px' }}>
+          <button className="stButton-secondary" onClick={() => handleRoleSelect('influencer')} style={{ padding: '12px 24px', fontSize: '15px' }}>
             ✨ I'm a creator
           </button>
           <button className="stButton-secondary" onClick={() => navigate('/discover')} style={{ padding: '12px 24px', fontSize: '15px' }}>

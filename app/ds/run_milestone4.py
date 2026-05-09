@@ -2,16 +2,29 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Any, Dict, List
 
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from joblib import dump
 from sklearn.pipeline import Pipeline
 
+# Wire up backend imports for DB access
+APP_DIR = Path(__file__).resolve().parents[1]
+BACKEND_DIR = APP_DIR / "backend"
+sys.path.insert(0, str(BACKEND_DIR))
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from db.connection import get_engine, wait_for_db
+from db.crud import select_many
+
 from modeling_pipeline import (
+    _tag_feature_col,
     build_feature_dataframe,
     build_target,
     compute_segments,
@@ -24,53 +37,40 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 MODEL_PATH = OUTPUT_DIR / "model.pkl"
 
 
-def build_repeatable_dataset(*, seed: int, n_samples: int) -> pd.DataFrame:
-    rng = np.random.default_rng(seed)
-    niche_choices = ["Tech", "Fashion", "Fitness", "Food", "Travel"]
-    location_choices = ["New York", "Los Angeles", "Austin", "Seattle", "Chicago"]
-    tag_vocab = ["Video", "Blog", "Photo", "Reels", "Podcast", "Live", "Tutorials"]
-    bios = [
-        "Tech enthusiast and reviewer.",
-        "Fashion addict and lifestyle creator.",
-        "Fitness coach and nutrition nerd.",
-        "Food blogger sharing recipes.",
-        "Travel storyteller and guide.",
-    ]
+def _coerce_tags(val):
+    """Convert comma-separated string to list of tag strings."""
+    if isinstance(val, list):
+        return val
+    if isinstance(val, str):
+        return [t.strip() for t in val.split(",") if t.strip()]
+    return []
 
-    follower_count = rng.integers(1000, 300000, size=n_samples)
-    niche = rng.choice(niche_choices, size=n_samples)
-    location = rng.choice(location_choices, size=n_samples)
-    tags = rng.choice(tag_vocab, size=(n_samples, 3), replace=True)
-    content_format_tags = [list(dict.fromkeys(row.tolist())) for row in tags]
-    bio = rng.choice(bios, size=n_samples)
 
-    niche_effect = np.array([1.2 if x == "Tech" else 0.9 for x in niche], dtype=float)
-    location_effect = np.array(
-        [1.0 if x in {"New York", "Los Angeles"} else 0.85 for x in location], dtype=float
+def fetch_dataset_from_db() -> pd.DataFrame:
+    """Pull influencer data from the live database."""
+    engine = get_engine()
+    wait_for_db(engine)
+
+    rows = select_many(
+        "influencers",
+        columns=(
+            "influencer_id",
+            "niche",
+            "follower_count",
+            "engagement_rate",
+            "location",
+            "content_formats",
+            "bio",
+        ),
+        engine=engine,
     )
-    tag_effect = np.array([1.0 + 0.03 * len(t) for t in content_format_tags], dtype=float)
+    if not rows:
+        raise RuntimeError("No rows found in `influencers` table. Seed the DB first.")
 
-    raw = (
-        1.5
-        + 0.000004 * follower_count
-        + 2.0 * niche_effect
-        + 1.0 * location_effect
-        + 1.2 * (tag_effect - 1.0)
-        + rng.normal(0, 1.0, size=n_samples)
-    )
-    engagement_rate = np.clip(raw, 0, 100)
-
-    return pd.DataFrame(
-        {
-            "id": np.arange(1, n_samples + 1),
-            "niche": niche,
-            "follower_count": follower_count,
-            "engagement_rate": engagement_rate,
-            "location": location,
-            "content_format_tags": content_format_tags,
-            "bio": bio,
-        }
-    )
+    df = pd.DataFrame(rows)
+    df.rename(columns={"influencer_id": "id", "content_formats": "content_format_tags"}, inplace=True)
+    df["content_format_tags"] = df["content_format_tags"].apply(_coerce_tags)
+    return df
 
 
 def _save_plot_distribution(series: pd.Series, *, title: str, xlabel: str, output_name: str) -> None:
@@ -116,12 +116,12 @@ def _build_feature_importance_table(model: Pipeline) -> pd.DataFrame:
     return table
 
 
-def run_milestone4(*, seed: int, n_samples: int, top_k_tags: int, min_tag_freq: int) -> Dict[str, Any]:
-    df = build_repeatable_dataset(seed=seed, n_samples=n_samples)
+def run_milestone4(*, seed: int, top_k_tags: int, min_tag_freq: int) -> Dict[str, Any]:
+    df = fetch_dataset_from_db()
     y, median_engagement_rate = build_target(df)
     top_tags = compute_top_tags(df, top_k=top_k_tags, min_freq=min_tag_freq)
     engineered = build_feature_dataframe(df, top_tags=top_tags)
-    tag_feature_cols = [f"tag__{tag}" for tag in top_tags]
+    tag_feature_cols = [_tag_feature_col(tag) for tag in top_tags]
 
     pipeline, meta = train_and_select_best_model(
         engineered,
@@ -135,7 +135,7 @@ def run_milestone4(*, seed: int, n_samples: int, top_k_tags: int, min_tag_freq: 
 
     dump(pipeline, MODEL_PATH)
 
-    # CSV outputs for frontend integration.
+    # CSV outputs for downstream tooling
     summary_df = pd.DataFrame(
         [
             {
@@ -178,7 +178,7 @@ def run_milestone4(*, seed: int, n_samples: int, top_k_tags: int, min_tag_freq: 
     if not feature_importance_df.empty:
         feature_importance_df.to_csv(OUTPUT_DIR / "feature_importance.csv", index=False)
 
-    # PNG outputs for frontend integration.
+    # PNG outputs
     _save_plot_distribution(
         df["engagement_rate"],
         title="Engagement Rate Distribution",
@@ -216,9 +216,8 @@ def parse_args() -> argparse.Namespace:
         description="Milestone 4: train final model, save model.pkl, and export PNG/CSV artifacts."
     )
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--n-samples", type=int, default=250)
     parser.add_argument("--top-k-tags", type=int, default=15)
-    parser.add_argument("--min-tag-freq", type=int, default=2)
+    parser.add_argument("--min-tag-freq", type=int, default=1)
     return parser.parse_args()
 
 
@@ -226,7 +225,6 @@ def main() -> None:
     args = parse_args()
     results = run_milestone4(
         seed=args.seed,
-        n_samples=args.n_samples,
         top_k_tags=args.top_k_tags,
         min_tag_freq=args.min_tag_freq,
     )

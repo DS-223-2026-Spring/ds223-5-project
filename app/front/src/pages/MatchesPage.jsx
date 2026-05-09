@@ -168,9 +168,9 @@ export default function MatchesPage() {
 
       {/* ---- SENT REQUESTS ---- */}
       <div style={{ height: '24px' }}></div>
-      <div className="sec-title">REQUESTS SENT &nbsp; {sentRequests.length + state.contacted.size}</div>
+      <div className="sec-title">REQUESTS SENT &nbsp; {sentRequests.length}</div>
 
-      {sentRequests.length === 0 && state.contacted.size === 0 ? (
+      {sentRequests.length === 0 ? (
         <div style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '14px', padding: '48px', textAlign: 'center' }}>
           <div style={{ fontSize: '28px', marginBottom: '10px' }}>✉</div>
           <div style={{ fontSize: '14px', color: 'var(--color-text-muted)' }}>No requests sent yet. Open a profile and reach out directly.</div>
@@ -196,17 +196,6 @@ export default function MatchesPage() {
               }}>View &rarr;</button>
             </div>
           ))}
-          {Array.from(state.contacted)
-            .filter(cid => !sentRequests.some(r => (r.direction === 'brand_to_influencer' ? r.influencer_id : r.brand_id) === cid))
-            .map(id => (
-              <div key={`contacted-${id}`} className="creator-card" style={{ borderLeft: '3px solid var(--color-primary)', marginBottom: '8px', display: 'flex', alignItems: 'center' }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontWeight: '700', fontSize: '15px' }}>Profile #{id} {statusBadge('pending')}</div>
-                  <div style={{ color: 'var(--color-text-muted)', fontSize: '12px', marginTop: '4px' }}>Awaiting response</div>
-                </div>
-                <button className="stButton-secondary" onClick={() => navigate(`/profile/${state.role === 'brand' ? 'influencer' : 'brand'}/${id}`)}>View &rarr;</button>
-              </div>
-            ))}
         </>
       )}
     </div>
