@@ -36,6 +36,26 @@ python predict_and_store_model.py
 
 Predictions, confidence scores, and segments are written to PostgreSQL tables `model_runs` and `influencer_predictions`.
 
+## Milestone 4 one-script workflow
+
+Use this command to run all Milestone 4 deliverables in a single rerunnable step:
+
+```bash
+python run_milestone4.py
+```
+
+This script:
+- trains and selects the final model
+- saves the final artifact as `outputs/model.pkl`
+- saves PNG charts for frontend usage
+- saves CSV summary tables for frontend usage
+
+Optional flags:
+
+```bash
+python run_milestone4.py --seed 42 --n-samples 250 --top-k-tags 15 --min-tag-freq 2
+```
+
 ## Run with Docker
 ```bash
 docker compose up --build
@@ -49,3 +69,13 @@ Artifacts are generated in `outputs/`:
 - `distribution_follower_count.png`
 - `distribution_engagement_rate.png`
 - `correlation_heatmap.png`
+- `model.pkl`
+- `model_performance_summary.csv`
+- `predictions.csv`
+- `segment_summary.csv`
+- `top_tags.csv`
+- `feature_importance.csv` (if supported by selected model)
+- `engagement_rate_distribution.png`
+- `predicted_probability_distribution.png`
+- `segment_counts.png`
+- `run_metadata.json`
