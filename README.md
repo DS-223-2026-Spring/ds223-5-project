@@ -11,11 +11,7 @@ Brands discover creators ranked by a transparent compatibility score. Creators g
 | Resource | URL |
 |---|---|
 | Documentation site | https://ds-223-2026-spring.github.io/ds223-5-project/ |
-| API docs (Swagger) | http://localhost:8000/docs |
-| API docs (ReDoc) | http://localhost:8000/redoc |
 | GitHub repository | https://github.com/DS-223-2026-Spring/ds223-5-project |
-| Issue tracker | https://github.com/DS-223-2026-Spring/ds223-5-project/issues |
-| Milestone 4 | https://github.com/DS-223-2026-Spring/ds223-5-project/milestone/4 |
 
 ---
 
