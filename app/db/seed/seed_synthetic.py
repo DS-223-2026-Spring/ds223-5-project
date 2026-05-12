@@ -27,8 +27,8 @@ fake.seed_instance(42)
 
 NICHE_CHOICES = ["Fitness","Wellness","Fashion","Food","Tech","Travel","Beauty","Gaming","Running","Lifestyle"]
 INFLUENCER_LOCATIONS = ["New York US","Los Angeles US","Chicago US","Austin US","Miami US","Brooklyn US","San Francisco US","London UK","Toronto CA","Sydney AU"]
-AUDIENCE_AGE = ["13-17", "18-24", "25-34", "35+"]
-AUDIENCE_GENDER = ["Female 65%","Female 72%","Female 80%","Male 60%","Male 70%","Mixed 50%"]
+AUDIENCE_AGE = ["13-17", "18-24", "25-34", "35-44", "45-54", "55+"]
+AUDIENCE_GENDER = ["female", "male", "non_binary", "unknown"]
 CONTENT_FORMAT_POOL = ["Reels", "Stories", "Long-form", "Posts", "Live"]
 INDUSTRIES = ["Fitness / Nutrition","Beauty / Skincare","Travel / Lifestyle","Productivity / SaaS","Food / Organic","Fashion / Apparel","Gaming / Tech","Wellness / Health"]
 BRAND_LOCATIONS = ["Austin US","New York US","San Francisco US","Portland US","Remote","Los Angeles US","Chicago US"]
@@ -55,7 +55,7 @@ TARGET_AUDIENCE_TEMPLATES = [
     "We reach {adj1} communities passionate about {noun}, mainly discovering brands via {channel}.",
 ]
 
-PREFERRED_FORMAT_POOL = ["Reels", "Stories", "Long-form", "Posts"]
+
 
 
 def _lognormal_followers() -> int:
@@ -171,11 +171,11 @@ def main() -> None:
         """
         INSERT INTO brands (
             name, industry, location, company_size, budget_min, budget_max,
-            target_audience, preferred_niches, preferred_formats,
+            target_audience, preferred_niches,
             email, website, instagram
         ) VALUES (
             :name, :industry, :location, :company_size, :budget_min, :budget_max,
-            :target_audience, :preferred_niches, :preferred_formats,
+            :target_audience, :preferred_niches,
             :email, :website, :instagram
         )
         RETURNING brand_id
@@ -186,7 +186,6 @@ def main() -> None:
         industry = str(np.random.choice(INDUSTRIES))
         bmin = int(np.random.choice(BUDGET_MIN_CHOICES))
         bmax = bmin + int(np.random.choice(BUDGET_MAX_DELTA))
-        n_fmt = int(np.random.randint(1, 3))
 
         row = {
             "name": company_names[i - 1],
@@ -197,9 +196,6 @@ def main() -> None:
             "budget_max": bmax,
             "target_audience": _target_audience_sentence(),
             "preferred_niches": _preferred_niches_for_industry(industry),
-            "preferred_formats": ",".join(
-                list(np.random.choice(PREFERRED_FORMAT_POOL, size=n_fmt, replace=False))
-            ),
             "email": f"brand_{i}@pairup.dev",
             "website": f"brand{i}.com",
             "instagram": f"@brand_{i}",
