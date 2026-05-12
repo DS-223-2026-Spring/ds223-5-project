@@ -51,15 +51,8 @@ docker compose up --build
 
 This starts all four containers. The first run takes a few minutes to build images and initialise the database.
 
-### 3. Open the app
 
-| Service | URL |
-|---|---|
-| Frontend | http://localhost:8501 |
-| Backend API | http://localhost:8000 |
-| API docs | http://localhost:8000/docs |
-
-### 4. Stop all services
+### 3. Stop all services
 
 ```bash
 docker compose down
