@@ -95,12 +95,14 @@ def _get_scores_map(influencer_id: int | None) -> dict[int, dict]:
 
 
 # GET /brands — filterable list with optional pre-computed scores
-@router.get("/", response_model=List[BrandResponse], description="Retrieve a list of brand profiles matching optional filter criteria such as industry, size, and budget range. If `influencer_id` is provided, dynamically calculates and includes match scores.")
+@router.get("/", response_model=List[BrandResponse], description="Retrieve a list of brand profiles matching optional filter criteria such as industry, size, budget range, location, and preferred niches. If `influencer_id` is provided, dynamically calculates and includes match scores.")
 def get_brands(
     industry: Optional[str] = Query(None),
     size: Optional[str] = Query(None),
     budget_min: Optional[int] = Query(None),
     budget_max: Optional[int] = Query(None),
+    location: Optional[str] = Query(None),
+    preferred_niche: Optional[str] = Query(None),
     min_match_score: Optional[int] = Query(None),
     influencer_id: Optional[int] = Query(None),
 ):
@@ -119,6 +121,12 @@ def get_brands(
     if budget_max is not None:
         clauses.append('"budget_min" <= :budget_max')
         params["budget_max"] = budget_max
+    if location:
+        clauses.append('"location" ILIKE :location')
+        params["location"] = f"%{location}%"
+    if preferred_niche:
+        clauses.append('"preferred_niches" ILIKE :preferred_niche')
+        params["preferred_niche"] = f"%{preferred_niche}%"
 
     sql = 'SELECT * FROM "brands"'
     if clauses:
