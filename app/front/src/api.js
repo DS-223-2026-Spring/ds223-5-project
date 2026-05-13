@@ -115,3 +115,8 @@ export async function updateContactRequest(requestId, status) {
     body: JSON.stringify({ status }),
   });
 }
+
+export async function getStats() {
+  const res = await fetchWithCatch(`${BASE_URL}/stats/`);
+  return res || { creator_count: 0, brand_count: 0, avg_roi: 0 };
+}

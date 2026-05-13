@@ -1,6 +1,6 @@
 import React from 'react';
 import FormField from './FormField';
-import { NICHES, FORMATS, INDUSTRIES, SIZES } from '../constants';
+import { NICHES, FORMATS, INDUSTRIES, SIZES, BUDGETS } from '../constants';
 
 export default function FilterPanel({ role, filters, setFilters, onReset }) {
   const isBrand = role === 'brand';
@@ -35,6 +35,14 @@ export default function FilterPanel({ role, filters, setFilters, onReset }) {
             value={filters.industry || ''} onChange={v => setFilters({...filters, industry: v})} />
           <FormField label="COMPANY SIZE" type="select" options={SIZES} 
             value={filters.size || ''} onChange={v => setFilters({...filters, size: v})} />
+          <FormField label="BRAND LOCATION"
+            value={filters.location || ''} onChange={v => setFilters({...filters, location: v})} placeholder="e.g. San Francisco" />
+          <FormField label="MIN BUDGET" type="slider" min="0" max="50000" step="500" suffix="$"
+            value={filters.budget_min || 0} onChange={v => setFilters({...filters, budget_min: v})} />
+          <FormField label="MAX BUDGET" type="slider" min="0" max="50000" step="500" suffix="$"
+            value={filters.budget_max || 50000} onChange={v => setFilters({...filters, budget_max: v})} />
+          <FormField label="PREFERRED NICHE" type="select" options={NICHES}
+            value={filters.preferred_niche || ''} onChange={v => setFilters({...filters, preferred_niche: v})} />
           <FormField label="MIN MATCH SCORE" type="slider" min="0" max="100" step="1" suffix="%"
             value={filters.min_match_score || 0} onChange={v => setFilters({...filters, min_match_score: v})} />
         </>

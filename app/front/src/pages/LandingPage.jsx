@@ -1,15 +1,30 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
+import { getStats } from '../api';
 
 export default function LandingPage() {
   const { dispatch } = useContext(AppContext);
   const navigate = useNavigate();
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    getStats().then(data => setStats(data));
+  }, []);
 
   const handleRoleSelect = (role) => {
     dispatch({ type: 'SET_ROLE', payload: role });
     navigate('/onboarding');
   };
+
+  // Build stat cards from real data, with fallback while loading
+  const statCards = stats
+    ? [
+        { val: stats.creator_count.toLocaleString(), lbl: 'Creators listed' },
+        { val: stats.brand_count.toLocaleString(), lbl: 'Brands seeking' },
+        { val: `$${stats.avg_roi.toFixed(2)}`, lbl: 'Avg ROI per $1 spent' },
+      ]
+    : null;
 
   return (
     <div>
@@ -50,16 +65,29 @@ export default function LandingPage() {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', gap: '24px', marginTop: '64px' }}>
-        {[
-          { val: '50', lbl: 'Creators listed' },
-          { val: '20', lbl: 'Brands seeking' },
-          { val: '$5.78', lbl: 'Avg ROI per $1 spent' },
-        ].map((s, i) => (
+        {statCards ? statCards.map((s, i) => (
           <div key={i} style={{ background: '#fff', border: '1px solid var(--color-border)', borderRadius: '14px', padding: '24px', textAlign: 'center', minWidth: '200px' }}>
             <div style={{ fontSize: '30px', fontWeight: '800', color: 'var(--color-primary)', marginBottom: '4px' }}>{s.val}</div>
             <div style={{ fontSize: '13px', color: 'var(--color-text-secondary)' }}>{s.lbl}</div>
           </div>
-        ))}
+        )) : (
+          // Skeleton loading placeholders while stats are being fetched
+          [0, 1, 2].map(i => (
+            <div key={i} style={{
+              background: '#fff', border: '1px solid var(--color-border)', borderRadius: '14px',
+              padding: '24px', textAlign: 'center', minWidth: '200px'
+            }}>
+              <div style={{
+                width: '60px', height: '30px', background: 'var(--color-border)', borderRadius: '6px',
+                margin: '0 auto 8px', animation: 'pulse 1.5s ease-in-out infinite'
+              }} />
+              <div style={{
+                width: '100px', height: '14px', background: 'var(--color-border)', borderRadius: '4px',
+                margin: '0 auto', animation: 'pulse 1.5s ease-in-out infinite'
+              }} />
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

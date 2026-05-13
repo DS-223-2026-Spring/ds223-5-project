@@ -11,21 +11,42 @@ export default function DiscoverPage() {
   const [results, setResults] = useState([]);
   const [filters, setFilters] = useState({});
   const [loading, setLoading] = useState(true);
+  const [activeRole, setActiveRole] = useState(state.role);
+
+  // Synchronous reset during render — runs BEFORE React paints, preventing
+  // the crash where stale influencer objects get rendered as BrandCards (or vice versa).
+  // React will immediately re-render with cleared state before the user sees anything.
+  if (activeRole !== state.role) {
+    setActiveRole(state.role);
+    setResults([]);
+    setFilters({});
+    setLoading(true);
+  }
 
   useEffect(() => {
     let active = true;
     const fetchResults = async () => {
       setLoading(true);
-      const params = isBrand ? { ...filters, brand_id: state.userId } : { ...filters, influencer_id: state.userId };
-      const data = isBrand ? await getInfluencers(params) : await getBrands(params);
-      if (active) {
-        setResults(data);
-        setLoading(false);
+      try {
+        const params = isBrand ? { ...filters, brand_id: state.userId } : { ...filters, influencer_id: state.userId };
+        const data = isBrand ? await getInfluencers(params) : await getBrands(params);
+        if (active) {
+          setResults(data);
+        }
+      } catch (err) {
+        console.error('Discover fetch error:', err);
+        if (active) {
+          setResults([]);
+        }
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
       }
     };
     fetchResults();
     return () => { active = false; };
-  }, [filters, isBrand]);
+  }, [filters, isBrand, state.userId]);
 
   return (
     <div style={{ display: 'flex', gap: '24px', padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
