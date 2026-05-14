@@ -1,0 +1,892 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../etl/">
+      
+      
+        <link rel="next" href="../app/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>API - My Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#api-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="My Docs" class="md-header__button md-logo" aria-label="My Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            My Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              API
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="lime"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../demo/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Demo
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../etl/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  ETL
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../app/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  APP
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="My Docs" class="md-nav__button md-logo" aria-label="My Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    My Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../demo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../etl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ETL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="api-reference">API Reference</h1>
+<p>PairUp exposes a REST API built with FastAPI.<br />
+The backend is responsible for profile management, marketplace discovery, match scoring, collaboration requests, and DS-powered outputs.</p>
+<p>Base URL (local development):</p>
+<pre><code class="language-text">http://localhost:8000/api/v1
+</code></pre>
+<hr />
+<h1 id="api-architecture">API Architecture</h1>
+<pre><code class="language-text">Frontend (React + Vite)
+        │
+        ▼
+ FastAPI Backend
+        │
+        ├── Match Scoring Service
+        ├── Notification Service
+        ├── CRUD Layer
+        └── PostgreSQL
+</code></pre>
+<p>The backend follows a modular structure:</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>api/endpoints/</code></td>
+<td>Route definitions</td>
+</tr>
+<tr>
+<td><code>schemas/</code></td>
+<td>Request and response validation</td>
+</tr>
+<tr>
+<td><code>services/</code></td>
+<td>Matching and notification logic</td>
+</tr>
+<tr>
+<td><code>db/</code></td>
+<td>Database connection and CRUD helpers</td>
+</tr>
+<tr>
+<td><code>core/</code></td>
+<td>App configuration</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="health-endpoints">Health Endpoints</h1>
+<h2 id="get"><code>GET /</code></h2>
+<p>Basic API welcome route.</p>
+<h3 id="response">Response</h3>
+<pre><code class="language-json">{
+  &quot;message&quot;: &quot;Welcome to the PairUp API&quot;
+}
+</code></pre>
+<hr />
+<h2 id="get-health"><code>GET /health</code></h2>
+<p>Checks whether the backend and PostgreSQL connection are working correctly.</p>
+<h3 id="response_1">Response</h3>
+<pre><code class="language-json">{
+  &quot;status&quot;: &quot;healthy&quot;,
+  &quot;database&quot;: &quot;connected&quot;
+}
+</code></pre>
+<hr />
+<h1 id="influencer-endpoints">Influencer Endpoints</h1>
+<h2 id="get-influencers"><code>GET /influencers</code></h2>
+<p>Retrieve influencers with optional filters and dynamic match scoring.</p>
+<h3 id="query-parameters">Query Parameters</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>niche</code></td>
+<td>string</td>
+<td>Filter by creator niche</td>
+</tr>
+<tr>
+<td><code>location</code></td>
+<td>string</td>
+<td>Partial location search</td>
+</tr>
+<tr>
+<td><code>min_engagement</code></td>
+<td>float</td>
+<td>Minimum engagement rate</td>
+</tr>
+<tr>
+<td><code>max_followers</code></td>
+<td>int</td>
+<td>Maximum follower count</td>
+</tr>
+<tr>
+<td><code>format</code></td>
+<td>string</td>
+<td>Filter by content format</td>
+</tr>
+<tr>
+<td><code>age_group</code></td>
+<td>string</td>
+<td>Audience age group</td>
+</tr>
+<tr>
+<td><code>brand_id</code></td>
+<td>int</td>
+<td>Compute live match scores against a brand</td>
+</tr>
+<tr>
+<td><code>min_match_score</code></td>
+<td>int</td>
+<td>Minimum compatibility score</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-request">Example Request</h3>
+<pre><code class="language-http">GET /api/v1/influencers?niche=fitness&amp;brand_id=2
+</code></pre>
+<h3 id="example-response">Example Response</h3>
+<pre><code class="language-json">[
+  {
+    &quot;id&quot;: 12,
+    &quot;name&quot;: &quot;FitWithAnna&quot;,
+    &quot;niche&quot;: &quot;fitness&quot;,
+    &quot;location&quot;: &quot;Los Angeles&quot;,
+    &quot;follower_count&quot;: 54000,
+    &quot;engagement_rate&quot;: 6.8,
+    &quot;total_score&quot;: 89,
+    &quot;niche_score&quot;: 35,
+    &quot;audience_score&quot;: 27,
+    &quot;engagement_score&quot;: 22,
+    &quot;history_score&quot;: 5
+  }
+]
+</code></pre>
+<hr />
+<h2 id="get-influencersid"><code>GET /influencers/{id}</code></h2>
+<p>Retrieve a single influencer profile.</p>
+<h3 id="example">Example</h3>
+<pre><code class="language-http">GET /api/v1/influencers/5
+</code></pre>
+<hr />
+<h2 id="post-influencers"><code>POST /influencers</code></h2>
+<p>Create a new influencer profile.</p>
+<h3 id="request-body">Request Body</h3>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;TravelWithLena&quot;,
+  &quot;niche&quot;: &quot;travel&quot;,
+  &quot;location&quot;: &quot;Paris&quot;,
+  &quot;follower_count&quot;: 85000,
+  &quot;engagement_rate&quot;: 5.4,
+  &quot;audience_age_group&quot;: &quot;18-24&quot;,
+  &quot;audience_gender&quot;: &quot;female&quot;,
+  &quot;content_formats&quot;: [&quot;reels&quot;, &quot;stories&quot;],
+  &quot;rate_min&quot;: 200,
+  &quot;rate_max&quot;: 600,
+  &quot;bio&quot;: &quot;Travel creator&quot;,
+  &quot;email&quot;: &quot;lena@example.com&quot;
+}
+</code></pre>
+<hr />
+<h2 id="put-influencersid"><code>PUT /influencers/{id}</code></h2>
+<p>Partially update an influencer profile.</p>
+<p>Only submitted fields are modified.</p>
+<hr />
+<h1 id="brand-endpoints">Brand Endpoints</h1>
+<h2 id="get-brands"><code>GET /brands</code></h2>
+<p>Retrieve brands with optional filtering and dynamic scoring.</p>
+<h3 id="query-parameters_1">Query Parameters</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>industry</code></td>
+<td>string</td>
+<td>Filter by industry</td>
+</tr>
+<tr>
+<td><code>size</code></td>
+<td>string</td>
+<td>Company size</td>
+</tr>
+<tr>
+<td><code>budget_min</code></td>
+<td>int</td>
+<td>Minimum campaign budget</td>
+</tr>
+<tr>
+<td><code>budget_max</code></td>
+<td>int</td>
+<td>Maximum campaign budget</td>
+</tr>
+<tr>
+<td><code>influencer_id</code></td>
+<td>int</td>
+<td>Compute scores against an influencer</td>
+</tr>
+<tr>
+<td><code>min_match_score</code></td>
+<td>int</td>
+<td>Minimum compatibility score</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="get-brandsid"><code>GET /brands/{id}</code></h2>
+<p>Retrieve a single brand profile.</p>
+<hr />
+<h2 id="post-brands"><code>POST /brands</code></h2>
+<p>Create a new brand profile.</p>
+<h3 id="request-example">Request Example</h3>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;Glow Cosmetics&quot;,
+  &quot;industry&quot;: &quot;beauty&quot;,
+  &quot;size&quot;: &quot;small&quot;,
+  &quot;budget_min&quot;: 500,
+  &quot;budget_max&quot;: 3000,
+  &quot;target&quot;: &quot;Gen Z skincare audience&quot;,
+  &quot;location&quot;: &quot;New York&quot;,
+  &quot;preferences&quot;: [&quot;beauty&quot;, &quot;lifestyle&quot;],
+  &quot;email&quot;: &quot;team@glow.com&quot;,
+  &quot;website&quot;: &quot;https://glow.com&quot;,
+  &quot;instagram&quot;: &quot;@glow&quot;
+}
+</code></pre>
+<hr />
+<h2 id="put-brandsid"><code>PUT /brands/{id}</code></h2>
+<p>Update an existing brand profile.</p>
+<hr />
+<h1 id="match-scoring-endpoint">Match Scoring Endpoint</h1>
+<h2 id="post-matchesgenerate"><code>POST /matches/generate</code></h2>
+<p>Generate and persist a compatibility score between a brand and influencer.</p>
+<p>The endpoint computes:</p>
+<ul>
+<li>niche alignment</li>
+<li>audience compatibility</li>
+<li>engagement quality</li>
+<li>collaboration history</li>
+</ul>
+<h3 id="request-body_1">Request Body</h3>
+<pre><code class="language-json">{
+  &quot;brand_id&quot;: 2,
+  &quot;influencer_id&quot;: 14
+}
+</code></pre>
+<h3 id="response_2">Response</h3>
+<pre><code class="language-json">{
+  &quot;brand_id&quot;: 2,
+  &quot;influencer_id&quot;: 14,
+  &quot;total_score&quot;: 91,
+  &quot;niche_score&quot;: 35,
+  &quot;audience_score&quot;: 28,
+  &quot;engagement_score&quot;: 23,
+  &quot;history_score&quot;: 5
+}
+</code></pre>
+<hr />
+<h1 id="collaboration-endpoints">Collaboration Endpoints</h1>
+<h2 id="post-contact"><code>POST /contact</code></h2>
+<p>Create a collaboration request between a brand and creator.</p>
+<p>The notification service simulates sending an email event.</p>
+<h3 id="request-example_1">Request Example</h3>
+<pre><code class="language-json">{
+  &quot;brand_id&quot;: 1,
+  &quot;influencer_id&quot;: 8,
+  &quot;direction&quot;: &quot;brand_to_influencer&quot;,
+  &quot;message&quot;: &quot;We would love to collaborate on our summer campaign.&quot;,
+  &quot;budget&quot;: 1200,
+  &quot;email&quot;: &quot;marketing@brand.com&quot;
+}
+</code></pre>
+<hr />
+<h2 id="get-contact-requests"><code>GET /contact-requests</code></h2>
+<p>Retrieve collaboration requests.</p>
+<p>Supports inbox-style communication between creators and brands.</p>
+<hr />
+<h1 id="past-collaboration-endpoint">Past Collaboration Endpoint</h1>
+<h2 id="get-past-collaborations"><code>GET /past-collaborations</code></h2>
+<p>Retrieve historical collaborations for an influencer.</p>
+<h3 id="query-parameters_2">Query Parameters</h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>influencer_id</code></td>
+<td>yes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example_1">Example</h3>
+<pre><code class="language-http">GET /api/v1/past-collaborations?influencer_id=4
+</code></pre>
+<hr />
+<h1 id="match-scoring-logic">Match Scoring Logic</h1>
+<p>The scoring engine combines four weighted components.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Weight</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Niche alignment</td>
+<td>35%</td>
+</tr>
+<tr>
+<td>Audience compatibility</td>
+<td>30%</td>
+</tr>
+<tr>
+<td>Engagement quality</td>
+<td>25%</td>
+</tr>
+<tr>
+<td>Collaboration history</td>
+<td>10%</td>
+</tr>
+</tbody>
+</table>
+<p>The backend computes scores dynamically when discovery endpoints are queried with <code>brand_id</code> or <code>influencer_id</code>.</p>
+<p>This allows the frontend to display transparent ranking explanations instead of black-box recommendations.</p>
+<hr />
+<h1 id="running-the-api">Running the API</h1>
+<p>From the <code>app/</code> directory:</p>
+<pre><code class="language-bash">docker compose up --build
+</code></pre>
+<p>Backend service:</p>
+<pre><code class="language-text">http://localhost:8000
+</code></pre>
+<p>Swagger documentation:</p>
+<pre><code class="language-text">http://localhost:8000/docs
+</code></pre>
+<p>ReDoc documentation:</p>
+<pre><code class="language-text">http://localhost:8000/redoc
+</code></pre>
+<hr />
+<h1 id="future-improvements">Future Improvements</h1>
+<p>Planned backend improvements include:</p>
+<ul>
+<li>JWT authentication</li>
+<li>saved searches</li>
+<li>recommendation caching</li>
+<li>async email delivery</li>
+<li>DS prediction exposure through endpoints</li>
+<li>analytics endpoints for dashboard visualizations</li>
+<li>campaign performance tracking</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "navigation.top", "search.suggest", "search.highlight", "content.tabs.link", "content.code.annotation", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

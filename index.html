@@ -1,0 +1,845 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+        <link rel="next" href="demo/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>My Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#pairup" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="My Docs" class="md-header__button md-logo" aria-label="My Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            My Docs
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="purple"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="teal" data-md-color-accent="lime"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="demo/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Demo
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="etl/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  ETL
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="app/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  APP
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="My Docs" class="md-nav__button md-logo" aria-label="My Docs" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    My Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#problem" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Problem
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#solution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Solution
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pages" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pages
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#expected-outcomes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expected outcomes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#current-status" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Current status
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#navigation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Navigation
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="demo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Demo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="etl/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ETL
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="app/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    APP
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="pairup">PairUp</h1>
+<p><strong>A data-driven marketplace connecting small businesses with micro-influencers.</strong></p>
+<p>PairUp eliminates the guesswork in influencer marketing. Brands discover creators ranked by a transparent compatibility score. Creators get found by brands that actually fit their audience. Both sides connect and collaborate without any agency in between.</p>
+<hr />
+<h2 id="problem">Problem</h2>
+<p>Small businesses increasingly rely on influencer marketing to reach niche audiences, but finding the right creator is still fragmented and uncertain.</p>
+<ul>
+<li><strong>44%</strong> of marketers say finding the right influencer is their primary challenge</li>
+<li><strong>47.4%</strong> of brands spent under $10,000 on influencer marketing in 2024 — leaving no room for bad matches</li>
+<li><strong>11.9%</strong> of marketers encounter influencer fraud — fake followers and inflated engagement</li>
+<li><strong>15.5%</strong> cannot accurately measure campaign ROI after the fact</li>
+</ul>
+<p>At the same time, micro-influencers with genuine, engaged audiences struggle to get discovered without a big agency or following behind them.</p>
+<p>The core problem is not a lack of creators or brands. It is the absence of a transparent, data-driven system that helps both sides make confident decisions before a collaboration starts.</p>
+<hr />
+<h2 id="solution">Solution</h2>
+<p>PairUp is a two-sided web marketplace built on four services working together.</p>
+<pre><code>React frontend  ──►  FastAPI backend  ──►  PostgreSQL
+                                              ▲
+                           DS pipeline  ──────┘
+</code></pre>
+<p><strong>Brands</strong> create a profile describing their industry, target audience, and budget. They search and filter creators by niche, location, engagement rate, and audience demographics. Every result is ranked by a pre-computed compatibility score that breaks down into four transparent sub-scores.</p>
+<p><strong>Creators</strong> create a profile showcasing their niche, audience stats, content formats, and past collaborations. They appear in brand search results ranked by how well they match. They can also browse brands actively seeking creators and send a pitch directly.</p>
+<p><strong>The matching score</strong> (computed in <code>services/scoring.py</code>) runs on every brand–influencer pair and produces a 0–100 compatibility rating:</p>
+<table>
+<thead>
+<tr>
+<th>Sub-score</th>
+<th>Weight</th>
+<th>What it measures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Niche alignment</td>
+<td>35%</td>
+<td>Creator niche vs brand preferred niches, using an adjacency graph for fuzzy matching</td>
+</tr>
+<tr>
+<td>Audience compatibility</td>
+<td>30%</td>
+<td>Age range overlap, gender alignment, geographic proximity</td>
+</tr>
+<tr>
+<td>Engagement quality</td>
+<td>25%</td>
+<td>Engagement rate normalised against the creator's follower tier benchmark</td>
+</tr>
+<tr>
+<td>Collaboration history</td>
+<td>10%</td>
+<td>Past collab categories vs brand niches — no history is neutral, not penalised</td>
+</tr>
+</tbody>
+</table>
+<p><strong>The DS pipeline</strong> (<code>app/ds/modeling_pipeline.py</code>) runs offline as a separate container. It trains a classifier — selecting the best performer from Logistic Regression, Random Forest, and Histogram Gradient Boosting — to predict which influencers are high performers based on their profile attributes. Predictions are stored in PostgreSQL and available for future frontend surfacing.</p>
+<p><strong>Contact</strong> flows directly between brands and creators through the platform. No agency, no intermediary. A brand sends a collab request; a creator sends a pitch. Both land in the other side's matches inbox.</p>
+<hr />
+<h2 id="architecture">Architecture</h2>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Technology</th>
+<th>Port</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>front</code></td>
+<td>React + Vite</td>
+<td>8501</td>
+<td>User interface — all pages and interactions</td>
+</tr>
+<tr>
+<td><code>back</code></td>
+<td>FastAPI + Python</td>
+<td>8000</td>
+<td>REST API, matching algorithm, business logic</td>
+</tr>
+<tr>
+<td><code>db</code></td>
+<td>PostgreSQL 17</td>
+<td>5433</td>
+<td>Persistent storage for all data</td>
+</tr>
+<tr>
+<td><code>ds</code></td>
+<td>Python scripts</td>
+<td>—</td>
+<td>Offline ML training and prediction pipeline</td>
+</tr>
+</tbody>
+</table>
+<p>All four services run via <code>docker compose up</code> from the <code>app/</code> directory.</p>
+<hr />
+<h2 id="pages">Pages</h2>
+<table>
+<thead>
+<tr>
+<th>Page</th>
+<th>Route</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Landing</td>
+<td><code>/</code></td>
+<td>Welcome screen, role selection (brand or creator)</td>
+</tr>
+<tr>
+<td>Onboarding</td>
+<td><code>/onboarding</code></td>
+<td>Profile creation — brand or creator registration</td>
+</tr>
+<tr>
+<td>Discover</td>
+<td><code>/discover</code></td>
+<td>Marketplace search with live filters and score-ranked results</td>
+</tr>
+<tr>
+<td>Matches</td>
+<td><code>/matches</code></td>
+<td>Saved profiles and sent / received contact requests</td>
+</tr>
+<tr>
+<td>Profile</td>
+<td><code>/profile/:type/:id</code></td>
+<td>Full influencer or brand profile with score breakdown</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="expected-outcomes">Expected outcomes</h2>
+<p><strong>For brands</strong></p>
+<ul>
+<li>Faster discovery — filtered, ranked results instead of manual search</li>
+<li>Transparent decisions — every match score shows its four components so a brand understands exactly why a creator ranked where they did</li>
+<li>Lower wasted spend — bad matches are visible before any money is committed</li>
+<li>Direct contact — send a collaboration request to any creator without leaving the platform</li>
+</ul>
+<p><strong>For creators</strong></p>
+<ul>
+<li>Genuine discoverability — ranked by compatibility, not follower count or pay-to-play</li>
+<li>Inbound opportunities — brands find creators and pitch directly</li>
+<li>Profile ownership — control over how niche, audience, and past work is presented</li>
+<li>No agency required — direct contact with brands at any budget level</li>
+</ul>
+<p><strong>For the platform</strong></p>
+<ul>
+<li>A growing two-sided network where every new brand makes the platform more valuable for creators and vice versa</li>
+<li>Pre-computed match scores that return instantly on search — no per-request calculation delay</li>
+<li>A DS layer that continuously produces quality signals (<code>is_recommended</code>, <code>segment_label</code>) independent of the rule-based matching algorithm, ready to surface when the frontend milestone adds it</li>
+</ul>
+<hr />
+<h2 id="current-status">Current status</h2>
+<p>The project is structured across four development branches (<code>db</code>, <code>back</code>, <code>front</code>, <code>ds</code>) with all core functionality implemented and integrated.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Database schema + migrations</td>
+<td>Complete (5 migrations)</td>
+</tr>
+<tr>
+<td>FastAPI backend — all endpoints</td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>Matching algorithm</td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>React frontend — all pages</td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>DS training pipeline</td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>DS prediction pipeline</td>
+<td>Complete</td>
+</tr>
+<tr>
+<td>Email notification service</td>
+<td>Implemented (mock logger)</td>
+</tr>
+<tr>
+<td>DS predictions surfaced in UI</td>
+<td>Planned</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="navigation">Navigation</h2>
+<ul>
+<li><a href="demo/">Demo</a> — walkthrough and screenshots</li>
+<li><a href="api/">API</a> — all endpoints, request and response shapes</li>
+<li><a href="etl/">DS</a> — data science pipeline, model selection, and outputs</li>
+<li><a href="app/">App</a> — architecture, services, and deployment</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.tabs", "navigation.sections", "toc.integrate", "navigation.top", "search.suggest", "search.highlight", "content.tabs.link", "content.code.annotation", "content.code.copy"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
