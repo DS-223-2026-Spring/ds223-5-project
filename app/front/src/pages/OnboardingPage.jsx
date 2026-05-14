@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
 import FormField from '../components/FormField';
-import { NICHES, FORMATS, AGE_GROUPS, GENDERS } from '../constants';
+import { NICHES, FORMATS, AGE_GROUPS, GENDERS, INDUSTRIES } from '../constants';
 import { createBrand, createInfluencer } from '../api';
 
 export default function OnboardingPage() {
@@ -12,12 +12,13 @@ export default function OnboardingPage() {
   const [role, setRole] = useState('brand');
   
   const [brandData, setBrandData] = useState({
-    name: '', industry: '', location: '', size: 'Startup', budget_min: 1000, budget_max: 5000, target: '',
+    name: '', industry: INDUSTRIES[0], location: '', size: 'Startup', budget_min: 1000, budget_max: 5000,
+    audience_age_group: '18-24', audience_gender: 'female',
     preferences: [], email: 'contact@brand.com', website: '', instagram: ''
   });
 
   const [creatorData, setCreatorData] = useState({
-    name: '', email: '', niche: '', location: '', follower_count: 10000, engagement_rate: 3.5, audience_age_group: '18-24',
+    name: '', email: '', niche: NICHES[0], location: '', follower_count: 10000, engagement_rate: 3.5, audience_age_group: '18-24',
     audience_gender: 'female', content_formats: [], rate_min: 500, rate_max: 1500, bio: ''
   });
 
@@ -29,6 +30,15 @@ export default function OnboardingPage() {
     }
     if (role === 'influencer' && (!creatorData.name || !creatorData.email)) {
       alert("Please fill in the required fields (Handle and Email).");
+      return;
+    }
+
+    if (role === 'brand' && brandData.preferences.length === 0) {
+      alert('Choose at least one creator niche you want to work with.');
+      return;
+    }
+    if (role === 'influencer' && creatorData.content_formats.length === 0) {
+      alert('Choose at least one content format you create.');
       return;
     }
 
@@ -91,8 +101,9 @@ export default function OnboardingPage() {
                 <FormField label="MAX BUDGET" type="number" value={brandData.budget_max} onChange={v => setBrandData({...brandData, budget_max: parseInt(v) || 0})} />
               </div>
               <div style={{ flex: 1 }}>
-                <FormField label="INDUSTRY" value={brandData.industry} onChange={v => setBrandData({...brandData, industry: v})} />
-                <FormField label="TARGET AUDIENCE" value={brandData.target} onChange={v => setBrandData({...brandData, target: v})} />
+                <FormField label="INDUSTRY" type="select" options={INDUSTRIES} value={brandData.industry} onChange={v => setBrandData({...brandData, industry: v})} />
+                <FormField label="TARGET AGE GROUP" type="select" options={AGE_GROUPS} value={brandData.audience_age_group} onChange={v => setBrandData({...brandData, audience_age_group: v})} />
+                <FormField label="TARGET GENDER" type="select" options={GENDERS} value={brandData.audience_gender} onChange={v => setBrandData({...brandData, audience_gender: v})} />
               </div>
             </div>
           ) : (
@@ -127,11 +138,23 @@ export default function OnboardingPage() {
           <h2 style={{ margin: '0 0 6px', fontSize: '22px' }}>Define your ideal match</h2>
           {role === 'brand' ? (
             <div style={{ marginTop: '24px' }}>
-              <FormField label="CREATOR NICHES WANTED" value={brandData.preferences.join(', ')} onChange={v => setBrandData({...brandData, preferences: v.split(',').map(s=>s.trim())})} placeholder="Comma separated, e.g. Fitness, Wellness" />
+              <FormField
+                label="CREATOR NICHES WANTED"
+                type="multi-checkbox"
+                options={NICHES}
+                value={brandData.preferences}
+                onChange={(next) => setBrandData({ ...brandData, preferences: next })}
+              />
             </div>
           ) : (
             <div style={{ marginTop: '24px' }}>
-              <FormField label="FORMATS YOU CREATE" value={creatorData.content_formats.join(', ')} onChange={v => setCreatorData({...creatorData, content_formats: v.split(',').map(s=>s.trim())})} placeholder="Comma separated, e.g. Reels, Stories" />
+              <FormField
+                label="FORMATS YOU CREATE"
+                type="multi-checkbox"
+                options={FORMATS}
+                value={creatorData.content_formats}
+                onChange={(next) => setCreatorData({ ...creatorData, content_formats: next })}
+              />
               <FormField label="SHORT BIO" type="textarea" value={creatorData.bio} onChange={v => setCreatorData({...creatorData, bio: v})} />
             </div>
           )}

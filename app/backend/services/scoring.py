@@ -64,18 +64,15 @@ def _compute_niche_score(brand: Dict[str, Any], influencer: Dict[str, Any]) -> i
 
 # Audience sub-score (weight: 30%) — average of age, gender, and location components
 def _compute_audience_score(brand: Dict[str, Any], influencer: Dict[str, Any]) -> int:
-    target = (brand.get("target_audience") or "").lower()
-    if not target:
-        return 50
-
     scores: List[int] = []
 
-    # Age overlap: compute intersection of numeric ranges
+    # Age overlap: compute intersection of numeric ranges (bucket labels like 18-24)
     inf_age = (influencer.get("audience_age_group") or "").lower()
+    tgt_age = (brand.get("target_audience_age_group") or "").lower()
     age_score = 50
-    if inf_age:
+    if inf_age and tgt_age:
         inf_nums = [int(x) for x in re.findall(r"\d+", inf_age)]
-        tgt_nums = [int(x) for x in re.findall(r"\d+", target)]
+        tgt_nums = [int(x) for x in re.findall(r"\d+", tgt_age)]
         if inf_nums and tgt_nums:
             inf_range = set(range(inf_nums[0], inf_nums[-1] + 1))
             tgt_range = set(range(tgt_nums[0], tgt_nums[-1] + 1))
@@ -86,20 +83,15 @@ def _compute_audience_score(brand: Dict[str, Any], influencer: Dict[str, Any]) -
                 age_score = 25
     scores.append(age_score)
 
-    # Gender alignment: keyword-based matching against target description
-    inf_gender = (influencer.get("audience_gender") or "").lower()
+    # Gender alignment: structured values (parity with influencer audience_gender)
+    inf_gender = (influencer.get("audience_gender") or "").strip().lower()
+    tgt_gender = (brand.get("target_audience_gender") or "").strip().lower()
     gender_score = 50
-    if inf_gender and target:
-        fem_keywords = {"women", "female", "f"}
-        male_keywords = {"men", "male", "m"}
-        target_fem = any(kw in target for kw in fem_keywords)
-        target_male = any(kw in target for kw in male_keywords)
-        inf_fem = "f" in inf_gender
-        inf_male = "m" in inf_gender and "f" not in inf_gender
-
-        if (target_fem and inf_fem) or (target_male and inf_male):
+    if inf_gender and tgt_gender:
+        broad = {"non_binary", "unknown"}
+        if inf_gender == tgt_gender:
             gender_score = 90
-        elif not target_fem and not target_male:
+        elif inf_gender in broad or tgt_gender in broad:
             gender_score = 70
         else:
             gender_score = 35

@@ -6,7 +6,7 @@ import FormField from '../components/FormField';
 import ScoreBadge from '../components/ScoreBadge';
 import ScoreBars from '../components/ScoreBars';
 import CollabModal from '../components/CollabModal';
-import { NICHES, FORMATS, INDUSTRIES, GENDERS } from '../constants';
+import { NICHES, FORMATS, INDUSTRIES, GENDERS, AGE_GROUPS } from '../constants';
 
 export default function ProfilePage() {
   const { type, id } = useParams();
@@ -36,7 +36,7 @@ export default function ProfilePage() {
         } else if (isOwnProfile) {
           // Mock own profile
           const mock = isBrandView 
-            ? { id: profileId, name: 'Your Brand', industry: 'General', size: 'SMB', budget_min: 0, budget_max: 0, target: '', location: '', preferences: [], email: '', website: '', instagram: '' }
+            ? { id: profileId, name: 'Your Brand', industry: 'General', size: 'SMB', budget_min: 0, budget_max: 0, age: '18-24', gender: 'female', location: '', preferences: [], email: '', website: '', instagram: '' }
             : { id: profileId, name: '@yourhandle', email: 'contact@creator.com', niche: 'General', followers: 0, engagement: 0, age: '18-24', gender: 'female', formats: [], rate_min: 0, rate_max: 0, bio: '' };
           setProfile(mock);
           setEditData(mock);
@@ -56,13 +56,23 @@ export default function ProfilePage() {
   const handleSaveOwnProfile = async () => {
     let success = true;
     if (isBrandView) {
-      // If we're mocking the profile (no existing data), create it. Otherwise, update.
-      // But how do we know if it was mocked? We can check if `profile.name` is 'Your Brand' or just rely on the API response.
-      // Alternatively, we can always try to create if it fails to update.
-      const res = await updateBrand(profileId, editData);
+      const brandPayload = {
+        name: editData.name,
+        industry: editData.industry,
+        size: editData.size,
+        budget_min: editData.budget_min,
+        budget_max: editData.budget_max,
+        audience_age_group: editData.age,
+        audience_gender: editData.gender,
+        location: editData.location,
+        preferences: editData.preferences || [],
+        email: editData.email,
+        website: editData.website || '',
+        instagram: editData.instagram || '',
+      };
+      const res = await updateBrand(profileId, brandPayload);
       if (!res) {
-        // If update failed (likely 404), create it
-        const createRes = await createBrand(editData);
+        const createRes = await createBrand(brandPayload);
         if (createRes && createRes.id) {
           dispatch({ type: 'SET_BRAND_ID', payload: createRes.id });
         } else {
@@ -127,8 +137,15 @@ export default function ProfilePage() {
                 <FormField label="LOCATION" value={editData.location} onChange={v => setEditData({...editData, location: v})} />
               </div>
             </div>
-            <FormField label="TARGET AUDIENCE" value={editData.target} onChange={v => setEditData({...editData, target: v})} />
-            <FormField label="CREATOR PREFERENCES" value={editData.preferences.join(', ')} onChange={v => setEditData({...editData, preferences: v.split(',').map(s=>s.trim())})} placeholder="Comma separated..." />
+            <div style={{ display: 'flex', gap: '16px' }}>
+              <div style={{ flex: 1 }}>
+                <FormField label="TARGET AGE GROUP" type="select" options={AGE_GROUPS} value={editData.age} onChange={v => setEditData({...editData, age: v})} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <FormField label="TARGET GENDER" type="select" options={GENDERS} value={editData.gender} onChange={v => setEditData({...editData, gender: v})} />
+              </div>
+            </div>
+            <FormField label="CREATOR PREFERENCES" value={(editData.preferences || []).join(', ')} onChange={v => setEditData({...editData, preferences: v.split(',').map(s=>s.trim())})} placeholder="Comma separated..." />
           </>
         ) : (
           <>

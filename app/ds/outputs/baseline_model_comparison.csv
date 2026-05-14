@@ -1,4 +1,4 @@
 model,accuracy,f1,rmse
-random_forest,0.8462,0.8571,0.3922
-logistic_regression,0.8462,0.8333,0.3922
+random_forest,0.9231,0.9231,0.2774
+logistic_regression,0.8462,0.8571,0.3922
 hist_gradient_boosting,0.4615,0.6316,0.7338

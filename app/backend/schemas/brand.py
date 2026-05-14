@@ -1,7 +1,8 @@
-from datetime import datetime
 from typing import List, Optional
 
 from pydantic import BaseModel, Field
+
+from schemas.influencer import AudienceAgeGroup, AudienceGender
 
 
 # API response schema — maps DB columns to contract field names
@@ -12,7 +13,8 @@ class BrandResponse(BaseModel):
     size: str
     budget_min: int
     budget_max: int
-    target: str
+    age: str
+    gender: str
     location: str
     preferences: List[str] = Field(default_factory=list)
     email: str = ""
@@ -32,7 +34,8 @@ class BrandCreate(BaseModel):
     size: str
     budget_min: int
     budget_max: int
-    target: str
+    audience_age_group: AudienceAgeGroup
+    audience_gender: AudienceGender
     location: str
     preferences: List[str]
     email: str
@@ -47,7 +50,8 @@ class BrandUpdate(BaseModel):
     size: Optional[str] = None
     budget_min: Optional[int] = None
     budget_max: Optional[int] = None
-    target: Optional[str] = None
+    audience_age_group: Optional[AudienceAgeGroup] = None
+    audience_gender: Optional[AudienceGender] = None
     location: Optional[str] = None
     preferences: Optional[List[str]] = None
     email: Optional[str] = None

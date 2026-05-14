@@ -10,6 +10,14 @@ from db.crud import execute_raw, insert_one, select_many, update_many
 router = APIRouter()
 
 
+def _normalize_age_group(raw: str) -> str:
+    normalized = raw.strip().replace("\u2013", "-").replace("\u2014", "-")
+    valid = {"13-17", "18-24", "25-34", "35-44", "45-54", "55+"}
+    if normalized in valid:
+        return normalized
+    return normalized
+
+
 # Transform DB row dict to response schema
 def _db_row_to_response(row: dict, scores: dict | None = None) -> dict:
     s = scores or {}
@@ -22,7 +30,8 @@ def _db_row_to_response(row: dict, scores: dict | None = None) -> dict:
         "size": row.get("company_size", ""),
         "budget_min": int(row.get("budget_min", 0)),
         "budget_max": int(row.get("budget_max", 0)),
-        "target": row.get("target_audience", ""),
+        "age": row.get("target_audience_age_group") or "",
+        "gender": row.get("target_audience_gender") or "",
         "location": row.get("location", ""),
         "preferences": preferences,
         "email": row.get("email", ""),
@@ -44,7 +53,9 @@ def _create_body_to_db(data: BrandCreate) -> dict:
         "company_size": data.size,
         "budget_min": data.budget_min,
         "budget_max": data.budget_max,
-        "target_audience": data.target,
+        "target_audience": "",
+        "target_audience_age_group": _normalize_age_group(str(data.audience_age_group)),
+        "target_audience_gender": str(data.audience_gender),
         "location": data.location,
         "preferred_niches": ", ".join(data.preferences),
         "email": data.email,
@@ -63,7 +74,6 @@ def _update_body_to_db(data: BrandUpdate) -> dict:
         "size": "company_size",
         "budget_min": "budget_min",
         "budget_max": "budget_max",
-        "target": "target_audience",
         "location": "location",
         "email": "email",
         "website": "website",
@@ -72,6 +82,10 @@ def _update_body_to_db(data: BrandUpdate) -> dict:
     for api_field, db_col in field_map.items():
         if api_field in raw:
             db_data[db_col] = raw[api_field]
+    if "audience_age_group" in raw:
+        db_data["target_audience_age_group"] = _normalize_age_group(str(raw["audience_age_group"]))
+    if "audience_gender" in raw:
+        db_data["target_audience_gender"] = str(raw["audience_gender"])
     if "preferences" in raw:
         db_data["preferred_niches"] = ", ".join(raw["preferences"])
     return db_data

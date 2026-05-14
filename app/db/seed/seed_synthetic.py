@@ -47,17 +47,6 @@ INDUSTRY_TO_PREFERRED_NICHES: dict[str, list[str]] = {
     "Wellness / Health": ["Wellness", "Fitness", "Lifestyle", "Beauty"],
 }
 
-TARGET_AUDIENCE_TEMPLATES = [
-    "Primary buyers are {adj1} {noun} enthusiasts aged 18–44 with {adj2} spending habits.",
-    "We target {adj1} consumers who value {noun} and shop mostly {channel}.",
-    "Ideal customers are busy professionals seeking {adj1} {noun} solutions in {channel}.",
-    "The core audience is {adj1} households focused on {noun} and {adj2} quality signals.",
-    "We reach {adj1} communities passionate about {noun}, mainly discovering brands via {channel}.",
-]
-
-
-
-
 def _lognormal_followers() -> int:
     raw = float(np.random.lognormal(mean=np.log(22000.0), sigma=0.65))
     return int(np.clip(raw, 5000, 100_000))
@@ -89,16 +78,6 @@ def _preferred_niches_for_industry(industry: str) -> str:
     return ",".join(picks)
 
 
-def _target_audience_sentence() -> str:
-    tpl = str(np.random.choice(TARGET_AUDIENCE_TEMPLATES))
-    return tpl.format(
-        adj1=fake.word().capitalize(),
-        adj2=fake.word().capitalize(),
-        noun=fake.word(),
-        channel=str(np.random.choice(["online", "in-store", "on social", "via subscriptions"])),
-    )
-
-
 def _unique_company_names(n: int) -> list[str]:
     seen: set[str] = set()
     out: list[str] = []
@@ -111,10 +90,31 @@ def _unique_company_names(n: int) -> list[str]:
     return out
 
 
+def _ensure_brands_audience_columns(engine) -> None:
+    """Align brands table with current app schema (migrations are not auto-applied in docker-compose)."""
+    stmts = [
+        text(
+            "ALTER TABLE brands ADD COLUMN IF NOT EXISTS "
+            "target_audience_age_group VARCHAR NOT NULL DEFAULT '18-24'"
+        ),
+        text(
+            "ALTER TABLE brands ADD COLUMN IF NOT EXISTS "
+            "target_audience_gender VARCHAR NOT NULL DEFAULT 'female'"
+        ),
+        text("ALTER TABLE brands ALTER COLUMN target_audience DROP NOT NULL"),
+        text("ALTER TABLE brands ALTER COLUMN target_audience SET DEFAULT ''"),
+    ]
+    with engine.begin() as conn:
+        for stmt in stmts:
+            conn.execute(stmt)
+
+
 def main() -> None:
     cfg = DatabaseConfig.from_env()
     engine = get_engine(cfg)
     wait_for_db(engine=engine, timeout_s=120)
+
+    _ensure_brands_audience_columns(engine)
 
     with engine.begin() as conn:
         conn.execute(text("DELETE FROM influencers WHERE is_synthetic = TRUE"))
@@ -171,11 +171,13 @@ def main() -> None:
         """
         INSERT INTO brands (
             name, industry, location, company_size, budget_min, budget_max,
-            target_audience, preferred_niches,
+            target_audience, target_audience_age_group, target_audience_gender,
+            preferred_niches,
             email, website, instagram
         ) VALUES (
             :name, :industry, :location, :company_size, :budget_min, :budget_max,
-            :target_audience, :preferred_niches,
+            :target_audience, :target_audience_age_group, :target_audience_gender,
+            :preferred_niches,
             :email, :website, :instagram
         )
         RETURNING brand_id
@@ -194,7 +196,9 @@ def main() -> None:
             "company_size": str(np.random.choice(COMPANY_SIZES)),
             "budget_min": bmin,
             "budget_max": bmax,
-            "target_audience": _target_audience_sentence(),
+            "target_audience": "",
+            "target_audience_age_group": str(np.random.choice(AUDIENCE_AGE)),
+            "target_audience_gender": str(np.random.choice(AUDIENCE_GENDER)),
             "preferred_niches": _preferred_niches_for_industry(industry),
             "email": f"brand_{i}@pairup.dev",
             "website": f"brand{i}.com",

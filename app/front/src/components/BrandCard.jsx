@@ -43,7 +43,7 @@ export default function BrandCard({ brand }) {
       </div>
 
       <div style={{ fontSize: '12px', color: 'var(--color-text-secondary)', marginBottom: '8px', lineHeight: 1.4 }}>
-        {brand.target}
+        {(brand.age || '—')} · {(brand.gender || '').replace(/_/g, ' ') || '—'}
       </div>
 
       <div>
